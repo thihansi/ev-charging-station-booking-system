@@ -1,0 +1,17 @@
+# Common ignores
+node_modules/
+bin/
+obj/
+.vscode/
+.idea/
+.DS_Store
+
+# Environment files
+*.env
+appsettings.json
+*.apk
+*.exe
+
+# Build files
+/dist
+/build
