@@ -1,6 +1,0 @@
-@EvChargingStationAPI_HostAddress = http://localhost:5239
-
-GET {{EvChargingStationAPI_HostAddress}}/weatherforecast/
-Accept: application/json
-
-###
