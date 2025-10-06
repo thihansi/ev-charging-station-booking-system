@@ -1,0 +1,156 @@
+﻿using EVChargingSystem.Api.DTOs;
+using EVChargingSystem.Api.Entities;
+using EVChargingSystem.Api.Repositories;
+using MongoDB.Driver;
+
+namespace EVChargingSystem.Api.Services
+{
+    public class BookingService : IBookingService
+    {
+        private readonly MongoDbContext _context;
+
+        public BookingService(MongoDbContext context)
+        {
+            _context = context;
+        }
+
+        public async Task<BookingDto> CreateBooking(BookingDto dto)
+        {
+            // Validate reservation is within 7 days
+            if (dto.ReservationDateTime > DateTime.UtcNow.AddDays(7))
+                throw new Exception("Reservation must be within 7 days from booking date");
+
+            if (dto.ReservationDateTime <= DateTime.UtcNow)
+                throw new Exception("Reservation must be in the future");
+
+            // Check if EV Owner exists and is active
+            var evOwner = await _context.EVOwners.Find(o => o.NIC == dto.EVOwnerNIC).FirstOrDefaultAsync();
+            if (evOwner == null || !evOwner.IsActive)
+                throw new Exception("EV Owner not found or inactive");
+
+            // Check if charging station exists and is active
+            var station = await _context.ChargingStations.Find(s => s.Id == dto.ChargingStationId).FirstOrDefaultAsync();
+            if (station == null || !station.IsActive)
+                throw new Exception("Charging station not found or inactive");
+
+            // Check availability (simplified - could be enhanced with slot management)
+            var existingBookingsCount = await _context.Bookings
+                .CountDocumentsAsync(b => b.ChargingStationId == dto.ChargingStationId && 
+                                         b.IsActive && 
+                                         b.ReservationDateTime.Date == dto.ReservationDateTime.Date);
+
+            if (existingBookingsCount >= station.AvailableSlots)
+                throw new Exception("No available slots for the selected date and time");
+
+            var booking = new Booking
+            {
+                Id = Guid.NewGuid(),
+                EVOwnerNIC = dto.EVOwnerNIC,
+                ChargingStationId = dto.ChargingStationId,
+                BookingDate = DateTime.UtcNow,
+                ReservationDateTime = dto.ReservationDateTime,
+                IsActive = true
+            };
+
+            await _context.Bookings.InsertOneAsync(booking);
+
+            dto.Id = booking.Id;
+            dto.BookingDate = booking.BookingDate;
+            return dto;
+        }
+
+        public async Task<BookingDto> UpdateBooking(Guid id, BookingDto dto)
+        {
+            var booking = await _context.Bookings.Find(b => b.Id == id && b.IsActive).FirstOrDefaultAsync();
+            if (booking == null) throw new Exception("Booking not found or already cancelled");
+
+            // Check 12-hour rule
+            if (booking.ReservationDateTime.Subtract(DateTime.UtcNow).TotalHours < 12)
+                throw new Exception("Cannot update booking less than 12 hours before reservation");
+
+            // Validate new reservation time
+            if (dto.ReservationDateTime > DateTime.UtcNow.AddDays(7))
+                throw new Exception("Reservation must be within 7 days from today");
+
+            if (dto.ReservationDateTime <= DateTime.UtcNow)
+                throw new Exception("Reservation must be in the future");
+
+            var update = Builders<Booking>.Update.Set(b => b.ReservationDateTime, dto.ReservationDateTime);
+            await _context.Bookings.UpdateOneAsync(b => b.Id == id, update);
+            
+            dto.Id = id;
+            dto.EVOwnerNIC = booking.EVOwnerNIC;
+            dto.ChargingStationId = booking.ChargingStationId;
+            dto.BookingDate = booking.BookingDate;
+            return dto;
+        }
+
+        public async Task CancelBooking(Guid id)
+        {
+            var booking = await _context.Bookings.Find(b => b.Id == id && b.IsActive).FirstOrDefaultAsync();
+            if (booking == null) throw new Exception("Booking not found or already cancelled");
+
+            // Check 12-hour rule
+            if (booking.ReservationDateTime.Subtract(DateTime.UtcNow).TotalHours < 12)
+                throw new Exception("Cannot cancel booking less than 12 hours before reservation");
+
+            var update = Builders<Booking>.Update.Set(b => b.IsActive, false);
+            await _context.Bookings.UpdateOneAsync(b => b.Id == id, update);
+        }
+
+        public async Task<IEnumerable<BookingDto>> GetBookingsByEVOwner(string evOwnerNIC)
+        {
+            var bookings = await _context.Bookings
+                .Find(b => b.EVOwnerNIC == evOwnerNIC)
+                .ToListAsync();
+
+            return bookings.Select(b => new BookingDto
+            {
+                Id = b.Id,
+                EVOwnerNIC = b.EVOwnerNIC,
+                ChargingStationId = b.ChargingStationId,
+                BookingDate = b.BookingDate,
+                ReservationDateTime = b.ReservationDateTime,
+                IsActive = b.IsActive
+            });
+        }
+
+        public async Task<IEnumerable<BookingDto>> GetAllBookings()
+        {
+            var bookings = await _context.Bookings.Find(_ => true).ToListAsync();
+
+            return bookings.Select(b => new BookingDto
+            {
+                Id = b.Id,
+                EVOwnerNIC = b.EVOwnerNIC,
+                ChargingStationId = b.ChargingStationId,
+                BookingDate = b.BookingDate,
+                ReservationDateTime = b.ReservationDateTime,
+                IsActive = b.IsActive
+            });
+        }
+
+        public async Task<BookingDto> GetBookingById(Guid id)
+        {
+            var booking = await _context.Bookings.Find(b => b.Id == id).FirstOrDefaultAsync();
+            if (booking == null) throw new Exception("Booking not found");
+
+            return new BookingDto
+            {
+                Id = booking.Id,
+                EVOwnerNIC = booking.EVOwnerNIC,
+                ChargingStationId = booking.ChargingStationId,
+                BookingDate = booking.BookingDate,
+                ReservationDateTime = booking.ReservationDateTime,
+                IsActive = booking.IsActive
+            };
+        }
+
+        public async Task<bool> HasActiveBookingsForStation(Guid stationId)
+        {
+            return await _context.Bookings
+                .Find(b => b.ChargingStationId == stationId && b.IsActive)
+                .AnyAsync();
+        }
+    }
+}

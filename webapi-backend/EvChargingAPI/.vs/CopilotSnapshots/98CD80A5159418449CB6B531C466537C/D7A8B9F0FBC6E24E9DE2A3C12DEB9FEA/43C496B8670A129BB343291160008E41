@@ -1,0 +1,43 @@
+﻿using GoogleApi;
+using GoogleApi.Entities.Maps.Geocoding.Request;
+using GoogleApi.Entities.Maps.Geocoding.Response;
+using Microsoft.Extensions.Configuration;
+
+namespace EVChargingSystem.Api.Services
+{
+    public class GoogleMapsService : IGoogleMapsService
+    {
+        private readonly string _apiKey;
+
+        public GoogleMapsService(IConfiguration configuration)
+        {
+            _apiKey = configuration["GoogleMaps:ApiKey"] ?? throw new ArgumentNullException(nameof(configuration), "Google Maps API key is missing in configuration.");
+        }
+
+        public async Task<(double Latitude, double Longitude)> GeocodeAddress(string address)
+        {
+            try
+            {
+                var request = new GeocodingRequest
+                {
+                    Key = _apiKey,
+                    Address = address
+                };
+
+                var response = await GoogleMaps.Geocode.QueryAsync(request);
+
+                if (response.Status == GoogleApi.Entities.Common.Enums.Status.Ok && response.Results?.Any() == true)
+                {
+                    var location = response.Results.First().Geometry.Location;
+                    return (location.Latitude, location.Longitude);
+                }
+
+                throw new InvalidOperationException("Address not found or invalid response from Google Maps API.");
+            }
+            catch (Exception ex) when (!(ex is InvalidOperationException))
+            {
+                throw new InvalidOperationException($"Geocoding failed: {ex.Message}", ex);
+            }
+        }
+    }
+}

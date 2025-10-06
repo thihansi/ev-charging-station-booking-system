@@ -1,0 +1,11 @@
+﻿using EVChargingSystem.Api.DTOs;
+
+namespace EVChargingSystem.Api.Services
+{
+    public interface IBookingService
+    {
+        Task<BookingDto> CreateBooking(BookingDto dto);
+        Task<BookingDto> UpdateBooking(Guid id, BookingDto dto);
+        Task CancelBooking(Guid id);
+    }
+}

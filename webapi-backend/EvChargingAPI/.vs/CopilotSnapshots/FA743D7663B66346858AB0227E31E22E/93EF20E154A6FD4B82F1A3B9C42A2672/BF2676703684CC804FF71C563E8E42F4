@@ -1,0 +1,29 @@
+﻿using System;
+using MongoDB.Bson;
+using MongoDB.Bson.Serialization.Attributes;
+
+namespace EVChargingSystem.Api.Entities
+{
+    public class Booking
+    {
+        [BsonId]
+        [BsonRepresentation(BsonType.String)]
+        public Guid Id { get; set; }
+        
+        [BsonElement("evOwnerNIC")]
+        public string EVOwnerNIC { get; set; }
+        
+        [BsonElement("chargingStationId")]
+        [BsonRepresentation(BsonType.String)]
+        public Guid ChargingStationId { get; set; }
+        
+        [BsonElement("bookingDate")]
+        public DateTime BookingDate { get; set; } = DateTime.UtcNow;
+        
+        [BsonElement("reservationDateTime")]
+        public DateTime ReservationDateTime { get; set; }
+        
+        [BsonElement("isActive")]
+        public bool IsActive { get; set; } = true;
+    }
+}

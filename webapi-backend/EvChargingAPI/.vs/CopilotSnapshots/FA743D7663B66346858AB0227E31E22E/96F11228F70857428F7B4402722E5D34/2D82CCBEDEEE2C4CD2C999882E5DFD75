@@ -1,0 +1,155 @@
+﻿using EVChargingSystem.Api.DTOs;
+using EVChargingSystem.Api.Services;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+
+namespace EvChargingAPI.Controllers
+{
+    [Route("api/[controller]")]
+    [ApiController]
+    public class BookingsController : ControllerBase
+    {
+        private readonly IBookingService _service;
+
+        public BookingsController(IBookingService service)
+        {
+            _service = service;
+        }
+
+        [HttpPost]
+        [Authorize(Roles = "EVOwner")]
+        public async Task<IActionResult> CreateBooking([FromBody] BookingDto dto)
+        {
+            try
+            {
+                // Get NIC from JWT token
+                var nic = User.FindFirst("nic")?.Value;
+                if (string.IsNullOrEmpty(nic))
+                {
+                    return Unauthorized("Invalid token");
+                }
+
+                // Ensure the booking is for the authenticated user
+                dto.EVOwnerNIC = nic;
+
+                var result = await _service.CreateBooking(dto);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { Message = ex.Message });
+            }
+        }
+
+        [HttpPut("{id}")]
+        [Authorize(Roles = "EVOwner")]
+        public async Task<IActionResult> UpdateBooking(Guid id, [FromBody] BookingDto dto)
+        {
+            try
+            {
+                // Get NIC from JWT token
+                var nic = User.FindFirst("nic")?.Value;
+                if (string.IsNullOrEmpty(nic))
+                {
+                    return Unauthorized("Invalid token");
+                }
+
+                // Verify the booking belongs to the authenticated user
+                var existingBooking = await _service.GetBookingById(id);
+                if (existingBooking.EVOwnerNIC != nic)
+                {
+                    return Forbid("You can only update your own bookings");
+                }
+
+                dto.EVOwnerNIC = nic;
+                var result = await _service.UpdateBooking(id, dto);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { Message = ex.Message });
+            }
+        }
+
+        [HttpDelete("{id}")]
+        [Authorize(Roles = "EVOwner")]
+        public async Task<IActionResult> CancelBooking(Guid id)
+        {
+            try
+            {
+                // Get NIC from JWT token
+                var nic = User.FindFirst("nic")?.Value;
+                if (string.IsNullOrEmpty(nic))
+                {
+                    return Unauthorized("Invalid token");
+                }
+
+                // Verify the booking belongs to the authenticated user
+                var existingBooking = await _service.GetBookingById(id);
+                if (existingBooking.EVOwnerNIC != nic)
+                {
+                    return Forbid("You can only cancel your own bookings");
+                }
+
+                await _service.CancelBooking(id);
+                return Ok(new { Message = "Booking cancelled successfully" });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { Message = ex.Message });
+            }
+        }
+
+        [HttpGet("my-bookings")]
+        [Authorize(Roles = "EVOwner")]
+        public async Task<IActionResult> GetMyBookings()
+        {
+            try
+            {
+                // Get NIC from JWT token
+                var nic = User.FindFirst("nic")?.Value;
+                if (string.IsNullOrEmpty(nic))
+                {
+                    return Unauthorized("Invalid token");
+                }
+
+                var bookings = await _service.GetBookingsByEVOwner(nic);
+                return Ok(bookings);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { Message = ex.Message });
+            }
+        }
+
+        [HttpGet]
+        [Authorize(Policy = "BackofficeOnly")]
+        public async Task<IActionResult> GetAllBookings()
+        {
+            try
+            {
+                var bookings = await _service.GetAllBookings();
+                return Ok(bookings);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { Message = ex.Message });
+            }
+        }
+
+        [HttpGet("{id}")]
+        [Authorize(Roles = "Backoffice,StationOperator")]
+        public async Task<IActionResult> GetBookingById(Guid id)
+        {
+            try
+            {
+                var booking = await _service.GetBookingById(id);
+                return Ok(booking);
+            }
+            catch (Exception ex)
+            {
+                return NotFound(new { Message = ex.Message });
+            }
+        }
+    }
+}

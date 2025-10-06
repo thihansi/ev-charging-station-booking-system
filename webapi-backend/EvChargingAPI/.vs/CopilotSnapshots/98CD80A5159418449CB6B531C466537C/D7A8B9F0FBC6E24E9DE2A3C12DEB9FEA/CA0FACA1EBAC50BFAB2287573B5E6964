@@ -1,0 +1,18 @@
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace EVChargingSystem.Api.Entities
+{
+    public class ChargingStation
+    {
+        [Key]
+        public Guid Id { get; set; }
+        public string Name { get; set; }
+        public string Address { get; set; }  // Input address, will geocode to Lat/Lng
+        public double Latitude { get; set; }
+        public double Longitude { get; set; }
+        public StationType Type { get; set; }
+        public int AvailableSlots { get; set; }
+        public string Schedule { get; set; }  // JSON string or simple string for availability
+        public bool IsActive { get; set; } = true;
+    }
+}

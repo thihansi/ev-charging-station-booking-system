@@ -1,0 +1,80 @@
+﻿using EVChargingSystem.Api.DTOs;
+using EVChargingSystem.Api.Entities;
+using EVChargingSystem.Api.Repositories;
+using Microsoft.EntityFrameworkCore;
+
+namespace EVChargingSystem.Api.Services
+{
+    public class ChargingStationService : IChargingStationService
+    {
+        private readonly AppDbContext _context;
+        private readonly IGoogleMapsService _mapsService;
+
+        public ChargingStationService(AppDbContext context, IGoogleMapsService mapsService)
+        {
+            _context = context;
+            _mapsService = mapsService;
+        }
+
+        public async Task<ChargingStationDto> CreateChargingStation(ChargingStationDto dto)
+        {
+            var (lat, lng) = await _mapsService.GeocodeAddress(dto.Address);
+
+            var station = new ChargingStation
+            {
+                Id = Guid.NewGuid(),
+                Name = dto.Name,
+                Address = dto.Address,
+                Latitude = lat,
+                Longitude = lng,
+                Type = dto.Type,
+                AvailableSlots = dto.AvailableSlots,
+                Schedule = dto.Schedule,
+                IsActive = dto.IsActive
+            };
+
+            _context.ChargingStations.Add(station);
+            await _context.SaveChangesAsync();
+
+            dto.Id = station.Id;
+            dto.Latitude = lat;
+            dto.Longitude = lng;
+            return dto;
+        }
+
+        public async Task<ChargingStationDto> UpdateChargingStation(Guid id, ChargingStationDto dto)
+        {
+            var station = await _context.ChargingStations.FindAsync(id);
+            if (station == null) throw new Exception("Station not found");
+
+            var (lat, lng) = await _mapsService.GeocodeAddress(dto.Address);
+
+            station.Name = dto.Name;
+            station.Address = dto.Address;
+            station.Latitude = lat;
+            station.Longitude = lng;
+            station.Type = dto.Type;
+            station.AvailableSlots = dto.AvailableSlots;
+            station.Schedule = dto.Schedule;
+            station.IsActive = dto.IsActive;
+
+            await _context.SaveChangesAsync();
+
+            dto.Latitude = lat;
+            dto.Longitude = lng;
+            return dto;
+        }
+
+        public async Task DeactivateChargingStation(Guid id)
+        {
+            var station = await _context.ChargingStations.FindAsync(id);
+            if (station == null) throw new Exception("Station not found");
+
+            if (await _context.Bookings.AnyAsync(b => b.ChargingStationId == id && b.IsActive))
+                throw new Exception("Cannot deactivate with active bookings");
+
+            station.IsActive = false;
+            await _context.SaveChangesAsync();
+        }
+    }
+}

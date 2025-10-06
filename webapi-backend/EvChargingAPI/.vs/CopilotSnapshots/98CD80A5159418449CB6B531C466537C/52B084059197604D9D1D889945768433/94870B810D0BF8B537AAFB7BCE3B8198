@@ -1,0 +1,21 @@
+﻿{
+  "ConnectionStrings": {
+    "DefaultConnection": "mongodb+srv://Movin21:test1234@cluster0.iupkz.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"
+  },
+  "Jwt": {
+    "Key": "YourSecretKeyHereAtLeast32CharsLong",
+    "Issuer": "https://yourdomain.com",
+    "Audience": "https://yourdomain.com",
+    "ExpiryMinutes": 300
+  },
+  "GoogleMaps": {
+    "ApiKey": "YourGoogleMapsApiKeyHere"
+  },
+  "Logging": {
+    "LogLevel": {
+      "Default": "Information",
+      "Microsoft.AspNetCore": "Warning"
+    }
+  },
+  "AllowedHosts": "*"
+}

@@ -1,0 +1,13 @@
+﻿using EVChargingSystem.Api.DTOs;
+
+namespace EVChargingSystem.Api.Services
+{
+    public interface IEVOwnerService
+    {
+        Task<EVOwnerDto> CreateEVOwner(EVOwnerDto dto);
+        Task<EVOwnerDto> UpdateEVOwner(string nic, EVOwnerDto dto);
+        Task DeleteEVOwner(string nic);
+        Task ActivateEVOwner(string nic);
+        Task DeactivateEVOwner(string nic);
+    }
+}
