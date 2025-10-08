@@ -18,6 +18,9 @@ android {
         vectorDrawables {
             useSupportLibrary true
         }
+        // Read Google Maps key from local.properties
+        def mapsApiKey = project.findProperty("MAPS_API_KEY") ?: ""
+        resValue "string", "google_maps_key", mapsApiKey
     }
 
     buildTypes {
