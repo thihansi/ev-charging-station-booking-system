@@ -21,6 +21,12 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.MobileInterface">
         <activity
+            android:name=".activities.DashboardActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activities.ProfileActivity"
+            android:exported="false" />
+        <activity
             android:name=".activities.RegisterActivity"
             android:exported="true"
             android:theme="@style/Theme.MobileInterface">
@@ -40,12 +46,11 @@
             android:name=".activities.OperatorDashboardActivity"
             android:exported="false" />
         <activity
-            android:name=".activities.LoginActivity"
+            android:name=".activities.EVOwnerLoginActivity"
             android:exported="false" />
         <activity
             android:name=".activities.MainActivity"
             android:exported="false" />
-
 
         <meta-data
             android:name="com.google.android.geo.API_KEY"
