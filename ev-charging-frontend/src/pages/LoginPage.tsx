@@ -272,15 +272,15 @@ const LoginPage: React.FC = () => {
             </Box>
 
             {/* Registration Link */}
-            <Box sx={{ mt: 2, textAlign: 'center' }}>
+            <Box sx={{ mt: 2, textAlign: "center" }}>
               <Typography variant="body2" color="text.secondary">
-                Need to create new users?{' '}
-                <Link 
+                Need to create new users?{" "}
+                <Link
                   to={ROUTES.USER_REGISTRATION}
-                  style={{ 
-                    color: 'inherit', 
-                    textDecoration: 'none',
-                    fontWeight: 'bold'
+                  style={{
+                    color: "inherit",
+                    textDecoration: "none",
+                    fontWeight: "bold",
                   }}
                 >
                   Register Here

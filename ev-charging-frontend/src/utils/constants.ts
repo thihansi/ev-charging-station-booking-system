@@ -1,7 +1,6 @@
 // API Configuration
-export const API_BASE_URL = 
-  import.meta.env.VITE_API_BASE_URL || 
-  "https://localhost:7001";  // Local development API
+export const API_BASE_URL =
+  import.meta.env.VITE_API_BASE_URL || "https://localhost:7001"; // Local development API
 
 // Local Storage Keys
 export const STORAGE_KEYS = {

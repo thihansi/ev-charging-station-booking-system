@@ -18,11 +18,11 @@ import { ArrowBack, Save } from "@mui/icons-material";
 import { useNotificationContext } from "../context/NotificationContext";
 import { chargingStationApi } from "../api";
 import { ROUTES } from "../utils/constants";
-import type { 
-  ChargingStation, 
-  CreateChargingStationRequest, 
+import type {
+  ChargingStation,
+  CreateChargingStationRequest,
   UpdateChargingStationRequest,
-  StationType
+  StationType,
 } from "../types";
 
 const ChargingStationFormPage: React.FC = () => {
@@ -75,7 +75,6 @@ const ChargingStationFormPage: React.FC = () => {
         totalSlots: stationData.totalSlots,
         operationalHours: stationData.operationalHours,
       });
-
     } catch (error) {
       showError("Failed to load charging station details");
       navigate(ROUTES.BACKOFFICE.CHARGING_STATIONS);
@@ -125,7 +124,7 @@ const ChargingStationFormPage: React.FC = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!validateForm()) {
       return;
     }
@@ -148,10 +147,13 @@ const ChargingStationFormPage: React.FC = () => {
         await chargingStationApi.create(formData);
         showSuccess("Charging station created successfully");
       }
-      
+
       navigate(ROUTES.BACKOFFICE.CHARGING_STATIONS);
     } catch (error: any) {
-      showError(error.response?.data?.message || `Failed to ${isEditMode ? 'update' : 'create'} charging station`);
+      showError(
+        error.response?.data?.message ||
+          `Failed to ${isEditMode ? "update" : "create"} charging station`
+      );
     } finally {
       setIsLoading(false);
     }
@@ -161,20 +163,26 @@ const ChargingStationFormPage: React.FC = () => {
     navigate(ROUTES.BACKOFFICE.CHARGING_STATIONS);
   };
 
-  const handleInputChange = (field: keyof CreateChargingStationRequest, value: any) => {
-    setFormData(prev => ({
+  const handleInputChange = (
+    field: keyof CreateChargingStationRequest,
+    value: any
+  ) => {
+    setFormData((prev) => ({
       ...prev,
       [field]: value,
     }));
-    
+
     // Clear error when user starts typing
     if (errors[field]) {
-      setErrors(prev => ({ ...prev, [field]: "" }));
+      setErrors((prev) => ({ ...prev, [field]: "" }));
     }
   };
 
-  const handleTimeChange = (timeType: 'openTime' | 'closeTime', value: string) => {
-    setFormData(prev => ({
+  const handleTimeChange = (
+    timeType: "openTime" | "closeTime",
+    value: string
+  ) => {
+    setFormData((prev) => ({
       ...prev,
       operationalHours: {
         ...prev.operationalHours,
@@ -188,7 +196,7 @@ const ChargingStationFormPage: React.FC = () => {
       setIsLoading(true);
       navigator.geolocation.getCurrentPosition(
         (position) => {
-          setFormData(prev => ({
+          setFormData((prev) => ({
             ...prev,
             latitude: position.coords.latitude,
             longitude: position.coords.longitude,
@@ -230,34 +238,40 @@ const ChargingStationFormPage: React.FC = () => {
         </Button>
         <Box>
           <Typography variant="h4" component="h1" fontWeight="bold">
-            {isEditMode ? "Edit Charging Station" : "Create New Charging Station"}
+            {isEditMode
+              ? "Edit Charging Station"
+              : "Create New Charging Station"}
           </Typography>
           <Typography variant="body1" color="text.secondary">
-            {isEditMode 
+            {isEditMode
               ? `Update charging station details for ${station?.name}`
-              : "Add a new EV charging station to the network"
-            }
+              : "Add a new EV charging station to the network"}
           </Typography>
         </Box>
       </Box>
 
       {/* Current Status (Edit Mode Only) */}
       {isEditMode && station && (
-        <Alert 
+        <Alert
           severity={station.isActive ? "success" : "warning"}
           sx={{ mb: 3 }}
         >
-          Current Status: <strong>{station.isActive ? "Active" : "Inactive"}</strong>
-          {station.isActive ? " - Station is operational" : " - Station is temporarily disabled"}
+          Current Status:{" "}
+          <strong>{station.isActive ? "Active" : "Inactive"}</strong>
+          {station.isActive
+            ? " - Station is operational"
+            : " - Station is temporarily disabled"}
         </Alert>
       )}
 
       <form onSubmit={handleSubmit}>
-        <Box sx={{ 
-          display: "grid", 
-          gridTemplateColumns: { xs: "1fr", md: "2fr 1fr" }, 
-          gap: 3 
-        }}>
+        <Box
+          sx={{
+            display: "grid",
+            gridTemplateColumns: { xs: "1fr", md: "2fr 1fr" },
+            gap: 3,
+          }}
+        >
           <Box>
             <Card>
               <CardContent>
@@ -272,7 +286,10 @@ const ChargingStationFormPage: React.FC = () => {
                     value={formData.name}
                     onChange={(e) => handleInputChange("name", e.target.value)}
                     error={Boolean(errors.name)}
-                    helperText={errors.name || "Enter a descriptive name for the charging station"}
+                    helperText={
+                      errors.name ||
+                      "Enter a descriptive name for the charging station"
+                    }
                     required
                     fullWidth
                   />
@@ -281,9 +298,14 @@ const ChargingStationFormPage: React.FC = () => {
                   <TextField
                     label="Address"
                     value={formData.address}
-                    onChange={(e) => handleInputChange("address", e.target.value)}
+                    onChange={(e) =>
+                      handleInputChange("address", e.target.value)
+                    }
                     error={Boolean(errors.address)}
-                    helperText={errors.address || "Full street address of the charging station"}
+                    helperText={
+                      errors.address ||
+                      "Full street address of the charging station"
+                    }
                     required
                     fullWidth
                     multiline
@@ -291,12 +313,21 @@ const ChargingStationFormPage: React.FC = () => {
                   />
 
                   {/* Station Type */}
-                  <FormControl fullWidth error={Boolean(errors.stationType)} required>
+                  <FormControl
+                    fullWidth
+                    error={Boolean(errors.stationType)}
+                    required
+                  >
                     <InputLabel>Station Type</InputLabel>
                     <Select
                       value={formData.stationType}
                       label="Station Type"
-                      onChange={(e) => handleInputChange("stationType", e.target.value as StationType)}
+                      onChange={(e) =>
+                        handleInputChange(
+                          "stationType",
+                          e.target.value as StationType
+                        )
+                      }
                     >
                       {stationTypes.map((type) => (
                         <MenuItem key={type} value={type}>
@@ -305,7 +336,11 @@ const ChargingStationFormPage: React.FC = () => {
                       ))}
                     </Select>
                     {errors.stationType && (
-                      <Typography variant="caption" color="error" sx={{ mt: 0.5, ml: 1.5 }}>
+                      <Typography
+                        variant="caption"
+                        color="error"
+                        sx={{ mt: 0.5, ml: 1.5 }}
+                      >
                         {errors.stationType}
                       </Typography>
                     )}
@@ -316,9 +351,16 @@ const ChargingStationFormPage: React.FC = () => {
                     label="Total Charging Slots"
                     type="number"
                     value={formData.totalSlots}
-                    onChange={(e) => handleInputChange("totalSlots", parseInt(e.target.value) || 1)}
+                    onChange={(e) =>
+                      handleInputChange(
+                        "totalSlots",
+                        parseInt(e.target.value) || 1
+                      )
+                    }
                     error={Boolean(errors.totalSlots)}
-                    helperText={errors.totalSlots || "Number of charging slots available"}
+                    helperText={
+                      errors.totalSlots || "Number of charging slots available"
+                    }
                     required
                     fullWidth
                     inputProps={{ min: 1 }}
@@ -334,7 +376,9 @@ const ChargingStationFormPage: React.FC = () => {
                         label="Open Time"
                         type="time"
                         value={formData.operationalHours.openTime}
-                        onChange={(e) => handleTimeChange("openTime", e.target.value)}
+                        onChange={(e) =>
+                          handleTimeChange("openTime", e.target.value)
+                        }
                         InputLabelProps={{ shrink: true }}
                         fullWidth
                       />
@@ -342,7 +386,9 @@ const ChargingStationFormPage: React.FC = () => {
                         label="Close Time"
                         type="time"
                         value={formData.operationalHours.closeTime}
-                        onChange={(e) => handleTimeChange("closeTime", e.target.value)}
+                        onChange={(e) =>
+                          handleTimeChange("closeTime", e.target.value)
+                        }
                         InputLabelProps={{ shrink: true }}
                         fullWidth
                       />
@@ -359,7 +405,12 @@ const ChargingStationFormPage: React.FC = () => {
                         label="Latitude"
                         type="number"
                         value={formData.latitude || ""}
-                        onChange={(e) => handleInputChange("latitude", parseFloat(e.target.value) || 0)}
+                        onChange={(e) =>
+                          handleInputChange(
+                            "latitude",
+                            parseFloat(e.target.value) || 0
+                          )
+                        }
                         error={Boolean(errors.latitude)}
                         helperText={errors.latitude}
                         required
@@ -370,7 +421,12 @@ const ChargingStationFormPage: React.FC = () => {
                         label="Longitude"
                         type="number"
                         value={formData.longitude || ""}
-                        onChange={(e) => handleInputChange("longitude", parseFloat(e.target.value) || 0)}
+                        onChange={(e) =>
+                          handleInputChange(
+                            "longitude",
+                            parseFloat(e.target.value) || 0
+                          )
+                        }
                         error={Boolean(errors.longitude)}
                         helperText={errors.longitude}
                         required
@@ -401,22 +457,26 @@ const ChargingStationFormPage: React.FC = () => {
                 </Typography>
                 <Box sx={{ display: "grid", gap: 1 }}>
                   <Typography variant="body2">
-                    <strong>Name:</strong> {formData.name || "Enter station name"}
+                    <strong>Name:</strong>{" "}
+                    {formData.name || "Enter station name"}
                   </Typography>
                   <Typography variant="body2">
                     <strong>Type:</strong> {formData.stationType}
                   </Typography>
                   <Typography variant="body2">
-                    <strong>Address:</strong> {formData.address || "Enter address"}
+                    <strong>Address:</strong>{" "}
+                    {formData.address || "Enter address"}
                   </Typography>
                   <Typography variant="body2">
                     <strong>Total Slots:</strong> {formData.totalSlots}
                   </Typography>
                   <Typography variant="body2">
-                    <strong>Hours:</strong> {formData.operationalHours.openTime} - {formData.operationalHours.closeTime}
+                    <strong>Hours:</strong> {formData.operationalHours.openTime}{" "}
+                    - {formData.operationalHours.closeTime}
                   </Typography>
                   <Typography variant="body2">
-                    <strong>Coordinates:</strong> {formData.latitude}, {formData.longitude}
+                    <strong>Coordinates:</strong> {formData.latitude},{" "}
+                    {formData.longitude}
                   </Typography>
                 </Box>
               </CardContent>
@@ -436,10 +496,13 @@ const ChargingStationFormPage: React.FC = () => {
                     disabled={isLoading}
                     fullWidth
                   >
-                    {isLoading 
-                      ? (isEditMode ? "Updating..." : "Creating...") 
-                      : (isEditMode ? "Update Station" : "Create Station")
-                    }
+                    {isLoading
+                      ? isEditMode
+                        ? "Updating..."
+                        : "Creating..."
+                      : isEditMode
+                      ? "Update Station"
+                      : "Create Station"}
                   </Button>
                   <Button
                     variant="outlined"

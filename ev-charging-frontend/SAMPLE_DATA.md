@@ -5,6 +5,7 @@ This document provides sample data that can be used to populate the EV Charging 
 ## Sample System Users
 
 ### Backoffice Administrator
+
 ```json
 {
   "username": "admin",
@@ -16,6 +17,7 @@ This document provides sample data that can be used to populate the EV Charging 
 ```
 
 ### Station Operator
+
 ```json
 {
   "username": "operator1",
@@ -30,6 +32,7 @@ This document provides sample data that can be used to populate the EV Charging 
 ## Sample EV Owners
 
 ### EV Owner 1
+
 ```json
 {
   "nic": "123456789V",
@@ -44,6 +47,7 @@ This document provides sample data that can be used to populate the EV Charging 
 ```
 
 ### EV Owner 2
+
 ```json
 {
   "nic": "987654321V",
@@ -58,6 +62,7 @@ This document provides sample data that can be used to populate the EV Charging 
 ```
 
 ### EV Owner 3
+
 ```json
 {
   "nic": "456789123V",
@@ -74,6 +79,7 @@ This document provides sample data that can be used to populate the EV Charging 
 ## Sample Charging Stations
 
 ### Station 1 - Urban Center
+
 ```json
 {
   "id": "STATION_001",
@@ -94,6 +100,7 @@ This document provides sample data that can be used to populate the EV Charging 
 ```
 
 ### Station 2 - Shopping Mall
+
 ```json
 {
   "id": "STATION_002",
@@ -114,6 +121,7 @@ This document provides sample data that can be used to populate the EV Charging 
 ```
 
 ### Station 3 - Highway Service Center
+
 ```json
 {
   "id": "STATION_003",
@@ -134,6 +142,7 @@ This document provides sample data that can be used to populate the EV Charging 
 ```
 
 ### Station 4 - Airport
+
 ```json
 {
   "id": "STATION_004",
@@ -154,6 +163,7 @@ This document provides sample data that can be used to populate the EV Charging 
 ```
 
 ### Station 5 - University Campus
+
 ```json
 {
   "id": "STATION_005",
@@ -176,6 +186,7 @@ This document provides sample data that can be used to populate the EV Charging 
 ## Sample Bookings
 
 ### Booking 1 - Pending
+
 ```json
 {
   "id": "BOOKING_001",
@@ -190,6 +201,7 @@ This document provides sample data that can be used to populate the EV Charging 
 ```
 
 ### Booking 2 - Approved
+
 ```json
 {
   "id": "BOOKING_002",
@@ -204,6 +216,7 @@ This document provides sample data that can be used to populate the EV Charging 
 ```
 
 ### Booking 3 - Completed
+
 ```json
 {
   "id": "BOOKING_003",
@@ -218,6 +231,7 @@ This document provides sample data that can be used to populate the EV Charging 
 ```
 
 ### Booking 4 - Rejected
+
 ```json
 {
   "id": "BOOKING_004",
@@ -232,6 +246,7 @@ This document provides sample data that can be used to populate the EV Charging 
 ```
 
 ### Booking 5 - Cancelled
+
 ```json
 {
   "id": "BOOKING_005",
@@ -246,6 +261,7 @@ This document provides sample data that can be used to populate the EV Charging 
 ```
 
 ### Booking 6 - No Show
+
 ```json
 {
   "id": "BOOKING_006",
@@ -262,21 +278,25 @@ This document provides sample data that can be used to populate the EV Charging 
 ## Quick Setup Guide
 
 ### Step 1: Create System Users
+
 1. Login to the backend admin panel
 2. Create the admin user with Backoffice role
 3. Create station operator users with StationOperator role
 
 ### Step 2: Populate Charging Stations
+
 1. Use the admin panel or API to create all 5 sample charging stations
 2. Ensure proper coordinates for map integration
 3. Set appropriate operational hours
 
 ### Step 3: Register EV Owners
+
 1. Create EV owner accounts through the registration system
 2. Mark appropriate accounts as verified
 3. Test different verification states
 
 ### Step 4: Create Sample Bookings
+
 1. Create bookings with different statuses to demonstrate workflow
 2. Assign bookings to different stations and owners
 3. Set various reservation times (past, present, future)
@@ -284,6 +304,7 @@ This document provides sample data that can be used to populate the EV Charging 
 ## Testing Scenarios
 
 ### Scenario 1: Complete Booking Workflow
+
 1. **EV Owner Registration**: Register as Sarah Johnson
 2. **Browse Stations**: View available charging stations
 3. **Create Booking**: Book a slot at Colombo City Center
@@ -292,17 +313,20 @@ This document provides sample data that can be used to populate the EV Charging 
 6. **Complete Session**: Mark charging session as completed
 
 ### Scenario 2: Role-Based Access Testing
+
 1. **Backoffice Access**: Login as admin to access all management features
 2. **Operator Access**: Login as operator to access station-specific features
 3. **Permission Testing**: Verify operators can only manage assigned stations
 
 ### Scenario 3: Booking Status Management
+
 1. **Pending Review**: Create booking and leave in pending state
 2. **Approval Process**: Test approve/reject functionality
 3. **Cancellation**: Test booking cancellation by different user types
 4. **No-Show Handling**: Test marking bookings as no-show
 
 ### Scenario 4: Dashboard Analytics
+
 1. **View Statistics**: Check booking counts and station utilization
 2. **Filter Data**: Test filtering by date ranges and status
 3. **Export Reports**: Test data export functionality
@@ -310,6 +334,7 @@ This document provides sample data that can be used to populate the EV Charging 
 ## API Testing Data
 
 ### Authentication
+
 ```bash
 # Admin Login
 POST /api/auth/login
@@ -327,6 +352,7 @@ POST /api/auth/login
 ```
 
 ### Station Management
+
 ```bash
 # Get all stations
 GET /api/charging-stations
@@ -341,6 +367,7 @@ PUT /api/charging-stations/STATION_001
 ```
 
 ### Booking Management
+
 ```bash
 # Get all bookings
 GET /api/bookings

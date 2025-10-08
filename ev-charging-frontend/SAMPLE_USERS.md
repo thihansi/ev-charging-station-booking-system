@@ -7,11 +7,13 @@ This document provides sample user credentials for testing the EV Charging Stati
 **Backend users are automatically created when you start the API server.**
 
 ### Admin Access
+
 - **Username:** `admin`
 - **Password:** `admin123`
 - **Role:** Backoffice
 
-### Station Operator Access  
+### Station Operator Access
+
 - **Username:** `operator`
 - **Password:** `operator123`
 - **Role:** StationOperator
@@ -19,6 +21,7 @@ This document provides sample user credentials for testing the EV Charging Stati
 ## System Admin/Backoffice Users
 
 ### Admin User 1 (Primary Administrator) - AUTO-CREATED
+
 ```json
 {
   "username": "admin",
@@ -28,12 +31,15 @@ This document provides sample user credentials for testing the EV Charging Stati
   "role": "Backoffice"
 }
 ```
+
 **Login Credentials:**
+
 - Username: `admin`
 - Password: `admin123`
 - **Status:** ✅ Automatically created by backend on startup
 
 ### Admin User 2 (Backup Administrator)
+
 ```json
 {
   "username": "backoffice.manager",
@@ -43,11 +49,14 @@ This document provides sample user credentials for testing the EV Charging Stati
   "role": "Backoffice"
 }
 ```
+
 **Login Credentials:**
+
 - Username: `backoffice.manager`
 - Password: `manager123`
 
 ### Admin User 3 (Operations Manager)
+
 ```json
 {
   "username": "operations.admin",
@@ -57,13 +66,16 @@ This document provides sample user credentials for testing the EV Charging Stati
   "role": "Backoffice"
 }
 ```
+
 **Login Credentials:**
+
 - Username: `operations.admin`
 - Password: `ops123`
 
 ## Station Operator Users
 
 ### Operator 1 (Primary Operator) - AUTO-CREATED
+
 ```json
 {
   "username": "operator",
@@ -74,12 +86,15 @@ This document provides sample user credentials for testing the EV Charging Stati
   "assignedStationId": ""
 }
 ```
+
 **Login Credentials:**
+
 - Username: `operator`
 - Password: `operator123`
 - **Status:** ✅ Automatically created by backend on startup
 
 ### Operator 2 (Colombo Stations)
+
 ```json
 {
   "username": "operator.colombo",
@@ -90,11 +105,14 @@ This document provides sample user credentials for testing the EV Charging Stati
   "assignedStationId": "STATION_001"
 }
 ```
+
 **Login Credentials:**
+
 - Username: `operator.colombo`
 - Password: `operator123`
 
 ### Operator 3 (Highway Stations)
+
 ```json
 {
   "username": "operator.highway",
@@ -105,11 +123,14 @@ This document provides sample user credentials for testing the EV Charging Stati
   "assignedStationId": "STATION_003"
 }
 ```
+
 **Login Credentials:**
+
 - Username: `operator.highway`
 - Password: `highway123`
 
 ### Operator 3 (Airport Station)
+
 ```json
 {
   "username": "operator.airport",
@@ -120,13 +141,16 @@ This document provides sample user credentials for testing the EV Charging Stati
   "assignedStationId": "STATION_004"
 }
 ```
+
 **Login Credentials:**
+
 - Username: `operator.airport`
 - Password: `airport123`
 
 ## EV Owner Test Accounts
 
 ### EV Owner 1 (Active User)
+
 ```json
 {
   "nic": "123456789V",
@@ -139,11 +163,14 @@ This document provides sample user credentials for testing the EV Charging Stati
   "isVerified": true
 }
 ```
+
 **Login Credentials (if EV Owner login is implemented):**
+
 - NIC/Username: `123456789V`
 - Password: `user123`
 
 ### EV Owner 2 (Power User)
+
 ```json
 {
   "nic": "987654321V",
@@ -156,11 +183,14 @@ This document provides sample user credentials for testing the EV Charging Stati
   "isVerified": true
 }
 ```
+
 **Login Credentials (if EV Owner login is implemented):**
+
 - NIC/Username: `987654321V`
 - Password: `user123`
 
 ### EV Owner 3 (New User - Unverified)
+
 ```json
 {
   "nic": "456789123V",
@@ -173,7 +203,9 @@ This document provides sample user credentials for testing the EV Charging Stati
   "isVerified": false
 }
 ```
+
 **Login Credentials (if EV Owner login is implemented):**
+
 - NIC/Username: `456789123V`
 - Password: `user123`
 
@@ -182,11 +214,13 @@ This document provides sample user credentials for testing the EV Charging Stati
 ### For System Testing:
 
 #### **Backoffice Dashboard Access:**
+
 1. **Primary Admin**: `admin` / `admin123`
 2. **Manager**: `backoffice.manager` / `manager123`
 3. **Operations**: `operations.admin` / `ops123`
 
 #### **Station Operator Dashboard Access:**
+
 1. **Colombo**: `operator.colombo` / `operator123`
 2. **Highway**: `operator.highway` / `highway123`
 3. **Airport**: `operator.airport` / `airport123`
@@ -194,6 +228,7 @@ This document provides sample user credentials for testing the EV Charging Stati
 ## User Creation API Calls
 
 ### Create Backoffice Admin
+
 ```bash
 POST /api/users
 Authorization: Bearer <admin_token>
@@ -209,6 +244,7 @@ Content-Type: application/json
 ```
 
 ### Create Station Operator
+
 ```bash
 POST /api/users
 Authorization: Bearer <admin_token>
@@ -225,6 +261,7 @@ Content-Type: application/json
 ```
 
 ### Create EV Owner
+
 ```bash
 POST /api/ev-owners
 Content-Type: application/json
@@ -242,16 +279,19 @@ Content-Type: application/json
 ## Testing Scenarios
 
 ### Scenario 1: Admin Workflow
+
 1. **Login**: Use `admin` / `admin123`
 2. **Access**: Full system access to all modules
 3. **Test**: Create users, manage stations, oversee bookings
 
 ### Scenario 2: Station Operator Workflow
+
 1. **Login**: Use `operator.colombo` / `operator123`
 2. **Access**: Station-specific dashboard and booking management
 3. **Test**: Approve bookings, scan QR codes, manage sessions
 
 ### Scenario 3: Role-Based Access Testing
+
 1. **Login as Admin**: Verify access to user management
 2. **Login as Operator**: Verify limited access to assigned stations only
 3. **Test Permissions**: Ensure proper role-based restrictions
@@ -261,6 +301,7 @@ Content-Type: application/json
 ⚠️ **Important**: These are sample credentials for development/testing only!
 
 ### For Production:
+
 - Change all default passwords
 - Implement strong password policies
 - Use proper password hashing (bcrypt)
@@ -269,6 +310,7 @@ Content-Type: application/json
 - Use secure password reset mechanisms
 
 ### Password Requirements (Recommended):
+
 - Minimum 8 characters
 - At least one uppercase letter
 - At least one lowercase letter

@@ -73,7 +73,9 @@ const BookingListPage: React.FC = () => {
   const [filteredBookings, setFilteredBookings] = useState<Booking[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
-  const [statusFilter, setStatusFilter] = useState<BookingStatus | "All">("All");
+  const [statusFilter, setStatusFilter] = useState<BookingStatus | "All">(
+    "All"
+  );
   const [tabValue, setTabValue] = useState(0);
   const [menuAnchorEl, setMenuAnchorEl] = useState<null | HTMLElement>(null);
   const [selectedBooking, setSelectedBooking] = useState<Booking | null>(null);
@@ -128,9 +130,15 @@ const BookingListPage: React.FC = () => {
         (booking) =>
           booking.id.toLowerCase().includes(searchTerm.toLowerCase()) ||
           booking.evOwnerNic.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          booking.chargingStationId.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          booking.evOwner?.fullName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          booking.chargingStation?.name?.toLowerCase().includes(searchTerm.toLowerCase())
+          booking.chargingStationId
+            .toLowerCase()
+            .includes(searchTerm.toLowerCase()) ||
+          booking.evOwner?.fullName
+            ?.toLowerCase()
+            .includes(searchTerm.toLowerCase()) ||
+          booking.chargingStation?.name
+            ?.toLowerCase()
+            .includes(searchTerm.toLowerCase())
       );
     }
 
@@ -145,8 +153,9 @@ const BookingListPage: React.FC = () => {
       filtered = filtered.filter((booking) => booking.status === "Pending");
     } else if (tabValue === 2) {
       // Active bookings tab
-      filtered = filtered.filter((booking) => 
-        booking.status === "Approved" || booking.status === "Completed"
+      filtered = filtered.filter(
+        (booking) =>
+          booking.status === "Approved" || booking.status === "Completed"
       );
     }
 
@@ -302,18 +311,24 @@ const BookingListPage: React.FC = () => {
   };
 
   const canApproveReject = (booking: Booking) => {
-    return booking.status === "Pending" && 
-           (user?.role === "Backoffice" || user?.role === "StationOperator");
+    return (
+      booking.status === "Pending" &&
+      (user?.role === "Backoffice" || user?.role === "StationOperator")
+    );
   };
 
   const canComplete = (booking: Booking) => {
-    return booking.status === "Approved" && 
-           (user?.role === "Backoffice" || user?.role === "StationOperator");
+    return (
+      booking.status === "Approved" &&
+      (user?.role === "Backoffice" || user?.role === "StationOperator")
+    );
   };
 
   const canMarkNoShow = (booking: Booking) => {
-    return booking.status === "Approved" && 
-           (user?.role === "Backoffice" || user?.role === "StationOperator");
+    return (
+      booking.status === "Approved" &&
+      (user?.role === "Backoffice" || user?.role === "StationOperator")
+    );
   };
 
   const handleConfirmAction = () => {
@@ -322,11 +337,13 @@ const BookingListPage: React.FC = () => {
   };
 
   const getPendingCount = () => {
-    return bookings.filter(b => b.status === "Pending").length;
+    return bookings.filter((b) => b.status === "Pending").length;
   };
 
   const getActiveCount = () => {
-    return bookings.filter(b => b.status === "Approved" || b.status === "Completed").length;
+    return bookings.filter(
+      (b) => b.status === "Approved" || b.status === "Completed"
+    ).length;
   };
 
   return (
@@ -343,7 +360,10 @@ const BookingListPage: React.FC = () => {
 
       {/* Tabs */}
       <Card sx={{ mb: 3 }}>
-        <Tabs value={tabValue} onChange={(_, newValue) => setTabValue(newValue)}>
+        <Tabs
+          value={tabValue}
+          onChange={(_, newValue) => setTabValue(newValue)}
+        >
           <Tab label={`All Bookings (${bookings.length})`} />
           <Tab label={`Pending (${getPendingCount()})`} />
           <Tab label={`Active (${getActiveCount()})`} />
@@ -372,7 +392,9 @@ const BookingListPage: React.FC = () => {
               <Select
                 value={statusFilter}
                 label="Status"
-                onChange={(e) => setStatusFilter(e.target.value as BookingStatus | "All")}
+                onChange={(e) =>
+                  setStatusFilter(e.target.value as BookingStatus | "All")
+                }
               >
                 {statusList.map((status) => (
                   <MenuItem key={status} value={status}>
@@ -430,16 +452,25 @@ const BookingListPage: React.FC = () => {
           <Edit fontSize="small" sx={{ mr: 1 }} />
           Edit
         </MenuItem>
-        {selectedBooking && canApproveReject(selectedBooking) && [
-          <MenuItem key="approve" onClick={handleApprove} sx={{ color: "success.main" }}>
-            <CheckCircle fontSize="small" sx={{ mr: 1 }} />
-            Approve
-          </MenuItem>,
-          <MenuItem key="reject" onClick={handleReject} sx={{ color: "error.main" }}>
-            <Cancel fontSize="small" sx={{ mr: 1 }} />
-            Reject
-          </MenuItem>
-        ]}
+        {selectedBooking &&
+          canApproveReject(selectedBooking) && [
+            <MenuItem
+              key="approve"
+              onClick={handleApprove}
+              sx={{ color: "success.main" }}
+            >
+              <CheckCircle fontSize="small" sx={{ mr: 1 }} />
+              Approve
+            </MenuItem>,
+            <MenuItem
+              key="reject"
+              onClick={handleReject}
+              sx={{ color: "error.main" }}
+            >
+              <Cancel fontSize="small" sx={{ mr: 1 }} />
+              Reject
+            </MenuItem>,
+          ]}
         {selectedBooking && canComplete(selectedBooking) && (
           <MenuItem onClick={handleComplete} sx={{ color: "success.main" }}>
             <CheckCircle fontSize="small" sx={{ mr: 1 }} />
@@ -518,7 +549,9 @@ const BookingListPage: React.FC = () => {
                         <Button
                           variant="contained"
                           startIcon={<Add />}
-                          onClick={() => navigate(ROUTES.BACKOFFICE.BOOKINGS_CREATE)}
+                          onClick={() =>
+                            navigate(ROUTES.BACKOFFICE.BOOKINGS_CREATE)
+                          }
                           sx={{ mt: 2 }}
                         >
                           Create First Booking
@@ -546,7 +579,8 @@ const BookingListPage: React.FC = () => {
                       </TableCell>
                       <TableCell>
                         <Typography variant="body2">
-                          {booking.chargingStation?.name || booking.chargingStationId}
+                          {booking.chargingStation?.name ||
+                            booking.chargingStationId}
                         </Typography>
                       </TableCell>
                       <TableCell>

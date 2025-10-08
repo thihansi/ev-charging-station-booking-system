@@ -1,4 +1,11 @@
-import React, { createContext, useContext, useReducer, useEffect, useMemo, useCallback } from "react";
+import React, {
+  createContext,
+  useContext,
+  useReducer,
+  useEffect,
+  useMemo,
+  useCallback,
+} from "react";
 import type { User, LoginRequest, UserRole } from "../types";
 import { authApi } from "../api";
 import { STORAGE_KEYS, USER_ROLES } from "../utils/constants";
@@ -124,7 +131,10 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
             });
           } catch (error: any) {
             // Token is invalid or backend is not available, clear storage
-            console.warn('Failed to verify token, clearing auth data:', error.message);
+            console.warn(
+              "Failed to verify token, clearing auth data:",
+              error.message
+            );
             removeLocalStorageItem(STORAGE_KEYS.AUTH_TOKEN);
             removeLocalStorageItem(STORAGE_KEYS.USER_PROFILE);
             dispatch({ type: "AUTH_LOGOUT" });
@@ -133,7 +143,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
           dispatch({ type: "SET_LOADING", payload: false });
         }
       } catch (error: any) {
-        console.warn('Auth initialization failed:', error.message);
+        console.warn("Auth initialization failed:", error.message);
         dispatch({ type: "SET_LOADING", payload: false });
       }
     };
@@ -142,37 +152,40 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   }, []);
 
   // Login function
-  const login = useCallback(async (credentials: LoginRequest): Promise<void> => {
-    try {
-      dispatch({ type: "AUTH_START" });
+  const login = useCallback(
+    async (credentials: LoginRequest): Promise<void> => {
+      try {
+        dispatch({ type: "AUTH_START" });
 
-      // Call login API
-      const loginResponse = await authApi.login(credentials);
+        // Call login API
+        const loginResponse = await authApi.login(credentials);
 
-      // Store token temporarily
-      setLocalStorageItem(STORAGE_KEYS.AUTH_TOKEN, loginResponse.token);
+        // Store token temporarily
+        setLocalStorageItem(STORAGE_KEYS.AUTH_TOKEN, loginResponse.token);
 
-      // Fetch user profile
-      const user = await authApi.getProfile();
+        // Fetch user profile
+        const user = await authApi.getProfile();
 
-      // Store user profile
-      setLocalStorageItem(STORAGE_KEYS.USER_PROFILE, user);
+        // Store user profile
+        setLocalStorageItem(STORAGE_KEYS.USER_PROFILE, user);
 
-      dispatch({
-        type: "AUTH_SUCCESS",
-        payload: { user, token: loginResponse.token },
-      });
-    } catch (error: any) {
-      const errorMessage = error.response?.data?.message || "Login failed";
-      dispatch({ type: "AUTH_FAILURE", payload: errorMessage });
+        dispatch({
+          type: "AUTH_SUCCESS",
+          payload: { user, token: loginResponse.token },
+        });
+      } catch (error: any) {
+        const errorMessage = error.response?.data?.message || "Login failed";
+        dispatch({ type: "AUTH_FAILURE", payload: errorMessage });
 
-      // Clear any stored data on login failure
-      removeLocalStorageItem(STORAGE_KEYS.AUTH_TOKEN);
-      removeLocalStorageItem(STORAGE_KEYS.USER_PROFILE);
+        // Clear any stored data on login failure
+        removeLocalStorageItem(STORAGE_KEYS.AUTH_TOKEN);
+        removeLocalStorageItem(STORAGE_KEYS.USER_PROFILE);
 
-      throw error;
-    }
-  }, []);
+        throw error;
+      }
+    },
+    []
+  );
 
   // Logout function
   const logout = useCallback((): void => {
@@ -190,22 +203,31 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   }, []);
 
   // Role checking functions
-  const hasRole = useCallback((role: UserRole): boolean => {
-    return state.user?.role === role;
-  }, [state.user?.role]);
+  const hasRole = useCallback(
+    (role: UserRole): boolean => {
+      return state.user?.role === role;
+    },
+    [state.user?.role]
+  );
 
   const isBackoffice = useMemo(() => hasRole(USER_ROLES.BACKOFFICE), [hasRole]);
-  const isOperator = useMemo(() => hasRole(USER_ROLES.STATION_OPERATOR), [hasRole]);
+  const isOperator = useMemo(
+    () => hasRole(USER_ROLES.STATION_OPERATOR),
+    [hasRole]
+  );
 
-  const value: AuthContextType = useMemo(() => ({
-    state,
-    login,
-    logout,
-    clearError,
-    hasRole,
-    isBackoffice,
-    isOperator,
-  }), [state, login, logout, clearError, hasRole, isBackoffice, isOperator]);
+  const value: AuthContextType = useMemo(
+    () => ({
+      state,
+      login,
+      logout,
+      clearError,
+      hasRole,
+      isBackoffice,
+      isOperator,
+    }),
+    [state, login, logout, clearError, hasRole, isBackoffice, isOperator]
+  );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };

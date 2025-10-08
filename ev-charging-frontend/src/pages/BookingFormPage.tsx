@@ -15,13 +15,13 @@ import { ArrowBack, Save } from "@mui/icons-material";
 import { useNotificationContext } from "../context/NotificationContext";
 import { bookingApi, evOwnerApi, chargingStationApi } from "../api";
 import { ROUTES } from "../utils/constants";
-import type { 
-  Booking, 
-  CreateBookingRequest, 
-  UpdateBookingRequest, 
-  EVOwner, 
+import type {
+  Booking,
+  CreateBookingRequest,
+  UpdateBookingRequest,
+  EVOwner,
   ChargingStation,
-  BookingStatus 
+  BookingStatus,
 } from "../types";
 
 const BookingFormPage: React.FC = () => {
@@ -38,9 +38,12 @@ const BookingFormPage: React.FC = () => {
 
   const [booking, setBooking] = useState<Booking | null>(null);
   const [evOwners, setEvOwners] = useState<EVOwner[]>([]);
-  const [chargingStations, setChargingStations] = useState<ChargingStation[]>([]);
+  const [chargingStations, setChargingStations] = useState<ChargingStation[]>(
+    []
+  );
   const [selectedEvOwner, setSelectedEvOwner] = useState<EVOwner | null>(null);
-  const [selectedStation, setSelectedStation] = useState<ChargingStation | null>(null);
+  const [selectedStation, setSelectedStation] =
+    useState<ChargingStation | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [isInitialLoading, setIsInitialLoading] = useState(isEditMode);
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -62,7 +65,7 @@ const BookingFormPage: React.FC = () => {
         chargingStationApi.getAll(),
       ]);
       setEvOwners(evOwnersData);
-      setChargingStations(stationsData.filter(station => station.isActive));
+      setChargingStations(stationsData.filter((station) => station.isActive));
     } catch (error) {
       showError("Failed to load form data");
     }
@@ -84,12 +87,15 @@ const BookingFormPage: React.FC = () => {
       });
 
       // Set selected options
-      const evOwner = evOwners.find(owner => owner.nic === bookingData.evOwnerNic);
-      const station = chargingStations.find(station => station.id === bookingData.chargingStationId);
-      
+      const evOwner = evOwners.find(
+        (owner) => owner.nic === bookingData.evOwnerNic
+      );
+      const station = chargingStations.find(
+        (station) => station.id === bookingData.chargingStationId
+      );
+
       if (evOwner) setSelectedEvOwner(evOwner);
       if (station) setSelectedStation(station);
-
     } catch (error) {
       showError("Failed to load booking details");
       navigate(ROUTES.BACKOFFICE.BOOKINGS);
@@ -114,9 +120,10 @@ const BookingFormPage: React.FC = () => {
     } else {
       const reservationDate = new Date(formData.reservationDateTime);
       const now = new Date();
-      
+
       if (reservationDate <= now) {
-        newErrors.reservationDateTime = "Reservation date must be in the future";
+        newErrors.reservationDateTime =
+          "Reservation date must be in the future";
       }
     }
 
@@ -126,7 +133,7 @@ const BookingFormPage: React.FC = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!validateForm()) {
       return;
     }
@@ -143,10 +150,13 @@ const BookingFormPage: React.FC = () => {
         await bookingApi.create(formData);
         showSuccess("Booking created successfully");
       }
-      
+
       navigate(ROUTES.BACKOFFICE.BOOKINGS);
     } catch (error: any) {
-      showError(error.response?.data?.message || `Failed to ${isEditMode ? 'update' : 'create'} booking`);
+      showError(
+        error.response?.data?.message ||
+          `Failed to ${isEditMode ? "update" : "create"} booking`
+      );
     } finally {
       setIsLoading(false);
     }
@@ -158,33 +168,33 @@ const BookingFormPage: React.FC = () => {
 
   const handleEvOwnerChange = (evOwner: EVOwner | null) => {
     setSelectedEvOwner(evOwner);
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
       evOwnerNic: evOwner?.nic || "",
     }));
     if (errors.evOwnerNic) {
-      setErrors(prev => ({ ...prev, evOwnerNic: "" }));
+      setErrors((prev) => ({ ...prev, evOwnerNic: "" }));
     }
   };
 
   const handleStationChange = (station: ChargingStation | null) => {
     setSelectedStation(station);
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
       chargingStationId: station?.id || "",
     }));
     if (errors.chargingStationId) {
-      setErrors(prev => ({ ...prev, chargingStationId: "" }));
+      setErrors((prev) => ({ ...prev, chargingStationId: "" }));
     }
   };
 
   const handleDateTimeChange = (value: string) => {
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
       reservationDateTime: value,
     }));
     if (errors.reservationDateTime) {
-      setErrors(prev => ({ ...prev, reservationDateTime: "" }));
+      setErrors((prev) => ({ ...prev, reservationDateTime: "" }));
     }
   };
 
@@ -209,11 +219,14 @@ const BookingFormPage: React.FC = () => {
         default:
           return;
       }
-      
+
       showSuccess(`Booking ${newStatus.toLowerCase()} successfully`);
       await loadBooking(); // Reload to get updated data
     } catch (error: any) {
-      showError(error.response?.data?.message || `Failed to ${newStatus.toLowerCase()} booking`);
+      showError(
+        error.response?.data?.message ||
+          `Failed to ${newStatus.toLowerCase()} booking`
+      );
     } finally {
       setIsLoading(false);
     }
@@ -253,21 +266,24 @@ const BookingFormPage: React.FC = () => {
             {isEditMode ? "Edit Booking" : "Create New Booking"}
           </Typography>
           <Typography variant="body1" color="text.secondary">
-            {isEditMode 
+            {isEditMode
               ? `Update booking details for ${booking?.id}`
-              : "Create a new EV charging station booking"
-            }
+              : "Create a new EV charging station booking"}
           </Typography>
         </Box>
       </Box>
 
       {/* Current Status (Edit Mode Only) */}
       {isEditMode && booking && (
-        <Alert 
+        <Alert
           severity={
-            booking.status === "Pending" ? "warning" :
-            booking.status === "Approved" ? "info" :
-            booking.status === "Completed" ? "success" : "error"
+            booking.status === "Pending"
+              ? "warning"
+              : booking.status === "Approved"
+              ? "info"
+              : booking.status === "Completed"
+              ? "success"
+              : "error"
           }
           sx={{ mb: 3 }}
         >
@@ -279,11 +295,13 @@ const BookingFormPage: React.FC = () => {
       )}
 
       <form onSubmit={handleSubmit}>
-        <Box sx={{ 
-          display: "grid", 
-          gridTemplateColumns: { xs: "1fr", md: "2fr 1fr" }, 
-          gap: 3 
-        }}>
+        <Box
+          sx={{
+            display: "grid",
+            gridTemplateColumns: { xs: "1fr", md: "2fr 1fr" },
+            gap: 3,
+          }}
+        >
           <Box>
             <Card>
               <CardContent>
@@ -297,7 +315,9 @@ const BookingFormPage: React.FC = () => {
                     value={selectedEvOwner}
                     onChange={(_, newValue) => handleEvOwnerChange(newValue)}
                     options={evOwners}
-                    getOptionLabel={(option) => `${option.fullName} (${option.nic})`}
+                    getOptionLabel={(option) =>
+                      `${option.fullName} (${option.nic})`
+                    }
                     disabled={isEditMode} // Can't change EV Owner in edit mode
                     renderInput={(params) => (
                       <TextField
@@ -327,7 +347,9 @@ const BookingFormPage: React.FC = () => {
                     value={selectedStation}
                     onChange={(_, newValue) => handleStationChange(newValue)}
                     options={chargingStations}
-                    getOptionLabel={(option) => `${option.name} - ${option.address}`}
+                    getOptionLabel={(option) =>
+                      `${option.name} - ${option.address}`
+                    }
                     disabled={isEditMode} // Can't change station in edit mode
                     renderInput={(params) => (
                       <TextField
@@ -409,7 +431,8 @@ const BookingFormPage: React.FC = () => {
                             </Button>
                           </>
                         )}
-                        {(booking.status === "Pending" || booking.status === "Approved") && (
+                        {(booking.status === "Pending" ||
+                          booking.status === "Approved") && (
                           <Button
                             variant="outlined"
                             color="error"
@@ -490,10 +513,13 @@ const BookingFormPage: React.FC = () => {
                     disabled={isLoading}
                     fullWidth
                   >
-                    {isLoading 
-                      ? (isEditMode ? "Updating..." : "Creating...") 
-                      : (isEditMode ? "Update Booking" : "Create Booking")
-                    }
+                    {isLoading
+                      ? isEditMode
+                        ? "Updating..."
+                        : "Creating..."
+                      : isEditMode
+                      ? "Update Booking"
+                      : "Create Booking"}
                   </Button>
                   <Button
                     variant="outlined"

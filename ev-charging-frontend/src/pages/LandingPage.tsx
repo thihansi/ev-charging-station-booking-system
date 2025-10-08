@@ -30,32 +30,38 @@ const LandingPage: React.FC = () => {
     {
       icon: <EvStation />,
       title: "Smart Charging Network",
-      description: "Comprehensive management of EV charging stations with real-time monitoring and availability tracking.",
+      description:
+        "Comprehensive management of EV charging stations with real-time monitoring and availability tracking.",
     },
     {
       icon: <Speed />,
       title: "Fast & Efficient",
-      description: "Quick booking process with instant confirmation and seamless charging session management.",
+      description:
+        "Quick booking process with instant confirmation and seamless charging session management.",
     },
     {
       icon: <QrCodeScanner />,
       title: "QR Code Integration",
-      description: "Simple QR code scanning for booking validation and charging session initialization.",
+      description:
+        "Simple QR code scanning for booking validation and charging session initialization.",
     },
     {
       icon: <Security />,
       title: "Secure & Reliable",
-      description: "Enterprise-grade security with role-based access control and data protection.",
+      description:
+        "Enterprise-grade security with role-based access control and data protection.",
     },
     {
       icon: <Dashboard />,
       title: "Advanced Analytics",
-      description: "Comprehensive dashboards with booking statistics, station utilization, and revenue insights.",
+      description:
+        "Comprehensive dashboards with booking statistics, station utilization, and revenue insights.",
     },
     {
       icon: <Nature />,
       title: "Eco-Friendly",
-      description: "Promoting sustainable transportation through efficient EV charging infrastructure management.",
+      description:
+        "Promoting sustainable transportation through efficient EV charging infrastructure management.",
     },
   ];
 
@@ -153,7 +159,14 @@ const LandingPage: React.FC = () => {
               Comprehensive EV charging station management system with advanced
               booking, monitoring, and analytics capabilities.
             </Typography>
-            <Box sx={{ display: "flex", gap: 2, justifyContent: "center", flexWrap: "wrap" }}>
+            <Box
+              sx={{
+                display: "flex",
+                gap: 2,
+                justifyContent: "center",
+                flexWrap: "wrap",
+              }}
+            >
               <Button
                 variant="contained"
                 size="large"
@@ -200,7 +213,10 @@ const LandingPage: React.FC = () => {
           <Box
             sx={{
               display: "grid",
-              gridTemplateColumns: { xs: "repeat(2, 1fr)", md: "repeat(4, 1fr)" },
+              gridTemplateColumns: {
+                xs: "repeat(2, 1fr)",
+                md: "repeat(4, 1fr)",
+              },
               gap: 4,
               textAlign: "center",
             }}
@@ -228,18 +244,31 @@ const LandingPage: React.FC = () => {
       <Box sx={{ py: 8, bgcolor: "grey.50" }}>
         <Container maxWidth="lg">
           <Box sx={{ textAlign: "center", mb: 6 }}>
-            <Typography variant="h3" component="h2" fontWeight="bold" gutterBottom>
+            <Typography
+              variant="h3"
+              component="h2"
+              fontWeight="bold"
+              gutterBottom
+            >
               Why Choose Our Platform?
             </Typography>
-            <Typography variant="h6" color="text.secondary" sx={{ maxWidth: 600, mx: "auto" }}>
-              Built for the future of electric mobility with cutting-edge technology
-              and user-centric design.
+            <Typography
+              variant="h6"
+              color="text.secondary"
+              sx={{ maxWidth: 600, mx: "auto" }}
+            >
+              Built for the future of electric mobility with cutting-edge
+              technology and user-centric design.
             </Typography>
           </Box>
           <Box
             sx={{
               display: "grid",
-              gridTemplateColumns: { xs: "1fr", md: "repeat(2, 1fr)", lg: "repeat(3, 1fr)" },
+              gridTemplateColumns: {
+                xs: "1fr",
+                md: "repeat(2, 1fr)",
+                lg: "repeat(3, 1fr)",
+              },
               gap: 4,
             }}
           >
@@ -290,17 +319,30 @@ const LandingPage: React.FC = () => {
         }}
       >
         <Container maxWidth="md">
-          <Typography variant="h3" component="h2" fontWeight="bold" gutterBottom>
+          <Typography
+            variant="h3"
+            component="h2"
+            fontWeight="bold"
+            gutterBottom
+          >
             Ready to Get Started?
           </Typography>
           <Typography
             variant="h6"
             sx={{ mb: 4, opacity: 0.9, fontWeight: 300 }}
           >
-            Join thousands of businesses already using our EV charging management system.
-            Start your journey towards sustainable transportation today.
+            Join thousands of businesses already using our EV charging
+            management system. Start your journey towards sustainable
+            transportation today.
           </Typography>
-          <Box sx={{ display: "flex", gap: 2, justifyContent: "center", flexWrap: "wrap" }}>
+          <Box
+            sx={{
+              display: "flex",
+              gap: 2,
+              justifyContent: "center",
+              flexWrap: "wrap",
+            }}
+          >
             <Button
               variant="contained"
               size="large"
@@ -323,16 +365,27 @@ const LandingPage: React.FC = () => {
       </Box>
 
       {/* Footer */}
-      <Box sx={{ py: 4, bgcolor: "grey.900", color: "white", textAlign: "center" }}>
+      <Box
+        sx={{ py: 4, bgcolor: "grey.900", color: "white", textAlign: "center" }}
+      >
         <Container maxWidth="lg">
-          <Box sx={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 2, mb: 2 }}>
+          <Box
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              gap: 2,
+              mb: 2,
+            }}
+          >
             <EvStation sx={{ fontSize: 28 }} />
             <Typography variant="h6" fontWeight="bold">
               EV Charging System
             </Typography>
           </Box>
           <Typography variant="body2" color="grey.400">
-            © 2025 EV Charging System. All rights reserved. Powering the future of electric mobility.
+            © 2025 EV Charging System. All rights reserved. Powering the future
+            of electric mobility.
           </Typography>
         </Container>
       </Box>

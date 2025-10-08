@@ -7,6 +7,7 @@ I've successfully set up automatic user creation in the backend with the followi
 ### 1. 🔧 Backend Code Modifications
 
 **Modified Files:**
+
 - `Program.cs` - Added automatic user seeding functionality
 - `IUserService.cs` - Added `GetAllUsers()` method to interface
 - `UserService.cs` - Implemented `GetAllUsers()` method
@@ -17,13 +18,15 @@ I've successfully set up automatic user creation in the backend with the followi
 The backend now automatically creates **two default users** when it starts (if no users exist):
 
 #### Admin User
+
 - **Username:** `admin`
 - **Password:** `admin123`
 - **Role:** `Backoffice`
 - **Purpose:** Full system administration access
 
 #### Station Operator
-- **Username:** `operator`  
+
+- **Username:** `operator`
 - **Password:** `operator123`
 - **Role:** `StationOperator`
 - **Purpose:** Manage charging stations and handle bookings
@@ -31,6 +34,7 @@ The backend now automatically creates **two default users** when it starts (if n
 ### 3. 📚 Documentation Created
 
 **New Files:**
+
 - `BACKEND_USER_CREATION_GUIDE.md` - Comprehensive guide for user creation
 - `CreateUsers.ps1` - PowerShell script for manual user creation via API
 - Updated `SAMPLE_USERS.md` - Added backend user information
@@ -49,13 +53,16 @@ When you start the backend application:
 If you need additional users, you have multiple options:
 
 #### Option A: API Endpoints
+
 - `POST /api/auth/create-backoffice-user`
 - `POST /api/auth/create-station-operator`
 
 #### Option B: PowerShell Script
+
 - Run `CreateUsers.ps1` (requires API to be running)
 
 #### Option C: Programmatic Creation
+
 - Use the seeding mechanism as a template
 
 ### 6. 🔐 Security Features
@@ -68,6 +75,7 @@ If you need additional users, you have multiple options:
 ### 7. 🗄️ Database Configuration
 
 **MongoDB Setup:**
+
 - **Connection:** `mongodb://localhost:27017/EVChargingSystem`
 - **Collections:** Users, EVOwners, ChargingStations, Bookings
 - **Auto-Creation:** Database and collections created automatically
@@ -75,6 +83,7 @@ If you need additional users, you have multiple options:
 ### 8. 🧪 Testing
 
 **Login Test:**
+
 ```http
 POST https://localhost:7001/api/auth/login
 Content-Type: application/json
@@ -86,6 +95,7 @@ Content-Type: application/json
 ```
 
 **Expected Response:**
+
 ```json
 {
   "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
@@ -95,12 +105,14 @@ Content-Type: application/json
 ## 🎯 Next Steps
 
 1. **Start the Backend:**
+
    ```bash
    cd webapi-backend/EvChargingAPI
    dotnet run
    ```
 
 2. **Verify Users Created:**
+
    - Check console output for confirmation messages
    - Test login with `admin/admin123` and `operator/operator123`
 
@@ -110,9 +122,9 @@ Content-Type: application/json
 
 ## 📋 Quick Reference
 
-| User Type | Username | Password | Role | Purpose |
-|-----------|----------|----------|------|---------|
-| Admin | `admin` | `admin123` | Backoffice | System administration |
-| Operator | `operator` | `operator123` | StationOperator | Station management |
+| User Type | Username   | Password      | Role            | Purpose               |
+| --------- | ---------- | ------------- | --------------- | --------------------- |
+| Admin     | `admin`    | `admin123`    | Backoffice      | System administration |
+| Operator  | `operator` | `operator123` | StationOperator | Station management    |
 
 The two users you requested are now automatically created and ready to use! 🎉

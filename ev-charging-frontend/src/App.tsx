@@ -37,7 +37,10 @@ function App() {
             <Routes>
               {/* Public Routes */}
               <Route path={ROUTES.LOGIN} element={<LoginPage />} />
-              <Route path={ROUTES.USER_REGISTRATION} element={<UserRegistrationPage />} />
+              <Route
+                path={ROUTES.USER_REGISTRATION}
+                element={<UserRegistrationPage />}
+              />
               <Route
                 path={ROUTES.UNAUTHORIZED}
                 element={<UnauthorizedPage />}
@@ -215,10 +218,7 @@ function App() {
               />
 
               {/* Landing Page */}
-              <Route
-                path="/"
-                element={<LandingPage />}
-              />
+              <Route path="/" element={<LandingPage />} />
 
               {/* Catch all - redirect to 404 */}
               <Route

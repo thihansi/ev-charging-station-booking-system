@@ -7,7 +7,9 @@ This guide explains how to create users in the EV Charging Station Booking Syste
 The backend now includes automatic user seeding functionality. When you start the application, it will automatically create two default users if no users exist in the database:
 
 ### Default Users Created:
+
 1. **Backoffice Admin**
+
    - Username: `admin`
    - Password: `admin123`
    - Role: `Backoffice`
@@ -22,6 +24,7 @@ The backend now includes automatic user seeding functionality. When you start th
 If you need to create additional users manually, you can use the following API endpoints:
 
 ### Prerequisites
+
 1. Make sure MongoDB is running (default: `mongodb://localhost:27017`)
 2. Start the backend API application
 3. The API will be available at `https://localhost:7001` (or the port configured in launchSettings.json)
@@ -29,6 +32,7 @@ If you need to create additional users manually, you can use the following API e
 ### API Endpoints for User Creation
 
 #### 1. Create Backoffice User
+
 ```http
 POST https://localhost:7001/api/auth/create-backoffice-user
 Content-Type: application/json
@@ -42,6 +46,7 @@ Content-Type: application/json
 ```
 
 #### 2. Create Station Operator
+
 ```http
 POST https://localhost:7001/api/auth/create-station-operator
 Content-Type: application/json
@@ -118,6 +123,7 @@ curl -X POST "https://localhost:7001/api/auth/create-station-operator" \
    ```
 
 The application will:
+
 1. Start the API server
 2. Automatically seed the default users (admin/admin123 and operator/operator123)
 3. Display confirmation messages in the console
@@ -141,6 +147,7 @@ This will return a JWT token that can be used for authenticated requests.
 ## Configuration
 
 The backend is configured with:
+
 - **MongoDB**: `mongodb://localhost:27017/EVChargingSystem`
 - **JWT Settings**: Configured for development with 60-minute expiry
 - **CORS**: Enabled for local development

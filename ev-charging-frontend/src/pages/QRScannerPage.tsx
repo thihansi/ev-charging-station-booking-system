@@ -46,7 +46,9 @@ const QRScannerPage: React.FC = () => {
 
   // Simulate camera scanner (in a real app, you'd use a camera library)
   const handleScanFromCamera = () => {
-    showError("Camera scanning not implemented. Please use QR code input or file upload instead.");
+    showError(
+      "Camera scanning not implemented. Please use QR code input or file upload instead."
+    );
   };
 
   // Handle QR code from file upload
@@ -58,7 +60,8 @@ const QRScannerPage: React.FC = () => {
       const reader = new FileReader();
       reader.onload = () => {
         // Simulate QR code extraction
-        const simulatedQrCode = "booking_" + Math.random().toString(36).substr(2, 9);
+        const simulatedQrCode =
+          "booking_" + Math.random().toString(36).substr(2, 9);
         handleQrCodeScan(simulatedQrCode);
       };
       reader.readAsDataURL(file);
@@ -77,16 +80,18 @@ const QRScannerPage: React.FC = () => {
   const handleQrCodeScan = async (qrCode: string) => {
     setIsLoading(true);
     setQrCodeValue(qrCode);
-    
+
     try {
       const result = await bookingApi.validateQR(qrCode);
-      
+
       if (result.isValid && result.booking) {
         setScannedBooking(result.booking);
         setDialogOpen(true);
         showSuccess("QR Code validated successfully!");
       } else {
-        showError("Invalid QR Code. This booking may not exist or has already been processed.");
+        showError(
+          "Invalid QR Code. This booking may not exist or has already been processed."
+        );
       }
     } catch (error: any) {
       showError(error.response?.data?.message || "Failed to validate QR code");
@@ -96,19 +101,19 @@ const QRScannerPage: React.FC = () => {
   };
 
   // Handle booking actions
-  const handleBookingAction = async (action: 'complete' | 'noshow') => {
+  const handleBookingAction = async (action: "complete" | "noshow") => {
     if (!scannedBooking) return;
 
     setIsLoading(true);
     try {
-      if (action === 'complete') {
+      if (action === "complete") {
         await bookingApi.complete(scannedBooking.id);
         showSuccess("Booking marked as completed!");
       } else {
         await bookingApi.markNoShow(scannedBooking.id);
         showSuccess("Booking marked as no-show!");
       }
-      
+
       setDialogOpen(false);
       setScannedBooking(null);
       setQrCodeValue("");
@@ -165,23 +170,27 @@ const QRScannerPage: React.FC = () => {
       {isLoading && <LinearProgress sx={{ mb: 3 }} />}
 
       {/* Scanner Options */}
-      <Box sx={{ 
-        display: "grid", 
-        gridTemplateColumns: { xs: "1fr", md: "1fr 1fr" }, 
-        gap: 3,
-        mb: 4 
-      }}>
+      <Box
+        sx={{
+          display: "grid",
+          gridTemplateColumns: { xs: "1fr", md: "1fr 1fr" },
+          gap: 3,
+          mb: 4,
+        }}
+      >
         <Card>
           <CardContent sx={{ textAlign: "center", py: 4 }}>
-            <QrCodeScanner sx={{ fontSize: 60, color: "primary.main", mb: 2 }} />
+            <QrCodeScanner
+              sx={{ fontSize: 60, color: "primary.main", mb: 2 }}
+            />
             <Typography variant="h6" gutterBottom>
               Scan with Camera
             </Typography>
             <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
               Use your device camera to scan QR codes
             </Typography>
-            <Button 
-              variant="contained" 
+            <Button
+              variant="contained"
               onClick={handleScanFromCamera}
               disabled={isLoading}
               fullWidth
@@ -198,11 +207,15 @@ const QRScannerPage: React.FC = () => {
                 <Typography variant="h6" gutterBottom>
                   Alternative Methods
                 </Typography>
-                <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
+                <Typography
+                  variant="body2"
+                  color="text.secondary"
+                  sx={{ mb: 3 }}
+                >
                   Upload QR code image or enter code manually
                 </Typography>
               </Box>
-              
+
               <Button
                 variant="outlined"
                 onClick={() => fileInputRef.current?.click()}
@@ -211,7 +224,7 @@ const QRScannerPage: React.FC = () => {
               >
                 Upload QR Code Image
               </Button>
-              
+
               <Button
                 variant="outlined"
                 onClick={handleManualInput}
@@ -236,7 +249,7 @@ const QRScannerPage: React.FC = () => {
               <ListItemIcon>
                 <CheckCircle color="success" />
               </ListItemIcon>
-              <ListItemText 
+              <ListItemText
                 primary="Valid QR Code"
                 secondary="QR codes from approved bookings can be processed for completion or no-show"
               />
@@ -245,7 +258,7 @@ const QRScannerPage: React.FC = () => {
               <ListItemIcon>
                 <Schedule color="warning" />
               </ListItemIcon>
-              <ListItemText 
+              <ListItemText
                 primary="Pending Bookings"
                 secondary="Pending bookings need approval before they can be processed"
               />
@@ -254,7 +267,7 @@ const QRScannerPage: React.FC = () => {
               <ListItemIcon>
                 <Cancel color="error" />
               </ListItemIcon>
-              <ListItemText 
+              <ListItemText
                 primary="Invalid Codes"
                 secondary="Expired, cancelled, or already processed bookings will show as invalid"
               />
@@ -269,12 +282,12 @@ const QRScannerPage: React.FC = () => {
         accept="image/*"
         onChange={handleFileUpload}
         ref={fileInputRef}
-        style={{ display: 'none' }}
+        style={{ display: "none" }}
       />
 
       {/* Booking Details Dialog */}
-      <Dialog 
-        open={dialogOpen} 
+      <Dialog
+        open={dialogOpen}
         onClose={() => setDialogOpen(false)}
         maxWidth="md"
         fullWidth
@@ -285,29 +298,32 @@ const QRScannerPage: React.FC = () => {
             <Typography variant="h6">Booking Details</Typography>
           </Box>
         </DialogTitle>
-        
+
         <DialogContent>
           {scannedBooking && (
             <Box>
               {/* Status Alert */}
-              <Alert 
+              <Alert
                 severity={getStatusColor(scannedBooking.status) as any}
                 sx={{ mb: 3 }}
               >
                 <Typography fontWeight="bold">
                   Status: {scannedBooking.status}
                 </Typography>
-                {canProcessBooking(scannedBooking) 
+                {canProcessBooking(scannedBooking)
                   ? "This booking is ready to be processed"
-                  : "This booking cannot be processed in its current status"
-                }
+                  : "This booking cannot be processed in its current status"}
               </Alert>
 
               {/* Booking Information */}
               <Box sx={{ display: "grid", gap: 2 }}>
                 <Card variant="outlined">
                   <CardContent>
-                    <Typography variant="subtitle2" color="text.secondary" gutterBottom>
+                    <Typography
+                      variant="subtitle2"
+                      color="text.secondary"
+                      gutterBottom
+                    >
                       Booking Information
                     </Typography>
                     <Box sx={{ display: "grid", gap: 1 }}>
@@ -317,8 +333,10 @@ const QRScannerPage: React.FC = () => {
                       <Typography variant="body2">
                         <strong>QR Code:</strong> {qrCodeValue}
                       </Typography>
-                      <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-                        <Chip 
+                      <Box
+                        sx={{ display: "flex", alignItems: "center", gap: 1 }}
+                      >
+                        <Chip
                           label={scannedBooking.status}
                           color={getStatusColor(scannedBooking.status) as any}
                           size="small"
@@ -330,13 +348,25 @@ const QRScannerPage: React.FC = () => {
 
                 <Card variant="outlined">
                   <CardContent>
-                    <Typography variant="subtitle2" color="text.secondary" gutterBottom>
+                    <Typography
+                      variant="subtitle2"
+                      color="text.secondary"
+                      gutterBottom
+                    >
                       Customer Information
                     </Typography>
-                    <Box sx={{ display: "flex", alignItems: "center", gap: 1, mb: 1 }}>
+                    <Box
+                      sx={{
+                        display: "flex",
+                        alignItems: "center",
+                        gap: 1,
+                        mb: 1,
+                      }}
+                    >
                       <Person fontSize="small" />
                       <Typography variant="body2">
-                        {scannedBooking.evOwner?.fullName || scannedBooking.evOwnerNic}
+                        {scannedBooking.evOwner?.fullName ||
+                          scannedBooking.evOwnerNic}
                       </Typography>
                     </Box>
                     <Typography variant="body2" color="text.secondary">
@@ -347,17 +377,26 @@ const QRScannerPage: React.FC = () => {
 
                 <Card variant="outlined">
                   <CardContent>
-                    <Typography variant="subtitle2" color="text.secondary" gutterBottom>
+                    <Typography
+                      variant="subtitle2"
+                      color="text.secondary"
+                      gutterBottom
+                    >
                       Session Details
                     </Typography>
                     <Box sx={{ display: "grid", gap: 1 }}>
-                      <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+                      <Box
+                        sx={{ display: "flex", alignItems: "center", gap: 1 }}
+                      >
                         <LocationOn fontSize="small" />
                         <Typography variant="body2">
-                          {scannedBooking.chargingStation?.name || scannedBooking.chargingStationId}
+                          {scannedBooking.chargingStation?.name ||
+                            scannedBooking.chargingStationId}
                         </Typography>
                       </Box>
-                      <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+                      <Box
+                        sx={{ display: "flex", alignItems: "center", gap: 1 }}
+                      >
                         <AccessTime fontSize="small" />
                         <Typography variant="body2">
                           {formatDateTime(scannedBooking.reservationDateTime)}
@@ -370,22 +409,20 @@ const QRScannerPage: React.FC = () => {
             </Box>
           )}
         </DialogContent>
-        
+
         <DialogActions>
-          <Button onClick={() => setDialogOpen(false)}>
-            Close
-          </Button>
+          <Button onClick={() => setDialogOpen(false)}>Close</Button>
           {scannedBooking && canProcessBooking(scannedBooking) && (
             <>
               <Button
-                onClick={() => handleBookingAction('noshow')}
+                onClick={() => handleBookingAction("noshow")}
                 color="warning"
                 disabled={isLoading}
               >
                 Mark No-Show
               </Button>
               <Button
-                onClick={() => handleBookingAction('complete')}
+                onClick={() => handleBookingAction("complete")}
                 color="success"
                 variant="contained"
                 disabled={isLoading}
