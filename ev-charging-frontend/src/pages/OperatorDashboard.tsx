@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from "react";
 import {
   Box,
   Card,
@@ -13,7 +13,7 @@ import {
   ListItemText,
   ListItemSecondaryAction,
   Divider,
-} from '@mui/material';
+} from "@mui/material";
 import {
   BookOnline,
   CheckCircle,
@@ -21,14 +21,14 @@ import {
   Refresh,
   QrCodeScanner,
   EvStation,
-} from '@mui/icons-material';
-import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../context/AuthContext';
-import { useNotificationContext } from '../context/NotificationContext';
-import { bookingApi } from '../api';
-import { ROUTES, BOOKING_STATUS } from '../utils/constants';
-import { formatDateTime } from '../utils/helpers';
-import type { Booking } from '../types';
+} from "@mui/icons-material";
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
+import { useNotificationContext } from "../context/NotificationContext";
+import { bookingApi } from "../api";
+import { ROUTES, BOOKING_STATUS } from "../utils/constants";
+import { formatDateTime } from "../utils/helpers";
+import type { Booking } from "../types";
 
 const OperatorDashboard: React.FC = () => {
   const navigate = useNavigate();
@@ -44,20 +44,24 @@ const OperatorDashboard: React.FC = () => {
     setIsLoading(true);
     try {
       const allBookings = await bookingApi.getAll();
-      
+
       // Filter pending bookings
-      const pending = allBookings.filter(booking => booking.status === BOOKING_STATUS.PENDING);
+      const pending = allBookings.filter(
+        (booking) => booking.status === BOOKING_STATUS.PENDING
+      );
       setPendingBookings(pending);
 
       // Get recent bookings (last 10, sorted by creation date)
       const recent = allBookings
-        .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
+        .sort(
+          (a, b) =>
+            new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+        )
         .slice(0, 10);
       setRecentBookings(recent);
-      
     } catch (error) {
-      showError('Failed to load bookings');
-      console.error('Bookings loading error:', error);
+      showError("Failed to load bookings");
+      console.error("Bookings loading error:", error);
     } finally {
       setIsLoading(false);
     }
@@ -68,15 +72,15 @@ const OperatorDashboard: React.FC = () => {
   }, []);
 
   const handleApproveBooking = async (bookingId: string) => {
-    setProcessingIds(prev => new Set(prev).add(bookingId));
+    setProcessingIds((prev) => new Set(prev).add(bookingId));
     try {
       await bookingApi.approve(bookingId);
-      showSuccess('Booking approved successfully');
+      showSuccess("Booking approved successfully");
       await loadBookings(); // Reload data
     } catch (error) {
-      showError('Failed to approve booking');
+      showError("Failed to approve booking");
     } finally {
-      setProcessingIds(prev => {
+      setProcessingIds((prev) => {
         const newSet = new Set(prev);
         newSet.delete(bookingId);
         return newSet;
@@ -85,15 +89,15 @@ const OperatorDashboard: React.FC = () => {
   };
 
   const handleRejectBooking = async (bookingId: string) => {
-    setProcessingIds(prev => new Set(prev).add(bookingId));
+    setProcessingIds((prev) => new Set(prev).add(bookingId));
     try {
       await bookingApi.reject(bookingId);
-      showSuccess('Booking rejected successfully');
+      showSuccess("Booking rejected successfully");
       await loadBookings(); // Reload data
     } catch (error) {
-      showError('Failed to reject booking');
+      showError("Failed to reject booking");
     } finally {
-      setProcessingIds(prev => {
+      setProcessingIds((prev) => {
         const newSet = new Set(prev);
         newSet.delete(bookingId);
         return newSet;
@@ -104,31 +108,43 @@ const OperatorDashboard: React.FC = () => {
   const getBookingStatusColor = (status: string) => {
     switch (status) {
       case BOOKING_STATUS.PENDING:
-        return 'warning';
+        return "warning";
       case BOOKING_STATUS.APPROVED:
-        return 'success';
+        return "success";
       case BOOKING_STATUS.REJECTED:
-        return 'error';
+        return "error";
       case BOOKING_STATUS.COMPLETED:
-        return 'info';
+        return "info";
       default:
-        return 'default';
+        return "default";
     }
   };
 
   return (
     <Box>
       {/* Header */}
-      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 4 }}>
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+          mb: 4,
+        }}
+      >
         <Box>
-          <Typography variant="h4" component="h1" gutterBottom fontWeight="bold">
+          <Typography
+            variant="h4"
+            component="h1"
+            gutterBottom
+            fontWeight="bold"
+          >
             Station Operator Dashboard
           </Typography>
           <Typography variant="body1" color="text.secondary">
             Welcome back, {state.user?.username}! Manage your station bookings
           </Typography>
         </Box>
-        <Box sx={{ display: 'flex', gap: 2 }}>
+        <Box sx={{ display: "flex", gap: 2 }}>
           <Button
             variant="outlined"
             startIcon={<QrCodeScanner />}
@@ -146,33 +162,33 @@ const OperatorDashboard: React.FC = () => {
       {isLoading && <LinearProgress sx={{ mb: 4 }} />}
 
       {/* Quick Stats */}
-      <Box sx={{ display: 'flex', gap: 3, mb: 4 }}>
+      <Box sx={{ display: "flex", gap: 3, mb: 4 }}>
         <Card sx={{ minWidth: 200 }}>
-          <CardContent sx={{ textAlign: 'center' }}>
-            <BookOnline sx={{ fontSize: 40, color: 'warning.main', mb: 1 }} />
+          <CardContent sx={{ textAlign: "center" }}>
+            <BookOnline sx={{ fontSize: 40, color: "warning.main", mb: 1 }} />
             <Typography variant="h4" fontWeight="bold">
               {pendingBookings.length}
             </Typography>
-            <Typography color="text.secondary">
-              Pending Approvals
-            </Typography>
+            <Typography color="text.secondary">Pending Approvals</Typography>
           </CardContent>
         </Card>
 
         <Card sx={{ minWidth: 200 }}>
-          <CardContent sx={{ textAlign: 'center' }}>
-            <EvStation sx={{ fontSize: 40, color: 'primary.main', mb: 1 }} />
+          <CardContent sx={{ textAlign: "center" }}>
+            <EvStation sx={{ fontSize: 40, color: "primary.main", mb: 1 }} />
             <Typography variant="h4" fontWeight="bold">
-              {recentBookings.filter(b => b.status === BOOKING_STATUS.APPROVED).length}
+              {
+                recentBookings.filter(
+                  (b) => b.status === BOOKING_STATUS.APPROVED
+                ).length
+              }
             </Typography>
-            <Typography color="text.secondary">
-              Approved Today
-            </Typography>
+            <Typography color="text.secondary">Approved Today</Typography>
           </CardContent>
         </Card>
       </Box>
 
-      <Box sx={{ display: 'flex', gap: 3 }}>
+      <Box sx={{ display: "flex", gap: 3 }}>
         {/* Pending Bookings */}
         <Card sx={{ flex: 1 }}>
           <CardContent>
@@ -191,14 +207,22 @@ const OperatorDashboard: React.FC = () => {
                     <ListItem>
                       <ListItemText
                         primary={
-                          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                          <Box
+                            sx={{
+                              display: "flex",
+                              alignItems: "center",
+                              gap: 1,
+                            }}
+                          >
                             <Typography variant="subtitle1" fontWeight="bold">
                               {booking.evOwnerNic}
                             </Typography>
                             <Chip
                               label={booking.status}
                               size="small"
-                              color={getBookingStatusColor(booking.status) as any}
+                              color={
+                                getBookingStatusColor(booking.status) as any
+                              }
                               variant="outlined"
                             />
                           </Box>
@@ -206,7 +230,8 @@ const OperatorDashboard: React.FC = () => {
                         secondary={
                           <Box>
                             <Typography variant="body2" color="text.secondary">
-                              Reservation: {formatDateTime(booking.reservationDateTime)}
+                              Reservation:{" "}
+                              {formatDateTime(booking.reservationDateTime)}
                             </Typography>
                             <Typography variant="body2" color="text.secondary">
                               Requested: {formatDateTime(booking.createdAt)}
@@ -215,7 +240,7 @@ const OperatorDashboard: React.FC = () => {
                         }
                       />
                       <ListItemSecondaryAction>
-                        <Box sx={{ display: 'flex', gap: 1 }}>
+                        <Box sx={{ display: "flex", gap: 1 }}>
                           <IconButton
                             color="success"
                             onClick={() => handleApproveBooking(booking.id)}
@@ -245,7 +270,14 @@ const OperatorDashboard: React.FC = () => {
         {/* Recent Bookings */}
         <Card sx={{ flex: 1 }}>
           <CardContent>
-            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
+            <Box
+              sx={{
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
+                mb: 2,
+              }}
+            >
               <Typography variant="h6" fontWeight="bold">
                 Recent Bookings
               </Typography>
@@ -256,7 +288,7 @@ const OperatorDashboard: React.FC = () => {
                 View All
               </Button>
             </Box>
-            
+
             {recentBookings.length === 0 ? (
               <Typography color="text.secondary" textAlign="center" py={4}>
                 No bookings yet
@@ -269,14 +301,22 @@ const OperatorDashboard: React.FC = () => {
                     <ListItem>
                       <ListItemText
                         primary={
-                          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                          <Box
+                            sx={{
+                              display: "flex",
+                              alignItems: "center",
+                              gap: 1,
+                            }}
+                          >
                             <Typography variant="subtitle2">
                               {booking.evOwnerNic}
                             </Typography>
                             <Chip
                               label={booking.status}
                               size="small"
-                              color={getBookingStatusColor(booking.status) as any}
+                              color={
+                                getBookingStatusColor(booking.status) as any
+                              }
                               variant="outlined"
                             />
                           </Box>
@@ -297,7 +337,7 @@ const OperatorDashboard: React.FC = () => {
         <Typography variant="h6" gutterBottom fontWeight="bold">
           Quick Actions
         </Typography>
-        <Box sx={{ display: 'flex', gap: 2 }}>
+        <Box sx={{ display: "flex", gap: 2 }}>
           <Button
             variant="contained"
             startIcon={<QrCodeScanner />}

@@ -1,15 +1,12 @@
-import React, { createContext, useContext, useReducer, useEffect } from 'react';
-import type { User, LoginRequest, UserRole } from '../types';
-import { authApi } from '../api';
-import { 
-  STORAGE_KEYS, 
-  USER_ROLES 
-} from '../utils/constants';
-import { 
-  getLocalStorageItem, 
-  setLocalStorageItem, 
-  removeLocalStorageItem 
-} from '../utils/helpers';
+import React, { createContext, useContext, useReducer, useEffect } from "react";
+import type { User, LoginRequest, UserRole } from "../types";
+import { authApi } from "../api";
+import { STORAGE_KEYS, USER_ROLES } from "../utils/constants";
+import {
+  getLocalStorageItem,
+  setLocalStorageItem,
+  removeLocalStorageItem,
+} from "../utils/helpers";
 
 // Auth State Interface
 interface AuthState {
@@ -22,12 +19,12 @@ interface AuthState {
 
 // Auth Actions
 type AuthAction =
-  | { type: 'AUTH_START' }
-  | { type: 'AUTH_SUCCESS'; payload: { user: User; token: string } }
-  | { type: 'AUTH_FAILURE'; payload: string }
-  | { type: 'AUTH_LOGOUT' }
-  | { type: 'CLEAR_ERROR' }
-  | { type: 'SET_LOADING'; payload: boolean };
+  | { type: "AUTH_START" }
+  | { type: "AUTH_SUCCESS"; payload: { user: User; token: string } }
+  | { type: "AUTH_FAILURE"; payload: string }
+  | { type: "AUTH_LOGOUT" }
+  | { type: "CLEAR_ERROR" }
+  | { type: "SET_LOADING"; payload: boolean };
 
 // Auth Context Interface
 interface AuthContextType {
@@ -52,13 +49,13 @@ const initialState: AuthState = {
 // Auth Reducer
 const authReducer = (state: AuthState, action: AuthAction): AuthState => {
   switch (action.type) {
-    case 'AUTH_START':
+    case "AUTH_START":
       return {
         ...state,
         isLoading: true,
         error: null,
       };
-    case 'AUTH_SUCCESS':
+    case "AUTH_SUCCESS":
       return {
         ...state,
         user: action.payload.user,
@@ -67,7 +64,7 @@ const authReducer = (state: AuthState, action: AuthAction): AuthState => {
         isAuthenticated: true,
         error: null,
       };
-    case 'AUTH_FAILURE':
+    case "AUTH_FAILURE":
       return {
         ...state,
         user: null,
@@ -76,7 +73,7 @@ const authReducer = (state: AuthState, action: AuthAction): AuthState => {
         isAuthenticated: false,
         error: action.payload,
       };
-    case 'AUTH_LOGOUT':
+    case "AUTH_LOGOUT":
       return {
         ...state,
         user: null,
@@ -84,12 +81,12 @@ const authReducer = (state: AuthState, action: AuthAction): AuthState => {
         isAuthenticated: false,
         error: null,
       };
-    case 'CLEAR_ERROR':
+    case "CLEAR_ERROR":
       return {
         ...state,
         error: null,
       };
-    case 'SET_LOADING':
+    case "SET_LOADING":
       return {
         ...state,
         isLoading: action.payload,
@@ -122,20 +119,20 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
           try {
             const currentUser = await authApi.getProfile();
             dispatch({
-              type: 'AUTH_SUCCESS',
+              type: "AUTH_SUCCESS",
               payload: { user: currentUser, token },
             });
           } catch (error) {
             // Token is invalid, clear storage
             removeLocalStorageItem(STORAGE_KEYS.AUTH_TOKEN);
             removeLocalStorageItem(STORAGE_KEYS.USER_PROFILE);
-            dispatch({ type: 'AUTH_LOGOUT' });
+            dispatch({ type: "AUTH_LOGOUT" });
           }
         } else {
-          dispatch({ type: 'SET_LOADING', payload: false });
+          dispatch({ type: "SET_LOADING", payload: false });
         }
       } catch (error) {
-        dispatch({ type: 'SET_LOADING', payload: false });
+        dispatch({ type: "SET_LOADING", payload: false });
       }
     };
 
@@ -145,32 +142,32 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   // Login function
   const login = async (credentials: LoginRequest): Promise<void> => {
     try {
-      dispatch({ type: 'AUTH_START' });
+      dispatch({ type: "AUTH_START" });
 
       // Call login API
       const loginResponse = await authApi.login(credentials);
-      
+
       // Store token temporarily
       setLocalStorageItem(STORAGE_KEYS.AUTH_TOKEN, loginResponse.token);
-      
+
       // Fetch user profile
       const user = await authApi.getProfile();
-      
+
       // Store user profile
       setLocalStorageItem(STORAGE_KEYS.USER_PROFILE, user);
 
       dispatch({
-        type: 'AUTH_SUCCESS',
+        type: "AUTH_SUCCESS",
         payload: { user, token: loginResponse.token },
       });
     } catch (error: any) {
-      const errorMessage = error.response?.data?.message || 'Login failed';
-      dispatch({ type: 'AUTH_FAILURE', payload: errorMessage });
-      
+      const errorMessage = error.response?.data?.message || "Login failed";
+      dispatch({ type: "AUTH_FAILURE", payload: errorMessage });
+
       // Clear any stored data on login failure
       removeLocalStorageItem(STORAGE_KEYS.AUTH_TOKEN);
       removeLocalStorageItem(STORAGE_KEYS.USER_PROFILE);
-      
+
       throw error;
     }
   };
@@ -180,14 +177,14 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     // Clear localStorage
     removeLocalStorageItem(STORAGE_KEYS.AUTH_TOKEN);
     removeLocalStorageItem(STORAGE_KEYS.USER_PROFILE);
-    
+
     // Update state
-    dispatch({ type: 'AUTH_LOGOUT' });
+    dispatch({ type: "AUTH_LOGOUT" });
   };
 
   // Clear error function
   const clearError = (): void => {
-    dispatch({ type: 'CLEAR_ERROR' });
+    dispatch({ type: "CLEAR_ERROR" });
   };
 
   // Role checking functions
@@ -215,7 +212,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 export const useAuth = (): AuthContextType => {
   const context = useContext(AuthContext);
   if (context === undefined) {
-    throw new Error('useAuth must be used within an AuthProvider');
+    throw new Error("useAuth must be used within an AuthProvider");
   }
   return context;
 };

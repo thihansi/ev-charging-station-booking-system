@@ -1,9 +1,9 @@
-import React from 'react';
-import { Box, Typography, Button, Container, Paper } from '@mui/material';
-import { Lock, Home } from '@mui/icons-material';
-import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../context/AuthContext';
-import { ROUTES, USER_ROLES } from '../utils/constants';
+import React from "react";
+import { Box, Typography, Button, Container, Paper } from "@mui/material";
+import { Lock, Home } from "@mui/icons-material";
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
+import { ROUTES, USER_ROLES } from "../utils/constants";
 
 const UnauthorizedPage: React.FC = () => {
   const navigate = useNavigate();
@@ -25,14 +25,14 @@ const UnauthorizedPage: React.FC = () => {
         elevation={3}
         sx={{
           p: 6,
-          textAlign: 'center',
+          textAlign: "center",
           borderRadius: 3,
         }}
       >
         <Box
           sx={{
-            display: 'flex',
-            justifyContent: 'center',
+            display: "flex",
+            justifyContent: "center",
             mb: 4,
           }}
         >
@@ -40,14 +40,14 @@ const UnauthorizedPage: React.FC = () => {
             sx={{
               width: 120,
               height: 120,
-              borderRadius: '50%',
-              bgcolor: 'error.light',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
+              borderRadius: "50%",
+              bgcolor: "error.light",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
             }}
           >
-            <Lock sx={{ fontSize: 60, color: 'white' }} />
+            <Lock sx={{ fontSize: 60, color: "white" }} />
           </Box>
         </Box>
 
@@ -60,8 +60,9 @@ const UnauthorizedPage: React.FC = () => {
         </Typography>
 
         <Typography variant="body1" color="text.secondary" paragraph>
-          This page requires specific permissions that your account doesn't have. 
-          Please contact your administrator if you believe this is an error.
+          This page requires specific permissions that your account doesn't
+          have. Please contact your administrator if you believe this is an
+          error.
         </Typography>
 
         <Box sx={{ mt: 4 }}>

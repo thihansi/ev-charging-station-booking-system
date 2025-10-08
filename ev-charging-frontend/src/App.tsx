@@ -1,17 +1,24 @@
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
-import { ThemeProvider } from '@mui/material/styles';
-import { CssBaseline } from '@mui/material';
-import { theme } from './utils/theme';
-import { AuthProvider } from './context/AuthContext';
-import { NotificationProvider } from './context/NotificationContext';
-import ProtectedRoute from './components/ProtectedRoute';
-import DashboardLayout from './layouts/DashboardLayout';
-import LoginPage from './pages/LoginPage';
-import UnauthorizedPage from './pages/UnauthorizedPage';
-import NotFoundPage from './pages/NotFoundPage';
-import BackofficeDashboard from './pages/BackofficeDashboard';
-import OperatorDashboard from './pages/OperatorDashboard';
-import { ROUTES, USER_ROLES } from './utils/constants';
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  Navigate,
+} from "react-router-dom";
+import { ThemeProvider } from "@mui/material/styles";
+import { CssBaseline } from "@mui/material";
+import { theme } from "./utils/theme";
+import { AuthProvider } from "./context/AuthContext";
+import { NotificationProvider } from "./context/NotificationContext";
+import ProtectedRoute from "./components/ProtectedRoute";
+import DashboardLayout from "./layouts/DashboardLayout";
+import LoginPage from "./pages/LoginPage";
+import UnauthorizedPage from "./pages/UnauthorizedPage";
+import NotFoundPage from "./pages/NotFoundPage";
+import BackofficeDashboard from "./pages/BackofficeDashboard";
+import OperatorDashboard from "./pages/OperatorDashboard";
+import EVOwnerListPage from "./pages/EVOwnerListPage";
+import EVOwnerFormPage from "./pages/EVOwnerFormPage";
+import { ROUTES, USER_ROLES } from "./utils/constants";
 
 function App() {
   return (
@@ -23,9 +30,12 @@ function App() {
             <Routes>
               {/* Public Routes */}
               <Route path={ROUTES.LOGIN} element={<LoginPage />} />
-              <Route path={ROUTES.UNAUTHORIZED} element={<UnauthorizedPage />} />
+              <Route
+                path={ROUTES.UNAUTHORIZED}
+                element={<UnauthorizedPage />}
+              />
               <Route path={ROUTES.NOT_FOUND} element={<NotFoundPage />} />
-              
+
               {/* Protected Backoffice Routes */}
               <Route
                 path={ROUTES.BACKOFFICE.DASHBOARD}
@@ -37,7 +47,39 @@ function App() {
                   </ProtectedRoute>
                 }
               />
-              
+
+              {/* EV Owner Management Routes */}
+              <Route
+                path={ROUTES.BACKOFFICE.EV_OWNERS}
+                element={
+                  <ProtectedRoute requiredRole={USER_ROLES.BACKOFFICE}>
+                    <DashboardLayout>
+                      <EVOwnerListPage />
+                    </DashboardLayout>
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path={ROUTES.BACKOFFICE.EV_OWNERS_CREATE}
+                element={
+                  <ProtectedRoute requiredRole={USER_ROLES.BACKOFFICE}>
+                    <DashboardLayout>
+                      <EVOwnerFormPage />
+                    </DashboardLayout>
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path={ROUTES.BACKOFFICE.EV_OWNERS_EDIT}
+                element={
+                  <ProtectedRoute requiredRole={USER_ROLES.BACKOFFICE}>
+                    <DashboardLayout>
+                      <EVOwnerFormPage />
+                    </DashboardLayout>
+                  </ProtectedRoute>
+                }
+              />
+
               {/* Protected Operator Routes */}
               <Route
                 path={ROUTES.OPERATOR.DASHBOARD}
@@ -49,12 +91,18 @@ function App() {
                   </ProtectedRoute>
                 }
               />
-              
+
               {/* Default redirect to login */}
-              <Route path="/" element={<Navigate to={ROUTES.LOGIN} replace />} />
-              
+              <Route
+                path="/"
+                element={<Navigate to={ROUTES.LOGIN} replace />}
+              />
+
               {/* Catch all - redirect to 404 */}
-              <Route path="*" element={<Navigate to={ROUTES.NOT_FOUND} replace />} />
+              <Route
+                path="*"
+                element={<Navigate to={ROUTES.NOT_FOUND} replace />}
+              />
             </Routes>
           </Router>
         </AuthProvider>

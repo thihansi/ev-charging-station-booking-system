@@ -1,8 +1,9 @@
-import React from 'react';
-import { Navigate, useLocation } from 'react-router-dom';
-import { useAuth } from '../context/AuthContext';
-import { ROUTES } from '../utils/constants';
-import type { UserRole } from '../types';
+import React from "react";
+import { Navigate, useLocation } from "react-router-dom";
+import { Box, CircularProgress } from "@mui/material";
+import { useAuth } from "../context/AuthContext";
+import { ROUTES } from "../utils/constants";
+import type { UserRole } from "../types";
 
 interface ProtectedRouteProps {
   children: React.ReactNode;
@@ -21,9 +22,16 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
   // Show loading spinner while checking authentication
   if (state.isLoading) {
     return (
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
-      </div>
+      <Box
+        sx={{
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          minHeight: "100vh",
+        }}
+      >
+        <CircularProgress size={48} />
+      </Box>
     );
   }
 

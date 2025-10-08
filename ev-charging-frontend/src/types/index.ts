@@ -7,7 +7,7 @@ export interface User {
   email?: string;
 }
 
-export type UserRole = 'Backoffice' | 'StationOperator';
+export type UserRole = "Backoffice" | "StationOperator";
 
 export interface LoginRequest {
   username: string;
@@ -72,7 +72,7 @@ export interface ChargingStation {
   updatedAt: string;
 }
 
-export type StationType = 'AC' | 'DC';
+export type StationType = "AC" | "DC";
 
 export interface OperationalHours {
   openTime: string; // Format: "HH:mm"
@@ -113,7 +113,13 @@ export interface Booking {
   chargingStation?: ChargingStation;
 }
 
-export type BookingStatus = 'Pending' | 'Approved' | 'Rejected' | 'Completed' | 'Cancelled' | 'NoShow';
+export type BookingStatus =
+  | "Pending"
+  | "Approved"
+  | "Rejected"
+  | "Completed"
+  | "Cancelled"
+  | "NoShow";
 
 export interface CreateBookingRequest {
   evOwnerNic: string;
@@ -151,7 +157,7 @@ export interface TableColumn {
   id: string;
   label: string;
   minWidth?: number;
-  align?: 'left' | 'right' | 'center';
+  align?: "left" | "right" | "center";
   format?: (value: any) => string;
 }
 

@@ -1,9 +1,9 @@
-import React from 'react';
-import { Box, Typography, Button, Container, Paper } from '@mui/material';
-import { SearchOff, Home } from '@mui/icons-material';
-import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../context/AuthContext';
-import { ROUTES, USER_ROLES } from '../utils/constants';
+import React from "react";
+import { Box, Typography, Button, Container, Paper } from "@mui/material";
+import { SearchOff, Home } from "@mui/icons-material";
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
+import { ROUTES, USER_ROLES } from "../utils/constants";
 
 const NotFoundPage: React.FC = () => {
   const navigate = useNavigate();
@@ -25,14 +25,14 @@ const NotFoundPage: React.FC = () => {
         elevation={3}
         sx={{
           p: 6,
-          textAlign: 'center',
+          textAlign: "center",
           borderRadius: 3,
         }}
       >
         <Box
           sx={{
-            display: 'flex',
-            justifyContent: 'center',
+            display: "flex",
+            justifyContent: "center",
             mb: 4,
           }}
         >
@@ -40,14 +40,14 @@ const NotFoundPage: React.FC = () => {
             sx={{
               width: 120,
               height: 120,
-              borderRadius: '50%',
-              bgcolor: 'warning.light',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
+              borderRadius: "50%",
+              bgcolor: "warning.light",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
             }}
           >
-            <SearchOff sx={{ fontSize: 60, color: 'white' }} />
+            <SearchOff sx={{ fontSize: 60, color: "white" }} />
           </Box>
         </Box>
 
@@ -60,7 +60,7 @@ const NotFoundPage: React.FC = () => {
         </Typography>
 
         <Typography variant="body1" color="text.secondary" paragraph>
-          The page might have been moved, deleted, or you entered a wrong URL. 
+          The page might have been moved, deleted, or you entered a wrong URL.
           Please check the URL or return to the dashboard.
         </Typography>
 

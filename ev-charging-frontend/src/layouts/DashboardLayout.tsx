@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
 import {
   Box,
   Drawer,
@@ -18,7 +18,7 @@ import {
   useTheme,
   useMediaQuery,
   Chip,
-} from '@mui/material';
+} from "@mui/material";
 import {
   Menu as MenuIcon,
   AccountCircle,
@@ -32,12 +32,12 @@ import {
   QrCodeScanner,
   ChevronLeft,
   ElectricCar,
-} from '@mui/icons-material';
-import { useNavigate, useLocation } from 'react-router-dom';
-import { useAuth } from '../context/AuthContext';
-import { useNotificationContext } from '../context/NotificationContext';
-import { ROUTES, USER_ROLES, MENU_ITEMS } from '../utils/constants';
-import { isActiveRoute } from '../utils/helpers';
+} from "@mui/icons-material";
+import { useNavigate, useLocation } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
+import { useNotificationContext } from "../context/NotificationContext";
+import { ROUTES, USER_ROLES, MENU_ITEMS } from "../utils/constants";
+import { isActiveRoute } from "../utils/helpers";
 
 const DRAWER_WIDTH = 280;
 
@@ -47,7 +47,7 @@ interface DashboardLayoutProps {
 
 const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
   const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down('lg'));
+  const isMobile = useMediaQuery(theme.breakpoints.down("lg"));
   const navigate = useNavigate();
   const location = useLocation();
   const { state, logout, isBackoffice, isOperator } = useAuth();
@@ -70,7 +70,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
 
   const handleLogout = () => {
     logout();
-    showSuccess('Logged out successfully');
+    showSuccess("Logged out successfully");
     navigate(ROUTES.LOGIN);
     handleProfileMenuClose();
   };
@@ -99,16 +99,16 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
   };
 
   const drawer = (
-    <Box sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
+    <Box sx={{ height: "100%", display: "flex", flexDirection: "column" }}>
       {/* Logo and Title */}
       <Box
         sx={{
           p: 2,
-          display: 'flex',
-          alignItems: 'center',
+          display: "flex",
+          alignItems: "center",
           minHeight: 64,
-          background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-          color: 'white',
+          background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+          color: "white",
         }}
       >
         <ElectricCar sx={{ mr: 2, fontSize: 32 }} />
@@ -117,7 +117,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
             EV Charging
           </Typography>
           <Typography variant="caption" sx={{ opacity: 0.8 }}>
-            {isBackoffice ? 'Backoffice Portal' : 'Operator Portal'}
+            {isBackoffice ? "Backoffice Portal" : "Operator Portal"}
           </Typography>
         </Box>
       </Box>
@@ -128,23 +128,23 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
       <List sx={{ flex: 1, py: 2 }}>
         {menuItems.map((item) => {
           const isActive = isActiveRoute(location.pathname, item.path);
-          
+
           return (
             <ListItem key={item.title} disablePadding sx={{ px: 2, mb: 1 }}>
               <ListItemButton
                 onClick={() => handleNavigate(item.path)}
                 sx={{
                   borderRadius: 2,
-                  backgroundColor: isActive ? 'primary.main' : 'transparent',
-                  color: isActive ? 'white' : 'text.primary',
-                  '&:hover': {
-                    backgroundColor: isActive ? 'primary.dark' : 'action.hover',
+                  backgroundColor: isActive ? "primary.main" : "transparent",
+                  color: isActive ? "white" : "text.primary",
+                  "&:hover": {
+                    backgroundColor: isActive ? "primary.dark" : "action.hover",
                   },
                 }}
               >
                 <ListItemIcon
                   sx={{
-                    color: isActive ? 'white' : 'text.secondary',
+                    color: isActive ? "white" : "text.secondary",
                     minWidth: 40,
                   }}
                 >
@@ -166,8 +166,10 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
 
       {/* User Info */}
       <Box sx={{ p: 2 }}>
-        <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
-          <Avatar sx={{ width: 40, height: 40, mr: 2, bgcolor: 'primary.main' }}>
+        <Box sx={{ display: "flex", alignItems: "center", mb: 2 }}>
+          <Avatar
+            sx={{ width: 40, height: 40, mr: 2, bgcolor: "primary.main" }}
+          >
             {state.user?.username?.charAt(0).toUpperCase()}
           </Avatar>
           <Box sx={{ flex: 1, minWidth: 0 }}>
@@ -188,16 +190,17 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
   );
 
   return (
-    <Box sx={{ display: 'flex', minHeight: '100vh' }}>
+    <Box sx={{ display: "flex", minHeight: "100vh" }}>
       {/* App Bar */}
       <AppBar
         position="fixed"
         sx={{
           width: { lg: `calc(100% - ${DRAWER_WIDTH}px)` },
           ml: { lg: `${DRAWER_WIDTH}px` },
-          bgcolor: 'background.paper',
-          color: 'text.primary',
-          boxShadow: '0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1)',
+          bgcolor: "background.paper",
+          color: "text.primary",
+          boxShadow:
+            "0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1)",
         }}
       >
         <Toolbar>
@@ -206,7 +209,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
             aria-label="open drawer"
             edge="start"
             onClick={handleDrawerToggle}
-            sx={{ mr: 2, display: { lg: 'none' } }}
+            sx={{ mr: 2, display: { lg: "none" } }}
           >
             <MenuIcon />
           </IconButton>
@@ -230,21 +233,23 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
             id="profile-menu"
             anchorEl={anchorEl}
             anchorOrigin={{
-              vertical: 'bottom',
-              horizontal: 'right',
+              vertical: "bottom",
+              horizontal: "right",
             }}
             keepMounted
             transformOrigin={{
-              vertical: 'top',
-              horizontal: 'right',
+              vertical: "top",
+              horizontal: "right",
             }}
             open={Boolean(anchorEl)}
             onClose={handleProfileMenuClose}
           >
-            <MenuItem onClick={() => {
-              handleNavigate(ROUTES.PROFILE);
-              handleProfileMenuClose();
-            }}>
+            <MenuItem
+              onClick={() => {
+                handleNavigate(ROUTES.PROFILE);
+                handleProfileMenuClose();
+              }}
+            >
               <Settings sx={{ mr: 2 }} />
               Profile
             </MenuItem>
@@ -270,8 +275,11 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
             keepMounted: true, // Better mobile performance
           }}
           sx={{
-            display: { xs: 'block', lg: 'none' },
-            '& .MuiDrawer-paper': { boxSizing: 'border-box', width: DRAWER_WIDTH },
+            display: { xs: "block", lg: "none" },
+            "& .MuiDrawer-paper": {
+              boxSizing: "border-box",
+              width: DRAWER_WIDTH,
+            },
           }}
         >
           {drawer}
@@ -281,8 +289,11 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
         <Drawer
           variant="permanent"
           sx={{
-            display: { xs: 'none', lg: 'block' },
-            '& .MuiDrawer-paper': { boxSizing: 'border-box', width: DRAWER_WIDTH },
+            display: { xs: "none", lg: "block" },
+            "& .MuiDrawer-paper": {
+              boxSizing: "border-box",
+              width: DRAWER_WIDTH,
+            },
           }}
           open
         >
@@ -297,8 +308,8 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
           flexGrow: 1,
           p: 3,
           width: { lg: `calc(100% - ${DRAWER_WIDTH}px)` },
-          bgcolor: 'background.default',
-          minHeight: '100vh',
+          bgcolor: "background.default",
+          minHeight: "100vh",
         }}
       >
         <Toolbar /> {/* Spacer for app bar */}

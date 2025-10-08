@@ -1,14 +1,18 @@
-import axios from 'axios';
-import type { AxiosInstance, AxiosResponse, InternalAxiosRequestConfig } from 'axios';
-import { API_BASE_URL, STORAGE_KEYS, HTTP_STATUS } from '../utils/constants';
-import { getLocalStorageItem, removeLocalStorageItem } from '../utils/helpers';
+import axios from "axios";
+import type {
+  AxiosInstance,
+  AxiosResponse,
+  InternalAxiosRequestConfig,
+} from "axios";
+import { API_BASE_URL, STORAGE_KEYS, HTTP_STATUS } from "../utils/constants";
+import { getLocalStorageItem, removeLocalStorageItem } from "../utils/helpers";
 
 // Create axios instance
 const apiClient: AxiosInstance = axios.create({
   baseURL: API_BASE_URL,
   timeout: 30000,
   headers: {
-    'Content-Type': 'application/json',
+    "Content-Type": "application/json",
   },
 });
 
@@ -16,11 +20,11 @@ const apiClient: AxiosInstance = axios.create({
 apiClient.interceptors.request.use(
   (config: InternalAxiosRequestConfig) => {
     const token = getLocalStorageItem<string>(STORAGE_KEYS.AUTH_TOKEN);
-    
+
     if (token && config.headers) {
       config.headers.Authorization = `Bearer ${token}`;
     }
-    
+
     return config;
   },
   (error) => {
@@ -38,13 +42,13 @@ apiClient.interceptors.response.use(
       // Clear auth data and redirect to login
       removeLocalStorageItem(STORAGE_KEYS.AUTH_TOKEN);
       removeLocalStorageItem(STORAGE_KEYS.USER_PROFILE);
-      
+
       // Only redirect if not already on login page
-      if (window.location.pathname !== '/login') {
-        window.location.href = '/login';
+      if (window.location.pathname !== "/login") {
+        window.location.href = "/login";
       }
     }
-    
+
     return Promise.reject(error);
   }
 );

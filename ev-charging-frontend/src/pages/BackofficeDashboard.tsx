@@ -1,385 +1,392 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from "react";
 import {
   Box,
-  Grid,
   Card,
   CardContent,
   Typography,
   Chip,
   IconButton,
-  Button,
   LinearProgress,
-} from '@mui/material';
+} from "@mui/material";
 import {
   People,
   EvStation,
-  BookOnline,
+  CalendarToday,
+  AttachMoney,
   TrendingUp,
-  Refresh,
-  Add,
-  Visibility,
-} from '@mui/icons-material';
-import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../context/AuthContext';
-import { useNotificationContext } from '../context/NotificationContext';
-import { evOwnerApi, chargingStationApi, bookingApi } from '../api';
-import { ROUTES, BOOKING_STATUS } from '../utils/constants';
-import { formatDateTime } from '../utils/helpers';
-import type { EVOwner, ChargingStation, Booking } from '../types';
-
-interface DashboardStats {
-  totalEvOwners: number;
-  activeEvOwners: number;
-  totalStations: number;
-  activeStations: number;
-  totalBookings: number;
-  pendingBookings: number;
-  approvedBookings: number;
-  rejectedBookings: number;
-}
-
-interface QuickAction {
-  title: string;
-  description: string;
-  icon: React.ReactElement;
-  path: string;
-  color: 'primary' | 'secondary' | 'success' | 'warning';
-}
+  MoreVert,
+  Notifications,
+  Assessment,
+} from "@mui/icons-material";
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
+import { useNotificationContext } from "../context/NotificationContext";
+import { ROUTES } from "../utils/constants";
 
 const BackofficeDashboard: React.FC = () => {
   const navigate = useNavigate();
   const { state } = useAuth();
-  const { showError } = useNotificationContext();
-
-  const [stats, setStats] = useState<DashboardStats>({
-    totalEvOwners: 0,
-    activeEvOwners: 0,
-    totalStations: 0,
-    activeStations: 0,
-    totalBookings: 0,
-    pendingBookings: 0,
-    approvedBookings: 0,
-    rejectedBookings: 0,
-  });
-  const [recentBookings, setRecentBookings] = useState<Booking[]>([]);
+  const { showSuccess } = useNotificationContext();
   const [isLoading, setIsLoading] = useState(true);
-  const [lastUpdated, setLastUpdated] = useState<Date>(new Date());
 
-  const quickActions: QuickAction[] = [
+  // Sample dashboard statistics
+  const [stats, setStats] = useState({
+    totalEvOwners: 1247,
+    activeEvOwners: 156,
+    totalStations: 89,
+    operationalStations: 82,
+    totalBookings: 3456,
+    pendingBookings: 23,
+    monthlyRevenue: 125678,
+  });
+
+  // Sample recent activities
+  const [recentActivities] = useState([
     {
-      title: 'Add EV Owner',
-      description: 'Register a new EV owner',
-      icon: <Add />,
-      path: ROUTES.BACKOFFICE.EV_OWNERS_CREATE,
-      color: 'primary',
+      id: 1,
+      type: "booking",
+      message: "New booking request from John Doe",
+      time: "2 minutes ago",
+      status: "pending",
     },
     {
-      title: 'Add Charging Station',
-      description: 'Create a new charging station',
-      icon: <EvStation />,
-      path: ROUTES.BACKOFFICE.CHARGING_STATIONS_CREATE,
-      color: 'success',
+      id: 2,
+      type: "evowner",
+      message: "EV Owner Sarah Wilson registered",
+      time: "1 hour ago",
+      status: "completed",
     },
     {
-      title: 'View All Bookings',
-      description: 'Manage booking requests',
-      icon: <BookOnline />,
-      path: ROUTES.BACKOFFICE.BOOKINGS,
-      color: 'warning',
+      id: 3,
+      type: "station",
+      message: "Station ST-001 reported maintenance issue",
+      time: "3 hours ago",
+      status: "warning",
     },
+  ]);
+
+  // Quick action items
+  const quickActions = [
     {
-      title: 'Manage EV Owners',
-      description: 'View and edit EV owners',
+      title: "Add EV Owner",
+      description: "Register a new electric vehicle owner",
       icon: <People />,
-      path: ROUTES.BACKOFFICE.EV_OWNERS,
-      color: 'secondary',
+      color: "primary",
+      action: () => navigate(ROUTES.BACKOFFICE.EV_OWNERS_CREATE),
+    },
+    {
+      title: "Add Charging Station",
+      description: "Register a new charging station",
+      icon: <EvStation />,
+      color: "info",
+      action: () => navigate(ROUTES.BACKOFFICE.CHARGING_STATIONS_CREATE),
+    },
+    {
+      title: "View Bookings",
+      description: "Manage booking requests",
+      icon: <CalendarToday />,
+      color: "warning",
+      action: () => navigate(ROUTES.BACKOFFICE.BOOKINGS),
+    },
+    {
+      title: "Generate Reports",
+      description: "View analytics and reports",
+      icon: <Assessment />,
+      color: "success",
+      action: () => showSuccess("Reports feature coming soon!"),
     },
   ];
 
-  const loadDashboardData = async () => {
-    setIsLoading(true);
-    try {
-      // Load all data in parallel
-      const [evOwners, stations, bookings] = await Promise.all([
-        evOwnerApi.getAll(),
-        chargingStationApi.getAll(),
-        bookingApi.getAll(),
-      ]);
-
-      // Calculate statistics
-      const newStats: DashboardStats = {
-        totalEvOwners: evOwners.length,
-        activeEvOwners: evOwners.filter(owner => owner.isActive).length,
-        totalStations: stations.length,
-        activeStations: stations.filter(station => station.isActive).length,
-        totalBookings: bookings.length,
-        pendingBookings: bookings.filter(booking => booking.status === BOOKING_STATUS.PENDING).length,
-        approvedBookings: bookings.filter(booking => booking.status === BOOKING_STATUS.APPROVED).length,
-        rejectedBookings: bookings.filter(booking => booking.status === BOOKING_STATUS.REJECTED).length,
-      };
-
-      setStats(newStats);
-
-      // Get recent bookings (last 10)
-      const sortedBookings = bookings
-        .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
-        .slice(0, 10);
-      setRecentBookings(sortedBookings);
-      
-      setLastUpdated(new Date());
-    } catch (error) {
-      showError('Failed to load dashboard data');
-      console.error('Dashboard data loading error:', error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
   useEffect(() => {
+    // Simulate loading dashboard data
+    const loadDashboardData = async () => {
+      setIsLoading(true);
+      try {
+        // Simulate API calls
+        await new Promise((resolve) => setTimeout(resolve, 1000));
+        
+        // In a real app, you would fetch data from APIs here
+        // const [ownersData, stationsData, bookingsData] = await Promise.all([
+        //   evOwnerApi.getAll(),
+        //   chargingStationApi.getAll(),
+        //   bookingApi.getAll()
+        // ]);
+        
+        setIsLoading(false);
+      } catch (error) {
+        console.error("Error loading dashboard data:", error);
+        setIsLoading(false);
+      }
+    };
+
     loadDashboardData();
   }, []);
-
-  const getBookingStatusColor = (status: string) => {
-    switch (status) {
-      case BOOKING_STATUS.PENDING:
-        return 'warning';
-      case BOOKING_STATUS.APPROVED:
-        return 'success';
-      case BOOKING_STATUS.REJECTED:
-        return 'error';
-      case BOOKING_STATUS.COMPLETED:
-        return 'info';
-      default:
-        return 'default';
-    }
-  };
 
   return (
     <Box>
       {/* Header */}
-      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 4 }}>
-        <Box>
-          <Typography variant="h4" component="h1" gutterBottom fontWeight="bold">
-            Welcome back, {state.user?.username}!
-          </Typography>
-          <Typography variant="body1" color="text.secondary">
-            Here's an overview of your EV charging system
-          </Typography>
-        </Box>
-        <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-          <Typography variant="body2" color="text.secondary">
-            Last updated: {formatDateTime(lastUpdated.toISOString())}
-          </Typography>
-          <IconButton onClick={loadDashboardData} disabled={isLoading}>
-            <Refresh />
-          </IconButton>
-        </Box>
+      <Box sx={{ mb: 4 }}>
+        <Typography variant="h4" component="h1" gutterBottom fontWeight="bold">
+          Backoffice Dashboard
+        </Typography>
+        <Typography variant="body1" color="text.secondary">
+          Welcome back, {state.user?.fullName || "Admin"}! Here's your system overview.
+        </Typography>
       </Box>
 
-      {/* Loading indicator */}
       {isLoading && <LinearProgress sx={{ mb: 4 }} />}
 
       {/* Statistics Cards */}
-      <Grid container spacing={3} sx={{ mb: 4 }}>
-        <Grid item xs={12} sm={6} md={3}>
-          <Card>
-            <CardContent>
-              <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                <Box>
-                  <Typography color="text.secondary" gutterBottom variant="h6">
-                    EV Owners
-                  </Typography>
-                  <Typography variant="h4" fontWeight="bold">
-                    {stats.totalEvOwners}
-                  </Typography>
-                  <Typography variant="body2" color="success.main">
-                    {stats.activeEvOwners} active
-                  </Typography>
-                </Box>
-                <People sx={{ fontSize: 40, color: 'primary.main' }} />
-              </Box>
-            </CardContent>
-          </Card>
-        </Grid>
-
-        <Grid item xs={12} sm={6} md={3}>
-          <Card>
-            <CardContent>
-              <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                <Box>
-                  <Typography color="text.secondary" gutterBottom variant="h6">
-                    Stations
-                  </Typography>
-                  <Typography variant="h4" fontWeight="bold">
-                    {stats.totalStations}
-                  </Typography>
-                  <Typography variant="body2" color="success.main">
-                    {stats.activeStations} active
-                  </Typography>
-                </Box>
-                <EvStation sx={{ fontSize: 40, color: 'success.main' }} />
-              </Box>
-            </CardContent>
-          </Card>
-        </Grid>
-
-        <Grid item xs={12} sm={6} md={3}>
-          <Card>
-            <CardContent>
-              <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                <Box>
-                  <Typography color="text.secondary" gutterBottom variant="h6">
-                    Total Bookings
-                  </Typography>
-                  <Typography variant="h4" fontWeight="bold">
-                    {stats.totalBookings}
-                  </Typography>
-                  <Typography variant="body2" color="warning.main">
-                    {stats.pendingBookings} pending
-                  </Typography>
-                </Box>
-                <BookOnline sx={{ fontSize: 40, color: 'warning.main' }} />
-              </Box>
-            </CardContent>
-          </Card>
-        </Grid>
-
-        <Grid item xs={12} sm={6} md={3}>
-          <Card>
-            <CardContent>
-              <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                <Box>
-                  <Typography color="text.secondary" gutterBottom variant="h6">
-                    Performance
-                  </Typography>
-                  <Typography variant="h4" fontWeight="bold">
-                    {stats.totalBookings > 0 
-                      ? Math.round((stats.approvedBookings / stats.totalBookings) * 100)
-                      : 0}%
-                  </Typography>
-                  <Typography variant="body2" color="info.main">
-                    Approval rate
-                  </Typography>
-                </Box>
-                <TrendingUp sx={{ fontSize: 40, color: 'info.main' }} />
-              </Box>
-            </CardContent>
-          </Card>
-        </Grid>
-      </Grid>
-
-      <Grid container spacing={3}>
-        {/* Quick Actions */}
-        <Grid item xs={12} md={6}>
-          <Card>
-            <CardContent>
-              <Typography variant="h6" gutterBottom fontWeight="bold">
-                Quick Actions
-              </Typography>
-              <Grid container spacing={2}>
-                {quickActions.map((action) => (
-                  <Grid item xs={12} sm={6} key={action.title}>
-                    <Card 
-                      variant="outlined" 
-                      sx={{ 
-                        cursor: 'pointer',
-                        transition: 'all 0.2s',
-                        '&:hover': {
-                          transform: 'translateY(-2px)',
-                          boxShadow: 2,
-                        },
-                      }}
-                      onClick={() => navigate(action.path)}
-                    >
-                      <CardContent sx={{ textAlign: 'center', py: 3 }}>
-                        <Box
-                          sx={{
-                            display: 'inline-flex',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            width: 48,
-                            height: 48,
-                            borderRadius: '50%',
-                            bgcolor: `${action.color}.light`,
-                            color: `${action.color}.dark`,
-                            mb: 2,
-                          }}
-                        >
-                          {action.icon}
-                        </Box>
-                        <Typography variant="subtitle1" fontWeight="bold" gutterBottom>
-                          {action.title}
-                        </Typography>
-                        <Typography variant="body2" color="text.secondary">
-                          {action.description}
-                        </Typography>
-                      </CardContent>
-                    </Card>
-                  </Grid>
-                ))}
-              </Grid>
-            </CardContent>
-          </Card>
-        </Grid>
-
-        {/* Recent Bookings */}
-        <Grid item xs={12} md={6}>
-          <Card>
-            <CardContent>
-              <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
-                <Typography variant="h6" fontWeight="bold">
-                  Recent Bookings
+      <Box
+        sx={{
+          display: 'grid',
+          gridTemplateColumns: {
+            xs: '1fr',
+            sm: 'repeat(2, 1fr)',
+            md: 'repeat(4, 1fr)',
+          },
+          gap: 3,
+          mb: 4,
+        }}
+      >
+        <Card>
+          <CardContent>
+            <Box
+              sx={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "space-between",
+              }}
+            >
+              <Box>
+                <Typography color="text.secondary" gutterBottom variant="h6">
+                  EV Owners
                 </Typography>
-                <Button
-                  startIcon={<Visibility />}
-                  onClick={() => navigate(ROUTES.BACKOFFICE.BOOKINGS)}
+                <Typography variant="h4" fontWeight="bold">
+                  {stats.totalEvOwners}
+                </Typography>
+                <Chip
+                  icon={<TrendingUp />}
+                  label={`+${stats.activeEvOwners} Active`}
+                  color="success"
                   size="small"
-                >
-                  View All
-                </Button>
+                  sx={{ mt: 1 }}
+                />
               </Box>
-              
-              {recentBookings.length === 0 ? (
-                <Typography color="text.secondary" textAlign="center" py={3}>
-                  No bookings yet
+              <People sx={{ fontSize: 48, color: "primary.main" }} />
+            </Box>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardContent>
+            <Box
+              sx={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "space-between",
+              }}
+            >
+              <Box>
+                <Typography color="text.secondary" gutterBottom variant="h6">
+                  Charging Stations
                 </Typography>
-              ) : (
-                <Box sx={{ maxHeight: 400, overflow: 'auto' }}>
-                  {recentBookings.map((booking) => (
+                <Typography variant="h4" fontWeight="bold">
+                  {stats.totalStations}
+                </Typography>
+                <Chip
+                  icon={<TrendingUp />}
+                  label={`${stats.operationalStations} Operational`}
+                  color="success"
+                  size="small"
+                  sx={{ mt: 1 }}
+                />
+              </Box>
+              <EvStation sx={{ fontSize: 48, color: "info.main" }} />
+            </Box>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardContent>
+            <Box
+              sx={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "space-between",
+              }}
+            >
+              <Box>
+                <Typography color="text.secondary" gutterBottom variant="h6">
+                  Total Bookings
+                </Typography>
+                <Typography variant="h4" fontWeight="bold">
+                  {stats.totalBookings}
+                </Typography>
+                <Chip
+                  icon={<Notifications />}
+                  label={`${stats.pendingBookings} Pending`}
+                  color="warning"
+                  size="small"
+                  sx={{ mt: 1 }}
+                />
+              </Box>
+              <CalendarToday sx={{ fontSize: 48, color: "warning.main" }} />
+            </Box>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardContent>
+            <Box
+              sx={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "space-between",
+              }}
+            >
+              <Box>
+                <Typography color="text.secondary" gutterBottom variant="h6">
+                  Monthly Revenue
+                </Typography>
+                <Typography variant="h4" fontWeight="bold">
+                  ${stats.monthlyRevenue.toLocaleString()}
+                </Typography>
+                <Chip
+                  icon={<TrendingUp />}
+                  label="+12% vs last month"
+                  color="success"
+                  size="small"
+                  sx={{ mt: 1 }}
+                />
+              </Box>
+              <AttachMoney sx={{ fontSize: 48, color: "success.main" }} />
+            </Box>
+          </CardContent>
+        </Card>
+      </Box>
+
+      {/* Quick Actions and Recent Activities */}
+      <Box
+        sx={{
+          display: 'grid',
+          gridTemplateColumns: { xs: '1fr', md: '1fr 1fr' },
+          gap: 3,
+        }}
+      >
+        {/* Quick Actions */}
+        <Card>
+          <CardContent>
+            <Typography variant="h6" component="h2" gutterBottom>
+              Quick Actions
+            </Typography>
+            <Box
+              sx={{
+                display: 'grid',
+                gridTemplateColumns: { xs: '1fr', sm: 'repeat(2, 1fr)' },
+                gap: 2,
+                mt: 2,
+              }}
+            >
+              {quickActions.map((action) => (
+                <Card
+                  key={action.title}
+                  variant="outlined"
+                  sx={{
+                    cursor: "pointer",
+                    transition: "all 0.2s",
+                    "&:hover": {
+                      boxShadow: 2,
+                      transform: "translateY(-2px)",
+                    },
+                  }}
+                  onClick={action.action}
+                >
+                  <CardContent sx={{ textAlign: "center", p: 2 }}>
                     <Box
-                      key={booking.id}
                       sx={{
-                        display: 'flex',
-                        justifyContent: 'space-between',
-                        alignItems: 'center',
-                        py: 2,
-                        borderBottom: '1px solid',
-                        borderColor: 'divider',
-                        '&:last-child': { borderBottom: 'none' },
+                        color: `${action.color}.main`,
+                        mb: 1,
                       }}
                     >
-                      <Box>
-                        <Typography variant="subtitle2" fontWeight="bold">
-                          {booking.evOwnerNic}
-                        </Typography>
-                        <Typography variant="body2" color="text.secondary">
-                          {formatDateTime(booking.reservationDateTime)}
-                        </Typography>
-                      </Box>
-                      <Chip
-                        label={booking.status}
-                        size="small"
-                        color={getBookingStatusColor(booking.status) as any}
-                        variant="outlined"
-                      />
+                      {React.cloneElement(action.icon, { fontSize: "large" })}
                     </Box>
-                  ))}
+                    <Typography variant="subtitle2" fontWeight="bold">
+                      {action.title}
+                    </Typography>
+                    <Typography variant="body2" color="text.secondary">
+                      {action.description}
+                    </Typography>
+                  </CardContent>
+                </Card>
+              ))}
+            </Box>
+          </CardContent>
+        </Card>
+
+        {/* Recent Activities */}
+        <Card>
+          <CardContent>
+            <Box
+              sx={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "space-between",
+                mb: 2,
+              }}
+            >
+              <Typography variant="h6" component="h2">
+                Recent Activities
+              </Typography>
+              <IconButton size="small">
+                <MoreVert />
+              </IconButton>
+            </Box>
+            <Box sx={{ maxHeight: 300, overflowY: "auto" }}>
+              {recentActivities.map((activity) => (
+                <Box
+                  key={activity.id}
+                  sx={{
+                    display: "flex",
+                    alignItems: "flex-start",
+                    p: 2,
+                    borderBottom: "1px solid",
+                    borderColor: "divider",
+                    "&:last-child": {
+                      borderBottom: "none",
+                    },
+                  }}
+                >
+                  <Box
+                    sx={{
+                      width: 8,
+                      height: 8,
+                      borderRadius: "50%",
+                      bgcolor:
+                        activity.status === "pending"
+                          ? "warning.main"
+                          : activity.status === "completed"
+                          ? "success.main"
+                          : "error.main",
+                      mt: 1,
+                      mr: 2,
+                      flexShrink: 0,
+                    }}
+                  />
+                  <Box sx={{ flex: 1 }}>
+                    <Typography variant="body2" sx={{ fontWeight: 500 }}>
+                      {activity.message}
+                    </Typography>
+                    <Typography variant="caption" color="text.secondary">
+                      {activity.time}
+                    </Typography>
+                  </Box>
                 </Box>
-              )}
-            </CardContent>
-          </Card>
-        </Grid>
-      </Grid>
+              ))}
+            </Box>
+          </CardContent>
+        </Card>
+      </Box>
     </Box>
   );
 };

@@ -1,8 +1,8 @@
-import React, { createContext, useContext } from 'react';
-import { Snackbar, Alert } from '@mui/material';
-import type { AlertColor } from '@mui/material';
-import { useNotification } from '../hooks/useNotification';
-import type { NotificationType } from '../hooks/useNotification';
+import React, { createContext, useContext } from "react";
+import { Snackbar, Alert } from "@mui/material";
+import type { AlertColor } from "@mui/material";
+import { useNotification } from "../hooks/useNotification";
+import type { NotificationType } from "../hooks/useNotification";
 
 interface NotificationContextType {
   showSuccess: (message: string, duration?: number) => void;
@@ -11,13 +11,17 @@ interface NotificationContextType {
   showInfo: (message: string, duration?: number) => void;
 }
 
-const NotificationContext = createContext<NotificationContextType | undefined>(undefined);
+const NotificationContext = createContext<NotificationContextType | undefined>(
+  undefined
+);
 
 interface NotificationProviderProps {
   children: React.ReactNode;
 }
 
-export const NotificationProvider: React.FC<NotificationProviderProps> = ({ children }) => {
+export const NotificationProvider: React.FC<NotificationProviderProps> = ({
+  children,
+}) => {
   const {
     notifications,
     removeNotification,
@@ -33,10 +37,10 @@ export const NotificationProvider: React.FC<NotificationProviderProps> = ({ chil
 
   const getAlertSeverity = (type: NotificationType): AlertColor => {
     const severityMap: Record<NotificationType, AlertColor> = {
-      success: 'success',
-      error: 'error',
-      warning: 'warning',
-      info: 'info',
+      success: "success",
+      error: "error",
+      warning: "warning",
+      info: "info",
     };
     return severityMap[type];
   };
@@ -51,7 +55,7 @@ export const NotificationProvider: React.FC<NotificationProviderProps> = ({ chil
       }}
     >
       {children}
-      
+
       {/* Render all notifications */}
       {notifications.map((notification, index) => (
         <Snackbar
@@ -60,8 +64,8 @@ export const NotificationProvider: React.FC<NotificationProviderProps> = ({ chil
           autoHideDuration={notification.autoHideDuration}
           onClose={() => handleClose(notification.id)}
           anchorOrigin={{
-            vertical: 'top',
-            horizontal: 'right',
+            vertical: "top",
+            horizontal: "right",
           }}
           sx={{
             mt: index * 8, // Stack notifications vertically
@@ -71,7 +75,7 @@ export const NotificationProvider: React.FC<NotificationProviderProps> = ({ chil
             onClose={() => handleClose(notification.id)}
             severity={getAlertSeverity(notification.type)}
             variant="filled"
-            sx={{ width: '100%' }}
+            sx={{ width: "100%" }}
           >
             {notification.message}
           </Alert>
@@ -84,7 +88,9 @@ export const NotificationProvider: React.FC<NotificationProviderProps> = ({ chil
 export const useNotificationContext = (): NotificationContextType => {
   const context = useContext(NotificationContext);
   if (context === undefined) {
-    throw new Error('useNotificationContext must be used within a NotificationProvider');
+    throw new Error(
+      "useNotificationContext must be used within a NotificationProvider"
+    );
   }
   return context;
 };
