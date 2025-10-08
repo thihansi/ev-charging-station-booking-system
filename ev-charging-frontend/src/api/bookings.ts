@@ -96,4 +96,48 @@ export const bookingApi = {
     });
     return response.data;
   },
+
+  // EV Owner specific endpoints
+
+  // Get my upcoming bookings (EV Owner)
+  getMyUpcomingBookings: async (): Promise<Booking[]> => {
+    const response = await apiClient.get<Booking[]>("/api/bookings/my-bookings/upcoming");
+    return response.data;
+  },
+
+  // Get my booking history (EV Owner)
+  getMyBookingHistory: async (): Promise<Booking[]> => {
+    const response = await apiClient.get<Booking[]>("/api/bookings/my-bookings/history");
+    return response.data;
+  },
+
+  // Get booking summary (EV Owner)
+  getBookingSummary: async (id: string): Promise<{
+    booking: Booking;
+    qrCode: string;
+    instructions: string;
+  }> => {
+    const response = await apiClient.get(`/api/bookings/my-bookings/summary/${id}`);
+    return response.data;
+  },
+
+  // Generate QR code for booking
+  generateQRCode: async (bookingId: string): Promise<{ qrCode: string; qrCodeImage: string }> => {
+    const response = await apiClient.get(`/api/bookings/${bookingId}/qr-code`);
+    return response.data;
+  },
+
+  // Additional approval/rejection endpoints
+
+  // Approve booking (with optional reason)
+  approveBooking: async (id: string, reason?: string): Promise<{ message: string }> => {
+    const response = await apiClient.post(`/api/bookings/approve/${id}`, { reason });
+    return response.data;
+  },
+
+  // Reject booking (with required reason)
+  rejectBooking: async (id: string, reason: string): Promise<{ message: string }> => {
+    const response = await apiClient.post(`/api/bookings/reject/${id}`, { reason });
+    return response.data;
+  },
 };

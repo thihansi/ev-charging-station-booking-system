@@ -19,7 +19,13 @@ const apiClient: AxiosInstance = axios.create({
 // Request interceptor to add auth token
 apiClient.interceptors.request.use(
   (config: InternalAxiosRequestConfig) => {
-    const token = getLocalStorageItem<string>(STORAGE_KEYS.AUTH_TOKEN);
+    // First check for system user token
+    let token = getLocalStorageItem<string>(STORAGE_KEYS.AUTH_TOKEN);
+    
+    // If no system user token, check for EV Owner token
+    if (!token) {
+      token = getLocalStorageItem<string>("evOwnerToken");
+    }
 
     if (token && config.headers) {
       config.headers.Authorization = `Bearer ${token}`;
@@ -39,13 +45,23 @@ apiClient.interceptors.response.use(
   },
   (error) => {
     if (error.response?.status === HTTP_STATUS.UNAUTHORIZED) {
-      // Clear auth data and redirect to login
+      // Clear auth data for both system users and EV owners
       removeLocalStorageItem(STORAGE_KEYS.AUTH_TOKEN);
       removeLocalStorageItem(STORAGE_KEYS.USER_PROFILE);
+      removeLocalStorageItem("evOwnerToken");
+      removeLocalStorageItem("evOwnerData");
 
-      // Only redirect if not already on login page
-      if (window.location.pathname !== "/login") {
-        window.location.href = "/login";
+      // Determine which login page to redirect to based on current path
+      const currentPath = window.location.pathname;
+      let redirectPath = "/login";
+      
+      if (currentPath.includes("ev-owner")) {
+        redirectPath = "/ev-owner-login";
+      }
+
+      // Only redirect if not already on a login page
+      if (!currentPath.includes("login")) {
+        window.location.href = redirectPath;
       }
     }
 

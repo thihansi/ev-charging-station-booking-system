@@ -7,7 +7,7 @@ import {
 import { ThemeProvider } from "@mui/material/styles";
 import { CssBaseline } from "@mui/material";
 import { theme } from "./utils/theme";
-import { AuthProvider } from "./context/AuthContext";
+import { AuthProvider, useAuth } from "./context/AuthContext";
 import { NotificationProvider } from "./context/NotificationContext";
 import ProtectedRoute from "./components/ProtectedRoute";
 import DashboardLayout from "./layouts/DashboardLayout";
@@ -25,6 +25,10 @@ import BookingFormPage from "./pages/BookingFormPage";
 import QRScannerPage from "./pages/QRScannerPage";
 import LandingPage from "./pages/LandingPage";
 import UserRegistrationPage from "./pages/UserRegistrationPage";
+import ProfilePage from "./pages/ProfilePage";
+import { EVOwnerRegistrationPage } from "./pages/EVOwnerRegistrationPage";
+import { EVOwnerLoginPage } from "./pages/EVOwnerLoginPage";
+import { EVOwnerDashboardPage } from "./pages/EVOwnerDashboardPage";
 import { ROUTES, USER_ROLES } from "./utils/constants";
 
 function App() {
@@ -220,6 +224,33 @@ function App() {
               {/* Landing Page */}
               <Route path="/" element={<LandingPage />} />
 
+              {/* EV Owner Routes */}
+              <Route path="/ev-owner-register" element={<EVOwnerRegistrationPage />} />
+              <Route path="/ev-owner-login" element={<EVOwnerLoginPage />} />
+              <Route path="/ev-owner-dashboard" element={<EVOwnerDashboardPage />} />
+
+              {/* Profile Page - accessible to all authenticated users */}
+              <Route
+                path={ROUTES.PROFILE}
+                element={
+                  <ProtectedRoute>
+                    <DashboardLayout>
+                      <ProfilePage />
+                    </DashboardLayout>
+                  </ProtectedRoute>
+                }
+              />
+
+              {/* Dashboard redirect - redirect to appropriate dashboard based on role */}
+              <Route
+                path={ROUTES.DASHBOARD}
+                element={
+                  <ProtectedRoute>
+                    <DashboardRedirect />
+                  </ProtectedRoute>
+                }
+              />
+
               {/* Catch all - redirect to 404 */}
               <Route
                 path="*"
@@ -232,5 +263,21 @@ function App() {
     </ThemeProvider>
   );
 }
+
+// Dashboard redirect component
+const DashboardRedirect: React.FC = () => {
+  const { state } = useAuth();
+
+  if (!state.user) {
+    return <Navigate to={ROUTES.LOGIN} replace />;
+  }
+
+  const redirectPath =
+    state.user.role === USER_ROLES.BACKOFFICE
+      ? ROUTES.BACKOFFICE.DASHBOARD
+      : ROUTES.OPERATOR.DASHBOARD;
+
+  return <Navigate to={redirectPath} replace />;
+};
 
 export default App;

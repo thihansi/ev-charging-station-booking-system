@@ -19,6 +19,7 @@ export const authApi = {
   // Get system user profile
   getProfile: async (): Promise<User> => {
     const response = await apiClient.get<User>("/api/auth/profile");
+    console.log("📋 Raw profile response:", response.data);
     return response.data;
   },
 
@@ -62,5 +63,24 @@ export const authApi = {
   logout: () => {
     // Token will be cleared by the interceptor
     return Promise.resolve();
+  },
+
+  // Update user profile
+  updateProfile: async (profileData: {
+    username: string;
+    fullName: string;
+    email: string;
+  }): Promise<{ message: string; user: User }> => {
+    const response = await apiClient.put("/api/auth/profile", profileData);
+    return response.data;
+  },
+
+  // Change password
+  changePassword: async (passwordData: {
+    currentPassword: string;
+    newPassword: string;
+  }): Promise<{ message: string }> => {
+    const response = await apiClient.put("/api/auth/change-password", passwordData);
+    return response.data;
   },
 };

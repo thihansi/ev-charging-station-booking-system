@@ -93,6 +93,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
       book_online: <BookOnline />,
       admin_panel_settings: <AdminPanelSettings />,
       qr_code_scanner: <QrCodeScanner />,
+      person: <AccountCircle />,
     };
     return iconMap[iconName] || <Dashboard />;
   };

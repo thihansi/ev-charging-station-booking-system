@@ -1,6 +1,5 @@
 // API Configuration
-export const API_BASE_URL =
-  import.meta.env.VITE_API_BASE_URL || "https://localhost:7001"; // Local development API
+export const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || ""; // Empty string enables Vite proxy for CORS workaround
 
 // Local Storage Keys
 export const STORAGE_KEYS = {
@@ -131,6 +130,11 @@ export const MENU_ITEMS = {
       path: ROUTES.BACKOFFICE.USERS,
       icon: "admin_panel_settings",
     },
+    {
+      title: "Profile",
+      path: ROUTES.PROFILE,
+      icon: "person",
+    },
   ],
   OPERATOR: [
     {
@@ -152,6 +156,11 @@ export const MENU_ITEMS = {
       title: "QR Scanner",
       path: ROUTES.OPERATOR.QR_SCANNER,
       icon: "qr_code_scanner",
+    },
+    {
+      title: "Profile",
+      path: ROUTES.PROFILE,
+      icon: "person",
     },
   ],
 } as const;

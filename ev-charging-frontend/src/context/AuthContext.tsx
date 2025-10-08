@@ -158,13 +158,17 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         dispatch({ type: "AUTH_START" });
 
         // Call login API
+        console.log("🔐 Attempting login...");
         const loginResponse = await authApi.login(credentials);
+        console.log("✅ Login successful, token received");
 
         // Store token temporarily
         setLocalStorageItem(STORAGE_KEYS.AUTH_TOKEN, loginResponse.token);
 
         // Fetch user profile
+        console.log("👤 Fetching user profile...");
         const user = await authApi.getProfile();
+        console.log("✅ Profile fetched successfully:", user);
 
         // Store user profile
         setLocalStorageItem(STORAGE_KEYS.USER_PROFILE, user);
@@ -174,6 +178,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
           payload: { user, token: loginResponse.token },
         });
       } catch (error: any) {
+        console.error("❌ Login/Profile error:", error);
         const errorMessage = error.response?.data?.message || "Login failed";
         dispatch({ type: "AUTH_FAILURE", payload: errorMessage });
 

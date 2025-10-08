@@ -96,8 +96,12 @@ const LoginPage: React.FC = () => {
   };
 
   // If already authenticated, don't render the login form
-  if (state.isAuthenticated) {
-    return <Navigate to={ROUTES.DASHBOARD} replace />;
+  if (state.isAuthenticated && state.user) {
+    const redirectPath =
+      state.user.role === USER_ROLES.BACKOFFICE
+        ? ROUTES.BACKOFFICE.DASHBOARD
+        : ROUTES.OPERATOR.DASHBOARD;
+    return <Navigate to={redirectPath} replace />;
   }
 
   return (
