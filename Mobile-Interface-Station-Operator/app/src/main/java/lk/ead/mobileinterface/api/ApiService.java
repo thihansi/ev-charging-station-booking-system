@@ -39,6 +39,9 @@ public interface ApiService {
     @POST("api/Bookings")
     Call<Booking> createBooking(@Header("Authorization") String token, @Body Booking booking);
 
+    @GET("api/Bookings/pending")
+    Call<List<Booking>> getPendingBookings(@Header("Authorization") String bearerToken);
+
     // Get all bookings of logged-in user
     @GET("api/Bookings/my-bookings")
     Call<List<Booking>> getMyBookings(@Header("Authorization") String token);
@@ -62,4 +65,6 @@ public interface ApiService {
     // Cancel booking
     @DELETE("api/Bookings/{id}")
     Call<Void> cancelBooking(@Header("Authorization") String token, @Path("id") int bookingId);
+
+
 }
