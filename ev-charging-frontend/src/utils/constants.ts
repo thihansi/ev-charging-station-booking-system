@@ -1,6 +1,7 @@
 // API Configuration
-export const API_BASE_URL =
-  "https://it223-hvhwgha5b2h5gbcg.southindia-01.azurewebsites.net";
+export const API_BASE_URL = 
+  import.meta.env.VITE_API_BASE_URL || 
+  "https://localhost:7001";  // Local development API
 
 // Local Storage Keys
 export const STORAGE_KEYS = {
@@ -15,6 +16,7 @@ export const ROUTES = {
   HOME: "/",
   LOGIN: "/login",
   DASHBOARD: "/dashboard",
+  USER_REGISTRATION: "/register",
 
   // Backoffice routes
   BACKOFFICE: {
@@ -27,6 +29,9 @@ export const ROUTES = {
     CHARGING_STATIONS_VIEW: "/backoffice/charging-stations/:id",
     CHARGING_STATIONS_EDIT: "/backoffice/charging-stations/:id/edit",
     BOOKINGS: "/backoffice/bookings",
+    BOOKINGS_CREATE: "/backoffice/bookings/create",
+    BOOKINGS_VIEW: "/backoffice/bookings/:id",
+    BOOKINGS_EDIT: "/backoffice/bookings/:id/edit",
     USERS: "/backoffice/users",
     USERS_CREATE: "/backoffice/users/create",
   },

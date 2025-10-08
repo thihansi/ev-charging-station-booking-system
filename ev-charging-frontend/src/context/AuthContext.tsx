@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useReducer, useEffect } from "react";
+import React, { createContext, useContext, useReducer, useEffect, useMemo, useCallback } from "react";
 import type { User, LoginRequest, UserRole } from "../types";
 import { authApi } from "../api";
 import { STORAGE_KEYS, USER_ROLES } from "../utils/constants";
@@ -122,8 +122,9 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
               type: "AUTH_SUCCESS",
               payload: { user: currentUser, token },
             });
-          } catch (error) {
-            // Token is invalid, clear storage
+          } catch (error: any) {
+            // Token is invalid or backend is not available, clear storage
+            console.warn('Failed to verify token, clearing auth data:', error.message);
             removeLocalStorageItem(STORAGE_KEYS.AUTH_TOKEN);
             removeLocalStorageItem(STORAGE_KEYS.USER_PROFILE);
             dispatch({ type: "AUTH_LOGOUT" });
@@ -131,7 +132,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         } else {
           dispatch({ type: "SET_LOADING", payload: false });
         }
-      } catch (error) {
+      } catch (error: any) {
+        console.warn('Auth initialization failed:', error.message);
         dispatch({ type: "SET_LOADING", payload: false });
       }
     };
@@ -140,7 +142,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   }, []);
 
   // Login function
-  const login = async (credentials: LoginRequest): Promise<void> => {
+  const login = useCallback(async (credentials: LoginRequest): Promise<void> => {
     try {
       dispatch({ type: "AUTH_START" });
 
@@ -170,32 +172,32 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
       throw error;
     }
-  };
+  }, []);
 
   // Logout function
-  const logout = (): void => {
+  const logout = useCallback((): void => {
     // Clear localStorage
     removeLocalStorageItem(STORAGE_KEYS.AUTH_TOKEN);
     removeLocalStorageItem(STORAGE_KEYS.USER_PROFILE);
 
     // Update state
     dispatch({ type: "AUTH_LOGOUT" });
-  };
+  }, []);
 
   // Clear error function
-  const clearError = (): void => {
+  const clearError = useCallback((): void => {
     dispatch({ type: "CLEAR_ERROR" });
-  };
+  }, []);
 
   // Role checking functions
-  const hasRole = (role: UserRole): boolean => {
+  const hasRole = useCallback((role: UserRole): boolean => {
     return state.user?.role === role;
-  };
+  }, [state.user?.role]);
 
-  const isBackoffice = hasRole(USER_ROLES.BACKOFFICE);
-  const isOperator = hasRole(USER_ROLES.STATION_OPERATOR);
+  const isBackoffice = useMemo(() => hasRole(USER_ROLES.BACKOFFICE), [hasRole]);
+  const isOperator = useMemo(() => hasRole(USER_ROLES.STATION_OPERATOR), [hasRole]);
 
-  const value: AuthContextType = {
+  const value: AuthContextType = useMemo(() => ({
     state,
     login,
     logout,
@@ -203,7 +205,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     hasRole,
     isBackoffice,
     isOperator,
-  };
+  }), [state, login, logout, clearError, hasRole, isBackoffice, isOperator]);
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };

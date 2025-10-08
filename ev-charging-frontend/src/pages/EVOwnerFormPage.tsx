@@ -19,7 +19,7 @@ const EVOwnerFormPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const { showSuccess, showError } = useNotificationContext();
   const [isLoading, setIsLoading] = useState(false);
-  const [isEdit, setIsEdit] = useState(!!id);
+  const isEdit = !!id;
 
   const [formData, setFormData] = useState<CreateEVOwnerRequest>({
     nic: "",

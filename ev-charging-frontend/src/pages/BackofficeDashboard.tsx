@@ -30,7 +30,7 @@ const BackofficeDashboard: React.FC = () => {
   const [isLoading, setIsLoading] = useState(true);
 
   // Sample dashboard statistics
-  const [stats, setStats] = useState({
+  const [stats] = useState({
     totalEvOwners: 1247,
     activeEvOwners: 156,
     totalStations: 89,

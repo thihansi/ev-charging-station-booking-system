@@ -63,5 +63,16 @@ namespace EVChargingSystem.Api.Services
             var token = tokenHandler.CreateToken(tokenDescriptor);
             return tokenHandler.WriteToken(token);
         }
+
+        public async Task<List<UserDto>> GetAllUsers()
+        {
+            var users = await _context.Users.Find(_ => true).ToListAsync();
+            return users.Select(u => new UserDto 
+            { 
+                Id = u.Id, 
+                Username = u.Username, 
+                Role = u.Role 
+            }).ToList();
+        }
     }
 }

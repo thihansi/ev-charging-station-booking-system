@@ -30,13 +30,12 @@ import {
   BookOnline,
   AdminPanelSettings,
   QrCodeScanner,
-  ChevronLeft,
   ElectricCar,
 } from "@mui/icons-material";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { useNotificationContext } from "../context/NotificationContext";
-import { ROUTES, USER_ROLES, MENU_ITEMS } from "../utils/constants";
+import { ROUTES, MENU_ITEMS } from "../utils/constants";
 import { isActiveRoute } from "../utils/helpers";
 
 const DRAWER_WIDTH = 280;
@@ -50,7 +49,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
   const isMobile = useMediaQuery(theme.breakpoints.down("lg"));
   const navigate = useNavigate();
   const location = useLocation();
-  const { state, logout, isBackoffice, isOperator } = useAuth();
+  const { state, logout, isBackoffice } = useAuth();
   const { showSuccess } = useNotificationContext();
 
   const [mobileOpen, setMobileOpen] = useState(false);

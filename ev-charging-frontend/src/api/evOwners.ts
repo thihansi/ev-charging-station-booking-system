@@ -3,7 +3,6 @@ import type {
   EVOwner,
   CreateEVOwnerRequest,
   UpdateEVOwnerRequest,
-  PaginatedResponse,
 } from "../types";
 
 export const evOwnerApi = {

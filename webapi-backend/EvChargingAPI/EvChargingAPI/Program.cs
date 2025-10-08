@@ -68,4 +68,40 @@ app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
 
+// Seed default users
+await SeedDefaultUsers(app);
+
 app.Run();
+
+async Task SeedDefaultUsers(WebApplication app)
+{
+    using var scope = app.Services.CreateScope();
+    var userService = scope.ServiceProvider.GetRequiredService<IUserService>();
+    
+    try
+    {
+        // Check if any users exist
+        var existingUsers = await userService.GetAllUsers();
+        if (existingUsers.Any())
+        {
+            Console.WriteLine("Users already exist in database. Skipping seeding.");
+            return;
+        }
+        
+        Console.WriteLine("Seeding default users...");
+        
+        // Create default backoffice admin
+        var adminUser = await userService.CreateUser("admin", "admin123", EVChargingSystem.Api.Entities.Role.Backoffice);
+        Console.WriteLine($"Created backoffice admin: {adminUser.Username}");
+        
+        // Create default station operator
+        var operatorUser = await userService.CreateUser("operator", "operator123", EVChargingSystem.Api.Entities.Role.StationOperator);
+        Console.WriteLine($"Created station operator: {operatorUser.Username}");
+        
+        Console.WriteLine("Default users seeded successfully!");
+    }
+    catch (Exception ex)
+    {
+        Console.WriteLine($"Error seeding users: {ex.Message}");
+    }
+}

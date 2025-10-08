@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from "react";
 import {
   Box,
   Card,
@@ -23,7 +23,7 @@ import {
   LinearProgress,
   InputAdornment,
   Toolbar,
-} from '@mui/material';
+} from "@mui/material";
 import {
   Add,
   Search,
@@ -33,24 +33,29 @@ import {
   Edit,
   Visibility,
   PowerSettingsNew,
-} from '@mui/icons-material';
-import { useNavigate } from 'react-router-dom';
-import { useNotificationContext } from '../context/NotificationContext';
-import { chargingStationApi } from '../api';
-import { ROUTES } from '../utils/constants';
-import { formatDateTime } from '../utils/helpers';
-import type { ChargingStation } from '../types';
+} from "@mui/icons-material";
+import { useNavigate } from "react-router-dom";
+import { useNotificationContext } from "../context/NotificationContext";
+import { chargingStationApi } from "../api";
+import { ROUTES } from "../utils/constants";
+import { formatDateTime } from "../utils/helpers";
+import type { ChargingStation } from "../types";
 
 const ChargingStationListPage: React.FC = () => {
   const navigate = useNavigate();
   const { showSuccess, showError } = useNotificationContext();
 
-  const [chargingStations, setChargingStations] = useState<ChargingStation[]>([]);
-  const [filteredStations, setFilteredStations] = useState<ChargingStation[]>([]);
+  const [chargingStations, setChargingStations] = useState<ChargingStation[]>(
+    []
+  );
+  const [filteredStations, setFilteredStations] = useState<ChargingStation[]>(
+    []
+  );
   const [isLoading, setIsLoading] = useState(true);
-  const [searchTerm, setSearchTerm] = useState('');
+  const [searchTerm, setSearchTerm] = useState("");
   const [menuAnchorEl, setMenuAnchorEl] = useState<null | HTMLElement>(null);
-  const [selectedStation, setSelectedStation] = useState<ChargingStation | null>(null);
+  const [selectedStation, setSelectedStation] =
+    useState<ChargingStation | null>(null);
   const [confirmDialog, setConfirmDialog] = useState<{
     open: boolean;
     title: string;
@@ -58,8 +63,8 @@ const ChargingStationListPage: React.FC = () => {
     action: () => void;
   }>({
     open: false,
-    title: '',
-    message: '',
+    title: "",
+    message: "",
     action: () => {},
   });
 
@@ -72,11 +77,12 @@ const ChargingStationListPage: React.FC = () => {
     if (!searchTerm.trim()) {
       setFilteredStations(chargingStations);
     } else {
-      const filtered = chargingStations.filter((station) =>
-        station.id.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        station.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        station.address.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        station.stationType.toLowerCase().includes(searchTerm.toLowerCase())
+      const filtered = chargingStations.filter(
+        (station) =>
+          station.id.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          station.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          station.address.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          station.stationType.toLowerCase().includes(searchTerm.toLowerCase())
       );
       setFilteredStations(filtered);
     }
@@ -89,13 +95,16 @@ const ChargingStationListPage: React.FC = () => {
       setChargingStations(stations);
       setFilteredStations(stations);
     } catch (error) {
-      showError('Failed to load charging stations');
+      showError("Failed to load charging stations");
     } finally {
       setIsLoading(false);
     }
   };
 
-  const handleMenuClick = (event: React.MouseEvent<HTMLElement>, station: ChargingStation) => {
+  const handleMenuClick = (
+    event: React.MouseEvent<HTMLElement>,
+    station: ChargingStation
+  ) => {
     setMenuAnchorEl(event.currentTarget);
     setSelectedStation(station);
   };
@@ -107,35 +116,25 @@ const ChargingStationListPage: React.FC = () => {
 
   const handleView = () => {
     if (selectedStation) {
-      navigate(ROUTES.BACKOFFICE.CHARGING_STATIONS_VIEW.replace(':id', selectedStation.id));
+      navigate(
+        ROUTES.BACKOFFICE.CHARGING_STATIONS_VIEW.replace(
+          ":id",
+          selectedStation.id
+        )
+      );
     }
     handleMenuClose();
   };
 
   const handleEdit = () => {
     if (selectedStation) {
-      navigate(ROUTES.BACKOFFICE.CHARGING_STATIONS_EDIT.replace(':id', selectedStation.id));
+      navigate(
+        ROUTES.BACKOFFICE.CHARGING_STATIONS_EDIT.replace(
+          ":id",
+          selectedStation.id
+        )
+      );
     }
-    handleMenuClose();
-  };
-
-  const handleActivate = () => {
-    if (!selectedStation) return;
-
-    setConfirmDialog({
-      open: true,
-      title: 'Activate Charging Station',
-      message: `Are you sure you want to activate ${selectedStation.name}?`,
-      action: async () => {
-        try {
-          await chargingStationApi.update(selectedStation.id, { isActive: true });
-          showSuccess('Charging station activated successfully');
-          await loadChargingStations();
-        } catch (error) {
-          showError('Failed to activate charging station');
-        }
-      },
-    });
     handleMenuClose();
   };
 
@@ -144,35 +143,15 @@ const ChargingStationListPage: React.FC = () => {
 
     setConfirmDialog({
       open: true,
-      title: 'Deactivate Charging Station',
-      message: `Are you sure you want to deactivate ${selectedStation.name}? This will make it unavailable for bookings.`,
+      title: "Deactivate Charging Station",
+      message: `Are you sure you want to deactivate ${selectedStation.name}? This will remove it from the system.`,
       action: async () => {
         try {
-          await chargingStationApi.updateStatus(selectedStation.stationId, 'Inactive');
-          showSuccess('Charging station deactivated successfully');
+          await chargingStationApi.delete(selectedStation.id);
+          showSuccess("Charging station deactivated successfully");
           await loadChargingStations();
         } catch (error) {
-          showError('Failed to deactivate charging station');
-        }
-      },
-    });
-    handleMenuClose();
-  };
-
-  const handleDelete = () => {
-    if (!selectedStation) return;
-
-    setConfirmDialog({
-      open: true,
-      title: 'Delete Charging Station',
-      message: `Are you sure you want to permanently delete ${selectedStation.name}? This action cannot be undone.`,
-      action: async () => {
-        try {
-          await chargingStationApi.delete(selectedStation.stationId);
-          showSuccess('Charging station deleted successfully');
-          await loadChargingStations();
-        } catch (error) {
-          showError('Failed to delete charging station');
+          showError("Failed to deactivate charging station");
         }
       },
     });
@@ -180,11 +159,11 @@ const ChargingStationListPage: React.FC = () => {
   };
 
   const getStatusColor = (isActive: boolean) => {
-    return isActive ? 'success' : 'error';
+    return isActive ? "success" : "error";
   };
 
   const getStatusLabel = (isActive: boolean) => {
-    return isActive ? 'Active' : 'Inactive';
+    return isActive ? "Active" : "Inactive";
   };
 
   const handleConfirmAction = () => {
@@ -206,7 +185,7 @@ const ChargingStationListPage: React.FC = () => {
 
       {/* Toolbar */}
       <Card sx={{ mb: 3 }}>
-        <Toolbar sx={{ justifyContent: 'space-between' }}>
+        <Toolbar sx={{ justifyContent: "space-between" }}>
           <TextField
             placeholder="Search by ID, name, location, or type..."
             value={searchTerm}
@@ -220,7 +199,7 @@ const ChargingStationListPage: React.FC = () => {
               ),
             }}
           />
-          <Box sx={{ display: 'flex', gap: 2 }}>
+          <Box sx={{ display: "flex", gap: 2 }}>
             <Button
               variant="outlined"
               startIcon={<Refresh />}
@@ -232,7 +211,9 @@ const ChargingStationListPage: React.FC = () => {
             <Button
               variant="contained"
               startIcon={<Add />}
-              onClick={() => navigate(ROUTES.BACKOFFICE.CHARGING_STATIONS_CREATE)}
+              onClick={() =>
+                navigate(ROUTES.BACKOFFICE.CHARGING_STATIONS_CREATE)
+              }
             >
               Add Charging Station
             </Button>
@@ -264,13 +245,17 @@ const ChargingStationListPage: React.FC = () => {
                   <TableRow>
                     <TableCell colSpan={7} align="center" sx={{ py: 4 }}>
                       <Typography variant="body1" color="text.secondary">
-                        {searchTerm ? 'No charging stations found matching your search.' : 'No charging stations found.'}
+                        {searchTerm
+                          ? "No charging stations found matching your search."
+                          : "No charging stations found."}
                       </Typography>
                       {!searchTerm && (
                         <Button
                           variant="contained"
                           startIcon={<Add />}
-                          onClick={() => navigate(ROUTES.BACKOFFICE.CHARGING_STATIONS_CREATE)}
+                          onClick={() =>
+                            navigate(ROUTES.BACKOFFICE.CHARGING_STATIONS_CREATE)
+                          }
                           sx={{ mt: 2 }}
                         >
                           Add First Charging Station
@@ -292,7 +277,9 @@ const ChargingStationListPage: React.FC = () => {
                         </Typography>
                       </TableCell>
                       <TableCell>
-                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                        <Box
+                          sx={{ display: "flex", alignItems: "center", gap: 1 }}
+                        >
                           <LocationOn fontSize="small" color="action" />
                           <Typography variant="body2">
                             {station.address}
@@ -349,7 +336,7 @@ const ChargingStationListPage: React.FC = () => {
           <Edit fontSize="small" sx={{ mr: 1 }} />
           Edit
         </MenuItem>
-        <MenuItem onClick={handleDeactivate} sx={{ color: 'warning.main' }}>
+        <MenuItem onClick={handleDeactivate} sx={{ color: "warning.main" }}>
           <PowerSettingsNew fontSize="small" sx={{ mr: 1 }} />
           Deactivate
         </MenuItem>

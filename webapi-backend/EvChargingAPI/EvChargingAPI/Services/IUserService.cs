@@ -7,6 +7,7 @@ namespace EVChargingSystem.Api.Services
     {
         Task<UserDto> CreateUser(string username, string password, Role role);
         Task<string> Authenticate(string username, string password);
+        Task<List<UserDto>> GetAllUsers();
         // Other methods if needed
     }
 }
