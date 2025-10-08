@@ -18,7 +18,7 @@ import lk.ead.mobileinterface.R;
 import lk.ead.mobileinterface.api.ApiClient;
 import lk.ead.mobileinterface.api.ApiService;
 import lk.ead.mobileinterface.models.User;
-import lk.ead.mobileinterface.utils.SessionManager;
+import lk.ead.mobileinterface.utils.EVOwnerSessionManager;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -49,7 +49,7 @@ public class ProfileActivity extends AppCompatActivity {
         progress = findViewById(R.id.progressBar);
 
         api = ApiClient.getClient().create(ApiService.class);
-        String token = SessionManager.getToken(this);
+        String token = EVOwnerSessionManager.getToken(this);
         if (token == null) {
             goToLogin();
             return;
@@ -61,7 +61,7 @@ public class ProfileActivity extends AppCompatActivity {
         btnSave.setOnClickListener(v -> updateProfile());
         btnDeactivate.setOnClickListener(v -> confirmDeactivate());
         btnLogout.setOnClickListener(v -> {
-            SessionManager.clear(this);
+            EVOwnerSessionManager.clear(this);
             goToLogin();
         });
 
@@ -85,7 +85,7 @@ public class ProfileActivity extends AppCompatActivity {
                     etPhone.setText(n(u.getPhone()));
                     swActive.setChecked(u.isActive());
                 } else if (res.code() == 401) {
-                    SessionManager.clear(ProfileActivity.this);
+                    EVOwnerSessionManager.clear(ProfileActivity.this);
                     goToLogin();
                 } else {
                     Toast.makeText(ProfileActivity.this,
@@ -134,7 +134,7 @@ public class ProfileActivity extends AppCompatActivity {
                 } else if (res.code() == 400) {
                     Toast.makeText(ProfileActivity.this, "Validation error", Toast.LENGTH_LONG).show();
                 } else if (res.code() == 401) {
-                    SessionManager.clear(ProfileActivity.this);
+                    EVOwnerSessionManager.clear(ProfileActivity.this);
                     goToLogin();
                 } else {
                     Toast.makeText(ProfileActivity.this,
@@ -169,10 +169,10 @@ public class ProfileActivity extends AppCompatActivity {
                 if (res.isSuccessful()) {
                     Toast.makeText(ProfileActivity.this,
                             "Account deactivated", Toast.LENGTH_LONG).show();
-                    SessionManager.clear(ProfileActivity.this);
+                    EVOwnerSessionManager.clear(ProfileActivity.this);
                     goToLogin();
                 } else if (res.code() == 401) {
-                    SessionManager.clear(ProfileActivity.this);
+                    EVOwnerSessionManager.clear(ProfileActivity.this);
                     goToLogin();
                 } else {
                     Toast.makeText(ProfileActivity.this,

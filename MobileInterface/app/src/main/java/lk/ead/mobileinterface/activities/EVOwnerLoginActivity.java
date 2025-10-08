@@ -18,7 +18,7 @@ import lk.ead.mobileinterface.api.ApiService;
 import lk.ead.mobileinterface.models.EVOwnerLoginRequest;
 import lk.ead.mobileinterface.models.EVOwnerLoginResponse;
 import lk.ead.mobileinterface.models.User;
-import lk.ead.mobileinterface.utils.SessionManager;
+import lk.ead.mobileinterface.utils.EVOwnerSessionManager;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -46,7 +46,7 @@ public class EVOwnerLoginActivity extends AppCompatActivity {
         btnLogin.setOnClickListener(v -> attemptLogin());
         btnGoRegister.setOnClickListener(v -> startActivity(new Intent(this, RegisterActivity.class)));
 
-        if (SessionManager.getToken(this) != null) {
+        if (EVOwnerSessionManager.getToken(this) != null) {
             goToDashboard();
         }
     }
@@ -73,8 +73,8 @@ public class EVOwnerLoginActivity extends AppCompatActivity {
                                 return;
                             }
 
-                            SessionManager.saveToken(EVOwnerLoginActivity.this, token);
-                            if (user != null) SessionManager.saveNic(EVOwnerLoginActivity.this, user.getNic());
+                            EVOwnerSessionManager.saveToken(EVOwnerLoginActivity.this, token);
+                            if (user != null) EVOwnerSessionManager.saveNic(EVOwnerLoginActivity.this, user.getNic());
 
                             Toast.makeText(EVOwnerLoginActivity.this, "Welcome!", Toast.LENGTH_SHORT).show();
                             goToDashboard();

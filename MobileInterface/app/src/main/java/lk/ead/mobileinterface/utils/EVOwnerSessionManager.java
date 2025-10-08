@@ -1,9 +1,8 @@
 package lk.ead.mobileinterface.utils;
 
 import android.content.Context;
-import android.content.SharedPreferences;
 
-public class SessionManager {
+public class EVOwnerSessionManager {
     private static final String PREF = "user_session";
     private static final String KEY_TOKEN = "jwt";
     private static final String KEY_EMAIL = "email";
