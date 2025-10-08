@@ -1,0 +1,88 @@
+# *.iml
+# .gradle
+# /local.properties
+# /.idea/caches
+# /.idea/libraries
+# /.idea/modules.xml
+# /.idea/workspace.xml
+# /.idea/navEditor.xml
+# /.idea/assetWizardSettings.xml
+# .DS_Store
+# /build
+# /captures
+# .externalNativeBuild
+# .cxx
+# local.properties
+
+
+
+# Gradle files
+.gradle/
+build/
+**/build/
+
+# Local configuration files (SDK paths, keystore, etc.)
+local.properties
+.gradle/
+.idea/caches/
+.idea/libraries/
+.idea/modules.xml
+.idea/workspace.xml
+.idea/navEditor.xml
+.idea/assetWizardSettings.xml
+.idea/deploymentTargetDropDown.xml
+.idea/other.xml
+.idea/misc.xml
+
+# IntelliJ / Android Studio specific
+*.iml
+/.idea
+/.DS_Store
+
+# Android/Java build output
+app/build/
+captures/
+outputs/
+tmp/
+*.apk
+*.ap_
+*.aab
+
+# Gradle wrapper logs
+.gradle/
+.gradle-build/
+.gradle-test-kit/
+
+# Log files
+*.log
+
+# Emulators and OS-specific
+*.lock
+*.orig
+*.rej
+*.swp
+*.swo
+*~
+Thumbs.db
+.DS_Store
+*.class
+
+# Android Studio profiling
+*.hprof
+
+# Keystore files (security!)
+*.jks
+*.keystore
+
+# Generated files
+generated/
+captures/
+.navigation/
+
+# Misc
+bin/
+gen/
+out/
+
+# Optional: ignore test results
+test-results/
