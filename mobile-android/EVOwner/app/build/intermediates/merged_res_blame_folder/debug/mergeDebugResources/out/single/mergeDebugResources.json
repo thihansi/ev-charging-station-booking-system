@@ -1,0 +1,114 @@
+[
+    {
+        "merged": "com.ead.ev_owner.app-debug-46:/layout_activity_edit_reservation.xml.flat",
+        "source": "com.ead.ev_owner.app-main-48:/layout/activity_edit_reservation.xml"
+    },
+    {
+        "merged": "com.ead.ev_owner.app-debug-46:/mipmap-mdpi_ic_launcher_round.webp.flat",
+        "source": "com.ead.ev_owner.app-main-48:/mipmap-mdpi/ic_launcher_round.webp"
+    },
+    {
+        "merged": "com.ead.ev_owner.app-debug-46:/layout_activity_booking_detail.xml.flat",
+        "source": "com.ead.ev_owner.app-main-48:/layout/activity_booking_detail.xml"
+    },
+    {
+        "merged": "com.ead.ev_owner.app-debug-46:/xml_backup_rules.xml.flat",
+        "source": "com.ead.ev_owner.app-main-48:/xml/backup_rules.xml"
+    },
+    {
+        "merged": "com.ead.ev_owner.app-debug-46:/mipmap-anydpi_ic_launcher.xml.flat",
+        "source": "com.ead.ev_owner.app-main-48:/mipmap-anydpi/ic_launcher.xml"
+    },
+    {
+        "merged": "com.ead.ev_owner.app-debug-46:/layout_dialog_station_availability.xml.flat",
+        "source": "com.ead.ev_owner.app-main-48:/layout/dialog_station_availability.xml"
+    },
+    {
+        "merged": "com.ead.ev_owner.app-debug-46:/mipmap-xhdpi_ic_launcher_round.webp.flat",
+        "source": "com.ead.ev_owner.app-main-48:/mipmap-xhdpi/ic_launcher_round.webp"
+    },
+    {
+        "merged": "com.ead.ev_owner.app-debug-46:/drawable_ic_launcher_background.xml.flat",
+        "source": "com.ead.ev_owner.app-main-48:/drawable/ic_launcher_background.xml"
+    },
+    {
+        "merged": "com.ead.ev_owner.app-debug-46:/mipmap-xxhdpi_ic_launcher.webp.flat",
+        "source": "com.ead.ev_owner.app-main-48:/mipmap-xxhdpi/ic_launcher.webp"
+    },
+    {
+        "merged": "com.ead.ev_owner.app-debug-46:/layout_fragment_history.xml.flat",
+        "source": "com.ead.ev_owner.app-main-48:/layout/fragment_history.xml"
+    },
+    {
+        "merged": "com.ead.ev_owner.app-debug-46:/drawable_ic_launcher_foreground.xml.flat",
+        "source": "com.ead.ev_owner.app-main-48:/drawable/ic_launcher_foreground.xml"
+    },
+    {
+        "merged": "com.ead.ev_owner.app-debug-46:/mipmap-xxhdpi_ic_launcher_round.webp.flat",
+        "source": "com.ead.ev_owner.app-main-48:/mipmap-xxhdpi/ic_launcher_round.webp"
+    },
+    {
+        "merged": "com.ead.ev_owner.app-debug-46:/mipmap-mdpi_ic_launcher.webp.flat",
+        "source": "com.ead.ev_owner.app-main-48:/mipmap-mdpi/ic_launcher.webp"
+    },
+    {
+        "merged": "com.ead.ev_owner.app-debug-46:/layout_activity_reservation_summary.xml.flat",
+        "source": "com.ead.ev_owner.app-main-48:/layout/activity_reservation_summary.xml"
+    },
+    {
+        "merged": "com.ead.ev_owner.app-debug-46:/layout_activity_owner_register.xml.flat",
+        "source": "com.ead.ev_owner.app-main-48:/layout/activity_owner_register.xml"
+    },
+    {
+        "merged": "com.ead.ev_owner.app-debug-46:/layout_activity_stations_map.xml.flat",
+        "source": "com.ead.ev_owner.app-main-48:/layout/activity_stations_map.xml"
+    },
+    {
+        "merged": "com.ead.ev_owner.app-debug-46:/layout_activity_new_reservation.xml.flat",
+        "source": "com.ead.ev_owner.app-main-48:/layout/activity_new_reservation.xml"
+    },
+    {
+        "merged": "com.ead.ev_owner.app-debug-46:/mipmap-hdpi_ic_launcher_round.webp.flat",
+        "source": "com.ead.ev_owner.app-main-48:/mipmap-hdpi/ic_launcher_round.webp"
+    },
+    {
+        "merged": "com.ead.ev_owner.app-debug-46:/mipmap-hdpi_ic_launcher.webp.flat",
+        "source": "com.ead.ev_owner.app-main-48:/mipmap-hdpi/ic_launcher.webp"
+    },
+    {
+        "merged": "com.ead.ev_owner.app-debug-46:/mipmap-anydpi_ic_launcher_round.xml.flat",
+        "source": "com.ead.ev_owner.app-main-48:/mipmap-anydpi/ic_launcher_round.xml"
+    },
+    {
+        "merged": "com.ead.ev_owner.app-debug-46:/layout_activity_dashboard.xml.flat",
+        "source": "com.ead.ev_owner.app-main-48:/layout/activity_dashboard.xml"
+    },
+    {
+        "merged": "com.ead.ev_owner.app-debug-46:/mipmap-xxxhdpi_ic_launcher_round.webp.flat",
+        "source": "com.ead.ev_owner.app-main-48:/mipmap-xxxhdpi/ic_launcher_round.webp"
+    },
+    {
+        "merged": "com.ead.ev_owner.app-debug-46:/layout_activity_my_bookings.xml.flat",
+        "source": "com.ead.ev_owner.app-main-48:/layout/activity_my_bookings.xml"
+    },
+    {
+        "merged": "com.ead.ev_owner.app-debug-46:/layout_fragment_upcoming.xml.flat",
+        "source": "com.ead.ev_owner.app-main-48:/layout/fragment_upcoming.xml"
+    },
+    {
+        "merged": "com.ead.ev_owner.app-debug-46:/xml_data_extraction_rules.xml.flat",
+        "source": "com.ead.ev_owner.app-main-48:/xml/data_extraction_rules.xml"
+    },
+    {
+        "merged": "com.ead.ev_owner.app-debug-46:/mipmap-xxxhdpi_ic_launcher.webp.flat",
+        "source": "com.ead.ev_owner.app-main-48:/mipmap-xxxhdpi/ic_launcher.webp"
+    },
+    {
+        "merged": "com.ead.ev_owner.app-debug-46:/mipmap-xhdpi_ic_launcher.webp.flat",
+        "source": "com.ead.ev_owner.app-main-48:/mipmap-xhdpi/ic_launcher.webp"
+    },
+    {
+        "merged": "com.ead.ev_owner.app-debug-46:/layout_activity_owner_login.xml.flat",
+        "source": "com.ead.ev_owner.app-main-48:/layout/activity_owner_login.xml"
+    }
+]

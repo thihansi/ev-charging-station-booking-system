@@ -1,0 +1,343 @@
+-- Merging decision tree log ---
+manifest
+ADDED from /Users/tommy19/Desktop/Y4S1/EAD/Assignment/Repo/ev-charging-station-booking-system/mobile-android/EVOwner/app/src/main/AndroidManifest.xml:2:1-36:12
+INJECTED from /Users/tommy19/Desktop/Y4S1/EAD/Assignment/Repo/ev-charging-station-booking-system/mobile-android/EVOwner/app/src/main/AndroidManifest.xml:2:1-36:12
+INJECTED from /Users/tommy19/Desktop/Y4S1/EAD/Assignment/Repo/ev-charging-station-booking-system/mobile-android/EVOwner/app/src/main/AndroidManifest.xml:2:1-36:12
+INJECTED from /Users/tommy19/Desktop/Y4S1/EAD/Assignment/Repo/ev-charging-station-booking-system/mobile-android/EVOwner/app/src/main/AndroidManifest.xml:2:1-36:12
+MERGED from [androidx.compose.material3:material3-android:1.3.0] /Users/tommy19/.gradle/caches/8.14/transforms/ea368bf7b9fbb48660f81ccb4e4024c4/transformed/material3-release/AndroidManifest.xml:17:1-22:12
+MERGED from [androidx.compose.material:material-android:1.7.0] /Users/tommy19/.gradle/caches/8.14/transforms/cd774a935250ae0fa6efd2d3674aa394/transformed/material-release/AndroidManifest.xml:2:1-7:12
+MERGED from [androidx.compose.material:material-ripple-android:1.7.0] /Users/tommy19/.gradle/caches/8.14/transforms/5502188df5229c9a4587d429cb88fd03/transformed/material-ripple-release/AndroidManifest.xml:2:1-7:12
+MERGED from [androidx.compose.foundation:foundation-android:1.7.0] /Users/tommy19/.gradle/caches/8.14/transforms/05dc70d2c5564cfa24074c2d1eae1758/transformed/foundation-release/AndroidManifest.xml:2:1-7:12
+MERGED from [androidx.compose.animation:animation-android:1.7.0] /Users/tommy19/.gradle/caches/8.14/transforms/c601d5001490f52555140596df311874/transformed/animation-release/AndroidManifest.xml:2:1-7:12
+MERGED from [androidx.compose.foundation:foundation-layout-android:1.7.0] /Users/tommy19/.gradle/caches/8.14/transforms/89d82ffe784ebc90126e3e61e2dcd149/transformed/foundation-layout-release/AndroidManifest.xml:2:1-7:12
+MERGED from [androidx.compose.animation:animation-core-android:1.7.0] /Users/tommy19/.gradle/caches/8.14/transforms/8593da0f48e885b4f92135b219000d0d/transformed/animation-core-release/AndroidManifest.xml:2:1-7:12
+MERGED from [androidx.compose.ui:ui-tooling-data-android:1.7.0] /Users/tommy19/.gradle/caches/8.14/transforms/f259f89f818c4654016ecd4e24364f63/transformed/ui-tooling-data-release/AndroidManifest.xml:2:1-7:12
+MERGED from [androidx.compose.ui:ui-unit-android:1.7.0] /Users/tommy19/.gradle/caches/8.14/transforms/53153d032be6d84c6505f86b562c3297/transformed/ui-unit-release/AndroidManifest.xml:2:1-7:12
+MERGED from [androidx.compose.ui:ui-geometry-android:1.7.0] /Users/tommy19/.gradle/caches/8.14/transforms/ae3dfddff21893a6c3e0f5e9c60b92fb/transformed/ui-geometry-release/AndroidManifest.xml:2:1-7:12
+MERGED from [androidx.compose.ui:ui-util-android:1.7.0] /Users/tommy19/.gradle/caches/8.14/transforms/05268d62ab2a4268188d6525bcff6414/transformed/ui-util-release/AndroidManifest.xml:2:1-7:12
+MERGED from [androidx.compose.ui:ui-text-android:1.7.0] /Users/tommy19/.gradle/caches/8.14/transforms/a0f8a7ba4b159367e5028cd86735e265/transformed/ui-text-release/AndroidManifest.xml:2:1-7:12
+MERGED from [androidx.compose.ui:ui-tooling-preview-android:1.7.0] /Users/tommy19/.gradle/caches/8.14/transforms/f94040de4da6acfa09e7ae9925890fbf/transformed/ui-tooling-preview-release/AndroidManifest.xml:17:1-22:12
+MERGED from [androidx.compose.ui:ui-tooling-android:1.7.0] /Users/tommy19/.gradle/caches/8.14/transforms/430681303e5df7409edbfb64b362d8b9/transformed/ui-tooling-release/AndroidManifest.xml:17:1-28:12
+MERGED from [androidx.compose.ui:ui-graphics-android:1.7.0] /Users/tommy19/.gradle/caches/8.14/transforms/267f86395414a75daeeb744972f5ec79/transformed/ui-graphics-release/AndroidManifest.xml:2:1-7:12
+MERGED from [androidx.compose.ui:ui-test-manifest:1.7.0] /Users/tommy19/.gradle/caches/8.14/transforms/af9d1a24448ce35cce8f3a2f1ea53194/transformed/ui-test-manifest-1.7.0/AndroidManifest.xml:17:1-28:12
+MERGED from [androidx.activity:activity-ktx:1.8.2] /Users/tommy19/.gradle/caches/8.14/transforms/123ef2f37c82181d8c48da337ce91834/transformed/activity-ktx-1.8.2/AndroidManifest.xml:2:1-7:12
+MERGED from [androidx.activity:activity:1.8.2] /Users/tommy19/.gradle/caches/8.14/transforms/a1e63f6854213b96c7541e723df096f4/transformed/activity-1.8.2/AndroidManifest.xml:17:1-22:12
+MERGED from [androidx.activity:activity-compose:1.8.2] /Users/tommy19/.gradle/caches/8.14/transforms/608666531ff461d48b141322aaee01c4/transformed/activity-compose-1.8.2/AndroidManifest.xml:2:1-7:12
+MERGED from [androidx.compose.material:material-icons-core-android:1.7.0] /Users/tommy19/.gradle/caches/8.14/transforms/f9bf884961ccde952bce436495b21369/transformed/material-icons-core-release/AndroidManifest.xml:2:1-7:12
+MERGED from [androidx.compose.ui:ui-android:1.7.0] /Users/tommy19/.gradle/caches/8.14/transforms/41c3f2ccf7d3411d95a1845ea4a190a3/transformed/ui-release/AndroidManifest.xml:2:1-7:12
+MERGED from [androidx.autofill:autofill:1.0.0] /Users/tommy19/.gradle/caches/8.14/transforms/f435a107c2e30c82dbb3895377d8f096/transformed/autofill-1.0.0/AndroidManifest.xml:17:1-24:12
+MERGED from [androidx.graphics:graphics-path:1.0.1] /Users/tommy19/.gradle/caches/8.14/transforms/1de46ce144ceb2d6a008c51eb77dc9fb/transformed/graphics-path-1.0.1/AndroidManifest.xml:2:1-7:12
+MERGED from [androidx.emoji2:emoji2:1.3.0] /Users/tommy19/.gradle/caches/8.14/transforms/dcaad81d14b58c352dc80f50ef17a59e/transformed/emoji2-1.3.0/AndroidManifest.xml:17:1-35:12
+MERGED from [androidx.customview:customview-poolingcontainer:1.0.0] /Users/tommy19/.gradle/caches/8.14/transforms/068d40ae7a4883152ae25c39fcf57245/transformed/customview-poolingcontainer-1.0.0/AndroidManifest.xml:17:1-23:12
+MERGED from [androidx.core:core-ktx:1.13.1] /Users/tommy19/.gradle/caches/8.14/transforms/8bc8f0ad9eeb54427984cd2551c0768e/transformed/core-ktx-1.13.1/AndroidManifest.xml:2:1-7:12
+MERGED from [androidx.core:core:1.13.1] /Users/tommy19/.gradle/caches/8.14/transforms/c93313df357c1b0295725774db470f41/transformed/core-1.13.1/AndroidManifest.xml:17:1-30:12
+MERGED from [androidx.lifecycle:lifecycle-livedata-core:2.8.3] /Users/tommy19/.gradle/caches/8.14/transforms/2a62c8749a5f2c955a0e26769dcff368/transformed/lifecycle-livedata-core-2.8.3/AndroidManifest.xml:17:1-22:12
+MERGED from [androidx.lifecycle:lifecycle-viewmodel-android:2.8.3] /Users/tommy19/.gradle/caches/8.14/transforms/1349d73ea3846eb73284f7078ec74be1/transformed/lifecycle-viewmodel-release/AndroidManifest.xml:17:1-22:12
+MERGED from [androidx.lifecycle:lifecycle-process:2.8.3] /Users/tommy19/.gradle/caches/8.14/transforms/4233befcc7933220d2e806cd3e0d557f/transformed/lifecycle-process-2.8.3/AndroidManifest.xml:17:1-35:12
+MERGED from [androidx.lifecycle:lifecycle-runtime-ktx-android:2.8.3] /Users/tommy19/.gradle/caches/8.14/transforms/291047c39074014f842fea3460cda19b/transformed/lifecycle-runtime-ktx-release/AndroidManifest.xml:2:1-7:12
+MERGED from [androidx.lifecycle:lifecycle-runtime-android:2.8.3] /Users/tommy19/.gradle/caches/8.14/transforms/1b4468dd359ed26ff73258efd2edcb80/transformed/lifecycle-runtime-release/AndroidManifest.xml:17:1-22:12
+MERGED from [androidx.lifecycle:lifecycle-viewmodel-ktx:2.8.3] /Users/tommy19/.gradle/caches/8.14/transforms/530d8388f177a48f0b614dffff18a76e/transformed/lifecycle-viewmodel-ktx-2.8.3/AndroidManifest.xml:2:1-7:12
+MERGED from [androidx.lifecycle:lifecycle-runtime-compose-android:2.8.3] /Users/tommy19/.gradle/caches/8.14/transforms/549556376604857a2d296de6c7ef0840/transformed/lifecycle-runtime-compose-release/AndroidManifest.xml:2:1-7:12
+MERGED from [androidx.lifecycle:lifecycle-viewmodel-savedstate:2.8.3] /Users/tommy19/.gradle/caches/8.14/transforms/337ee93f861c5cb6d1660334d9500234/transformed/lifecycle-viewmodel-savedstate-2.8.3/AndroidManifest.xml:17:1-22:12
+MERGED from [androidx.savedstate:savedstate:1.2.1] /Users/tommy19/.gradle/caches/8.14/transforms/5965a354accf991bc810c5fbe4ceb910/transformed/savedstate-1.2.1/AndroidManifest.xml:17:1-22:12
+MERGED from [androidx.savedstate:savedstate-ktx:1.2.1] /Users/tommy19/.gradle/caches/8.14/transforms/948db5f9b031970fe1539cde7f67fd1c/transformed/savedstate-ktx-1.2.1/AndroidManifest.xml:17:1-22:12
+MERGED from [androidx.compose.runtime:runtime-saveable-android:1.7.0] /Users/tommy19/.gradle/caches/8.14/transforms/c2cbfa305fa9b8ce3cfafcf2be5e8baf/transformed/runtime-saveable-release/AndroidManifest.xml:2:1-7:12
+MERGED from [androidx.compose.runtime:runtime-android:1.7.0] /Users/tommy19/.gradle/caches/8.14/transforms/e3a3302ad0cbc7266e7ab7f2a6de0e2e/transformed/runtime-release/AndroidManifest.xml:2:1-7:12
+MERGED from [androidx.annotation:annotation-experimental:1.4.0] /Users/tommy19/.gradle/caches/8.14/transforms/9e4d652ae3bf546952430f5a2abab718/transformed/annotation-experimental-1.4.0/AndroidManifest.xml:2:1-7:12
+MERGED from [androidx.versionedparcelable:versionedparcelable:1.1.1] /Users/tommy19/.gradle/caches/8.14/transforms/4b3d3b36b694d58b79d183f284c6bc01/transformed/versionedparcelable-1.1.1/AndroidManifest.xml:17:1-27:12
+MERGED from [androidx.profileinstaller:profileinstaller:1.3.1] /Users/tommy19/.gradle/caches/8.14/transforms/7447d2b89fe3de0c6fc85838df73324b/transformed/profileinstaller-1.3.1/AndroidManifest.xml:17:1-55:12
+MERGED from [androidx.startup:startup-runtime:1.1.1] /Users/tommy19/.gradle/caches/8.14/transforms/02ab978a1c00828f5ba02a27ba9e9028/transformed/startup-runtime-1.1.1/AndroidManifest.xml:17:1-33:12
+MERGED from [androidx.tracing:tracing:1.0.0] /Users/tommy19/.gradle/caches/8.14/transforms/768b7572dac7ca9afccb39ea1f933318/transformed/tracing-1.0.0/AndroidManifest.xml:17:1-24:12
+MERGED from [androidx.interpolator:interpolator:1.0.0] /Users/tommy19/.gradle/caches/8.14/transforms/98cbb1ed270b9f4110763f9d48d9f966/transformed/interpolator-1.0.0/AndroidManifest.xml:17:1-22:12
+MERGED from [androidx.arch.core:core-runtime:2.2.0] /Users/tommy19/.gradle/caches/8.14/transforms/61ebba233c18a72401611834cb37addf/transformed/core-runtime-2.2.0/AndroidManifest.xml:17:1-22:12
+	package
+		INJECTED from /Users/tommy19/Desktop/Y4S1/EAD/Assignment/Repo/ev-charging-station-booking-system/mobile-android/EVOwner/app/src/main/AndroidManifest.xml
+	android:versionName
+		INJECTED from /Users/tommy19/Desktop/Y4S1/EAD/Assignment/Repo/ev-charging-station-booking-system/mobile-android/EVOwner/app/src/main/AndroidManifest.xml
+	xmlns:tools
+		ADDED from /Users/tommy19/Desktop/Y4S1/EAD/Assignment/Repo/ev-charging-station-booking-system/mobile-android/EVOwner/app/src/main/AndroidManifest.xml:3:5-51
+	android:versionCode
+		INJECTED from /Users/tommy19/Desktop/Y4S1/EAD/Assignment/Repo/ev-charging-station-booking-system/mobile-android/EVOwner/app/src/main/AndroidManifest.xml
+	xmlns:android
+		ADDED from /Users/tommy19/Desktop/Y4S1/EAD/Assignment/Repo/ev-charging-station-booking-system/mobile-android/EVOwner/app/src/main/AndroidManifest.xml:2:11-69
+uses-permission#android.permission.INTERNET
+ADDED from /Users/tommy19/Desktop/Y4S1/EAD/Assignment/Repo/ev-charging-station-booking-system/mobile-android/EVOwner/app/src/main/AndroidManifest.xml:4:5-66
+	android:name
+		ADDED from /Users/tommy19/Desktop/Y4S1/EAD/Assignment/Repo/ev-charging-station-booking-system/mobile-android/EVOwner/app/src/main/AndroidManifest.xml:4:22-64
+uses-permission#android.permission.ACCESS_COARSE_LOCATION
+ADDED from /Users/tommy19/Desktop/Y4S1/EAD/Assignment/Repo/ev-charging-station-booking-system/mobile-android/EVOwner/app/src/main/AndroidManifest.xml:5:5-80
+	android:name
+		ADDED from /Users/tommy19/Desktop/Y4S1/EAD/Assignment/Repo/ev-charging-station-booking-system/mobile-android/EVOwner/app/src/main/AndroidManifest.xml:5:22-78
+uses-feature#android.hardware.camera
+ADDED from /Users/tommy19/Desktop/Y4S1/EAD/Assignment/Repo/ev-charging-station-booking-system/mobile-android/EVOwner/app/src/main/AndroidManifest.xml:6:5-84
+	android:required
+		ADDED from /Users/tommy19/Desktop/Y4S1/EAD/Assignment/Repo/ev-charging-station-booking-system/mobile-android/EVOwner/app/src/main/AndroidManifest.xml:6:58-82
+	android:name
+		ADDED from /Users/tommy19/Desktop/Y4S1/EAD/Assignment/Repo/ev-charging-station-booking-system/mobile-android/EVOwner/app/src/main/AndroidManifest.xml:6:19-57
+application
+ADDED from /Users/tommy19/Desktop/Y4S1/EAD/Assignment/Repo/ev-charging-station-booking-system/mobile-android/EVOwner/app/src/main/AndroidManifest.xml:8:5-34:19
+INJECTED from /Users/tommy19/Desktop/Y4S1/EAD/Assignment/Repo/ev-charging-station-booking-system/mobile-android/EVOwner/app/src/main/AndroidManifest.xml:8:5-34:19
+MERGED from [androidx.compose.ui:ui-tooling-android:1.7.0] /Users/tommy19/.gradle/caches/8.14/transforms/430681303e5df7409edbfb64b362d8b9/transformed/ui-tooling-release/AndroidManifest.xml:22:5-26:19
+MERGED from [androidx.compose.ui:ui-tooling-android:1.7.0] /Users/tommy19/.gradle/caches/8.14/transforms/430681303e5df7409edbfb64b362d8b9/transformed/ui-tooling-release/AndroidManifest.xml:22:5-26:19
+MERGED from [androidx.compose.ui:ui-test-manifest:1.7.0] /Users/tommy19/.gradle/caches/8.14/transforms/af9d1a24448ce35cce8f3a2f1ea53194/transformed/ui-test-manifest-1.7.0/AndroidManifest.xml:22:5-26:19
+MERGED from [androidx.compose.ui:ui-test-manifest:1.7.0] /Users/tommy19/.gradle/caches/8.14/transforms/af9d1a24448ce35cce8f3a2f1ea53194/transformed/ui-test-manifest-1.7.0/AndroidManifest.xml:22:5-26:19
+MERGED from [androidx.emoji2:emoji2:1.3.0] /Users/tommy19/.gradle/caches/8.14/transforms/dcaad81d14b58c352dc80f50ef17a59e/transformed/emoji2-1.3.0/AndroidManifest.xml:23:5-33:19
+MERGED from [androidx.emoji2:emoji2:1.3.0] /Users/tommy19/.gradle/caches/8.14/transforms/dcaad81d14b58c352dc80f50ef17a59e/transformed/emoji2-1.3.0/AndroidManifest.xml:23:5-33:19
+MERGED from [androidx.core:core:1.13.1] /Users/tommy19/.gradle/caches/8.14/transforms/c93313df357c1b0295725774db470f41/transformed/core-1.13.1/AndroidManifest.xml:28:5-89
+MERGED from [androidx.core:core:1.13.1] /Users/tommy19/.gradle/caches/8.14/transforms/c93313df357c1b0295725774db470f41/transformed/core-1.13.1/AndroidManifest.xml:28:5-89
+MERGED from [androidx.lifecycle:lifecycle-process:2.8.3] /Users/tommy19/.gradle/caches/8.14/transforms/4233befcc7933220d2e806cd3e0d557f/transformed/lifecycle-process-2.8.3/AndroidManifest.xml:23:5-33:19
+MERGED from [androidx.lifecycle:lifecycle-process:2.8.3] /Users/tommy19/.gradle/caches/8.14/transforms/4233befcc7933220d2e806cd3e0d557f/transformed/lifecycle-process-2.8.3/AndroidManifest.xml:23:5-33:19
+MERGED from [androidx.versionedparcelable:versionedparcelable:1.1.1] /Users/tommy19/.gradle/caches/8.14/transforms/4b3d3b36b694d58b79d183f284c6bc01/transformed/versionedparcelable-1.1.1/AndroidManifest.xml:24:5-25:19
+MERGED from [androidx.versionedparcelable:versionedparcelable:1.1.1] /Users/tommy19/.gradle/caches/8.14/transforms/4b3d3b36b694d58b79d183f284c6bc01/transformed/versionedparcelable-1.1.1/AndroidManifest.xml:24:5-25:19
+MERGED from [androidx.profileinstaller:profileinstaller:1.3.1] /Users/tommy19/.gradle/caches/8.14/transforms/7447d2b89fe3de0c6fc85838df73324b/transformed/profileinstaller-1.3.1/AndroidManifest.xml:23:5-53:19
+MERGED from [androidx.profileinstaller:profileinstaller:1.3.1] /Users/tommy19/.gradle/caches/8.14/transforms/7447d2b89fe3de0c6fc85838df73324b/transformed/profileinstaller-1.3.1/AndroidManifest.xml:23:5-53:19
+MERGED from [androidx.startup:startup-runtime:1.1.1] /Users/tommy19/.gradle/caches/8.14/transforms/02ab978a1c00828f5ba02a27ba9e9028/transformed/startup-runtime-1.1.1/AndroidManifest.xml:25:5-31:19
+MERGED from [androidx.startup:startup-runtime:1.1.1] /Users/tommy19/.gradle/caches/8.14/transforms/02ab978a1c00828f5ba02a27ba9e9028/transformed/startup-runtime-1.1.1/AndroidManifest.xml:25:5-31:19
+	android:extractNativeLibs
+		INJECTED from /Users/tommy19/Desktop/Y4S1/EAD/Assignment/Repo/ev-charging-station-booking-system/mobile-android/EVOwner/app/src/main/AndroidManifest.xml
+	android:appComponentFactory
+		ADDED from [androidx.core:core:1.13.1] /Users/tommy19/.gradle/caches/8.14/transforms/c93313df357c1b0295725774db470f41/transformed/core-1.13.1/AndroidManifest.xml:28:18-86
+	android:supportsRtl
+		ADDED from /Users/tommy19/Desktop/Y4S1/EAD/Assignment/Repo/ev-charging-station-booking-system/mobile-android/EVOwner/app/src/main/AndroidManifest.xml:15:9-35
+	android:label
+		ADDED from /Users/tommy19/Desktop/Y4S1/EAD/Assignment/Repo/ev-charging-station-booking-system/mobile-android/EVOwner/app/src/main/AndroidManifest.xml:13:9-41
+	android:fullBackupContent
+		ADDED from /Users/tommy19/Desktop/Y4S1/EAD/Assignment/Repo/ev-charging-station-booking-system/mobile-android/EVOwner/app/src/main/AndroidManifest.xml:11:9-54
+	android:roundIcon
+		ADDED from /Users/tommy19/Desktop/Y4S1/EAD/Assignment/Repo/ev-charging-station-booking-system/mobile-android/EVOwner/app/src/main/AndroidManifest.xml:14:9-54
+	tools:targetApi
+		ADDED from /Users/tommy19/Desktop/Y4S1/EAD/Assignment/Repo/ev-charging-station-booking-system/mobile-android/EVOwner/app/src/main/AndroidManifest.xml:17:9-29
+	android:icon
+		ADDED from /Users/tommy19/Desktop/Y4S1/EAD/Assignment/Repo/ev-charging-station-booking-system/mobile-android/EVOwner/app/src/main/AndroidManifest.xml:12:9-43
+	android:allowBackup
+		ADDED from /Users/tommy19/Desktop/Y4S1/EAD/Assignment/Repo/ev-charging-station-booking-system/mobile-android/EVOwner/app/src/main/AndroidManifest.xml:9:9-35
+	android:theme
+		ADDED from /Users/tommy19/Desktop/Y4S1/EAD/Assignment/Repo/ev-charging-station-booking-system/mobile-android/EVOwner/app/src/main/AndroidManifest.xml:16:9-45
+	android:dataExtractionRules
+		ADDED from /Users/tommy19/Desktop/Y4S1/EAD/Assignment/Repo/ev-charging-station-booking-system/mobile-android/EVOwner/app/src/main/AndroidManifest.xml:10:9-65
+meta-data#com.google.android.geo.API_KEY
+ADDED from /Users/tommy19/Desktop/Y4S1/EAD/Assignment/Repo/ev-charging-station-booking-system/mobile-android/EVOwner/app/src/main/AndroidManifest.xml:20:7-22:52
+	android:value
+		ADDED from /Users/tommy19/Desktop/Y4S1/EAD/Assignment/Repo/ev-charging-station-booking-system/mobile-android/EVOwner/app/src/main/AndroidManifest.xml:22:11-50
+	android:name
+		ADDED from /Users/tommy19/Desktop/Y4S1/EAD/Assignment/Repo/ev-charging-station-booking-system/mobile-android/EVOwner/app/src/main/AndroidManifest.xml:21:11-56
+activity#com.ead.ev_owner.MainActivity
+ADDED from /Users/tommy19/Desktop/Y4S1/EAD/Assignment/Repo/ev-charging-station-booking-system/mobile-android/EVOwner/app/src/main/AndroidManifest.xml:24:9-33:20
+	android:exported
+		ADDED from /Users/tommy19/Desktop/Y4S1/EAD/Assignment/Repo/ev-charging-station-booking-system/mobile-android/EVOwner/app/src/main/AndroidManifest.xml:26:13-36
+	android:theme
+		ADDED from /Users/tommy19/Desktop/Y4S1/EAD/Assignment/Repo/ev-charging-station-booking-system/mobile-android/EVOwner/app/src/main/AndroidManifest.xml:27:13-49
+	android:name
+		ADDED from /Users/tommy19/Desktop/Y4S1/EAD/Assignment/Repo/ev-charging-station-booking-system/mobile-android/EVOwner/app/src/main/AndroidManifest.xml:25:13-41
+intent-filter#action:name:android.intent.action.MAIN+category:name:android.intent.category.LAUNCHER
+ADDED from /Users/tommy19/Desktop/Y4S1/EAD/Assignment/Repo/ev-charging-station-booking-system/mobile-android/EVOwner/app/src/main/AndroidManifest.xml:28:13-32:29
+action#android.intent.action.MAIN
+ADDED from /Users/tommy19/Desktop/Y4S1/EAD/Assignment/Repo/ev-charging-station-booking-system/mobile-android/EVOwner/app/src/main/AndroidManifest.xml:29:17-69
+	android:name
+		ADDED from /Users/tommy19/Desktop/Y4S1/EAD/Assignment/Repo/ev-charging-station-booking-system/mobile-android/EVOwner/app/src/main/AndroidManifest.xml:29:25-66
+category#android.intent.category.LAUNCHER
+ADDED from /Users/tommy19/Desktop/Y4S1/EAD/Assignment/Repo/ev-charging-station-booking-system/mobile-android/EVOwner/app/src/main/AndroidManifest.xml:31:17-77
+	android:name
+		ADDED from /Users/tommy19/Desktop/Y4S1/EAD/Assignment/Repo/ev-charging-station-booking-system/mobile-android/EVOwner/app/src/main/AndroidManifest.xml:31:27-74
+uses-sdk
+INJECTED from /Users/tommy19/Desktop/Y4S1/EAD/Assignment/Repo/ev-charging-station-booking-system/mobile-android/EVOwner/app/src/main/AndroidManifest.xml reason: use-sdk injection requested
+INJECTED from /Users/tommy19/Desktop/Y4S1/EAD/Assignment/Repo/ev-charging-station-booking-system/mobile-android/EVOwner/app/src/main/AndroidManifest.xml
+INJECTED from /Users/tommy19/Desktop/Y4S1/EAD/Assignment/Repo/ev-charging-station-booking-system/mobile-android/EVOwner/app/src/main/AndroidManifest.xml
+MERGED from [androidx.compose.material3:material3-android:1.3.0] /Users/tommy19/.gradle/caches/8.14/transforms/ea368bf7b9fbb48660f81ccb4e4024c4/transformed/material3-release/AndroidManifest.xml:20:5-44
+MERGED from [androidx.compose.material3:material3-android:1.3.0] /Users/tommy19/.gradle/caches/8.14/transforms/ea368bf7b9fbb48660f81ccb4e4024c4/transformed/material3-release/AndroidManifest.xml:20:5-44
+MERGED from [androidx.compose.material:material-android:1.7.0] /Users/tommy19/.gradle/caches/8.14/transforms/cd774a935250ae0fa6efd2d3674aa394/transformed/material-release/AndroidManifest.xml:5:5-44
+MERGED from [androidx.compose.material:material-android:1.7.0] /Users/tommy19/.gradle/caches/8.14/transforms/cd774a935250ae0fa6efd2d3674aa394/transformed/material-release/AndroidManifest.xml:5:5-44
+MERGED from [androidx.compose.material:material-ripple-android:1.7.0] /Users/tommy19/.gradle/caches/8.14/transforms/5502188df5229c9a4587d429cb88fd03/transformed/material-ripple-release/AndroidManifest.xml:5:5-44
+MERGED from [androidx.compose.material:material-ripple-android:1.7.0] /Users/tommy19/.gradle/caches/8.14/transforms/5502188df5229c9a4587d429cb88fd03/transformed/material-ripple-release/AndroidManifest.xml:5:5-44
+MERGED from [androidx.compose.foundation:foundation-android:1.7.0] /Users/tommy19/.gradle/caches/8.14/transforms/05dc70d2c5564cfa24074c2d1eae1758/transformed/foundation-release/AndroidManifest.xml:5:5-44
+MERGED from [androidx.compose.foundation:foundation-android:1.7.0] /Users/tommy19/.gradle/caches/8.14/transforms/05dc70d2c5564cfa24074c2d1eae1758/transformed/foundation-release/AndroidManifest.xml:5:5-44
+MERGED from [androidx.compose.animation:animation-android:1.7.0] /Users/tommy19/.gradle/caches/8.14/transforms/c601d5001490f52555140596df311874/transformed/animation-release/AndroidManifest.xml:5:5-44
+MERGED from [androidx.compose.animation:animation-android:1.7.0] /Users/tommy19/.gradle/caches/8.14/transforms/c601d5001490f52555140596df311874/transformed/animation-release/AndroidManifest.xml:5:5-44
+MERGED from [androidx.compose.foundation:foundation-layout-android:1.7.0] /Users/tommy19/.gradle/caches/8.14/transforms/89d82ffe784ebc90126e3e61e2dcd149/transformed/foundation-layout-release/AndroidManifest.xml:5:5-44
+MERGED from [androidx.compose.foundation:foundation-layout-android:1.7.0] /Users/tommy19/.gradle/caches/8.14/transforms/89d82ffe784ebc90126e3e61e2dcd149/transformed/foundation-layout-release/AndroidManifest.xml:5:5-44
+MERGED from [androidx.compose.animation:animation-core-android:1.7.0] /Users/tommy19/.gradle/caches/8.14/transforms/8593da0f48e885b4f92135b219000d0d/transformed/animation-core-release/AndroidManifest.xml:5:5-44
+MERGED from [androidx.compose.animation:animation-core-android:1.7.0] /Users/tommy19/.gradle/caches/8.14/transforms/8593da0f48e885b4f92135b219000d0d/transformed/animation-core-release/AndroidManifest.xml:5:5-44
+MERGED from [androidx.compose.ui:ui-tooling-data-android:1.7.0] /Users/tommy19/.gradle/caches/8.14/transforms/f259f89f818c4654016ecd4e24364f63/transformed/ui-tooling-data-release/AndroidManifest.xml:5:5-44
+MERGED from [androidx.compose.ui:ui-tooling-data-android:1.7.0] /Users/tommy19/.gradle/caches/8.14/transforms/f259f89f818c4654016ecd4e24364f63/transformed/ui-tooling-data-release/AndroidManifest.xml:5:5-44
+MERGED from [androidx.compose.ui:ui-unit-android:1.7.0] /Users/tommy19/.gradle/caches/8.14/transforms/53153d032be6d84c6505f86b562c3297/transformed/ui-unit-release/AndroidManifest.xml:5:5-44
+MERGED from [androidx.compose.ui:ui-unit-android:1.7.0] /Users/tommy19/.gradle/caches/8.14/transforms/53153d032be6d84c6505f86b562c3297/transformed/ui-unit-release/AndroidManifest.xml:5:5-44
+MERGED from [androidx.compose.ui:ui-geometry-android:1.7.0] /Users/tommy19/.gradle/caches/8.14/transforms/ae3dfddff21893a6c3e0f5e9c60b92fb/transformed/ui-geometry-release/AndroidManifest.xml:5:5-44
+MERGED from [androidx.compose.ui:ui-geometry-android:1.7.0] /Users/tommy19/.gradle/caches/8.14/transforms/ae3dfddff21893a6c3e0f5e9c60b92fb/transformed/ui-geometry-release/AndroidManifest.xml:5:5-44
+MERGED from [androidx.compose.ui:ui-util-android:1.7.0] /Users/tommy19/.gradle/caches/8.14/transforms/05268d62ab2a4268188d6525bcff6414/transformed/ui-util-release/AndroidManifest.xml:5:5-44
+MERGED from [androidx.compose.ui:ui-util-android:1.7.0] /Users/tommy19/.gradle/caches/8.14/transforms/05268d62ab2a4268188d6525bcff6414/transformed/ui-util-release/AndroidManifest.xml:5:5-44
+MERGED from [androidx.compose.ui:ui-text-android:1.7.0] /Users/tommy19/.gradle/caches/8.14/transforms/a0f8a7ba4b159367e5028cd86735e265/transformed/ui-text-release/AndroidManifest.xml:5:5-44
+MERGED from [androidx.compose.ui:ui-text-android:1.7.0] /Users/tommy19/.gradle/caches/8.14/transforms/a0f8a7ba4b159367e5028cd86735e265/transformed/ui-text-release/AndroidManifest.xml:5:5-44
+MERGED from [androidx.compose.ui:ui-tooling-preview-android:1.7.0] /Users/tommy19/.gradle/caches/8.14/transforms/f94040de4da6acfa09e7ae9925890fbf/transformed/ui-tooling-preview-release/AndroidManifest.xml:20:5-44
+MERGED from [androidx.compose.ui:ui-tooling-preview-android:1.7.0] /Users/tommy19/.gradle/caches/8.14/transforms/f94040de4da6acfa09e7ae9925890fbf/transformed/ui-tooling-preview-release/AndroidManifest.xml:20:5-44
+MERGED from [androidx.compose.ui:ui-tooling-android:1.7.0] /Users/tommy19/.gradle/caches/8.14/transforms/430681303e5df7409edbfb64b362d8b9/transformed/ui-tooling-release/AndroidManifest.xml:20:5-44
+MERGED from [androidx.compose.ui:ui-tooling-android:1.7.0] /Users/tommy19/.gradle/caches/8.14/transforms/430681303e5df7409edbfb64b362d8b9/transformed/ui-tooling-release/AndroidManifest.xml:20:5-44
+MERGED from [androidx.compose.ui:ui-graphics-android:1.7.0] /Users/tommy19/.gradle/caches/8.14/transforms/267f86395414a75daeeb744972f5ec79/transformed/ui-graphics-release/AndroidManifest.xml:5:5-44
+MERGED from [androidx.compose.ui:ui-graphics-android:1.7.0] /Users/tommy19/.gradle/caches/8.14/transforms/267f86395414a75daeeb744972f5ec79/transformed/ui-graphics-release/AndroidManifest.xml:5:5-44
+MERGED from [androidx.compose.ui:ui-test-manifest:1.7.0] /Users/tommy19/.gradle/caches/8.14/transforms/af9d1a24448ce35cce8f3a2f1ea53194/transformed/ui-test-manifest-1.7.0/AndroidManifest.xml:20:5-44
+MERGED from [androidx.compose.ui:ui-test-manifest:1.7.0] /Users/tommy19/.gradle/caches/8.14/transforms/af9d1a24448ce35cce8f3a2f1ea53194/transformed/ui-test-manifest-1.7.0/AndroidManifest.xml:20:5-44
+MERGED from [androidx.activity:activity-ktx:1.8.2] /Users/tommy19/.gradle/caches/8.14/transforms/123ef2f37c82181d8c48da337ce91834/transformed/activity-ktx-1.8.2/AndroidManifest.xml:5:5-44
+MERGED from [androidx.activity:activity-ktx:1.8.2] /Users/tommy19/.gradle/caches/8.14/transforms/123ef2f37c82181d8c48da337ce91834/transformed/activity-ktx-1.8.2/AndroidManifest.xml:5:5-44
+MERGED from [androidx.activity:activity:1.8.2] /Users/tommy19/.gradle/caches/8.14/transforms/a1e63f6854213b96c7541e723df096f4/transformed/activity-1.8.2/AndroidManifest.xml:20:5-44
+MERGED from [androidx.activity:activity:1.8.2] /Users/tommy19/.gradle/caches/8.14/transforms/a1e63f6854213b96c7541e723df096f4/transformed/activity-1.8.2/AndroidManifest.xml:20:5-44
+MERGED from [androidx.activity:activity-compose:1.8.2] /Users/tommy19/.gradle/caches/8.14/transforms/608666531ff461d48b141322aaee01c4/transformed/activity-compose-1.8.2/AndroidManifest.xml:5:5-44
+MERGED from [androidx.activity:activity-compose:1.8.2] /Users/tommy19/.gradle/caches/8.14/transforms/608666531ff461d48b141322aaee01c4/transformed/activity-compose-1.8.2/AndroidManifest.xml:5:5-44
+MERGED from [androidx.compose.material:material-icons-core-android:1.7.0] /Users/tommy19/.gradle/caches/8.14/transforms/f9bf884961ccde952bce436495b21369/transformed/material-icons-core-release/AndroidManifest.xml:5:5-44
+MERGED from [androidx.compose.material:material-icons-core-android:1.7.0] /Users/tommy19/.gradle/caches/8.14/transforms/f9bf884961ccde952bce436495b21369/transformed/material-icons-core-release/AndroidManifest.xml:5:5-44
+MERGED from [androidx.compose.ui:ui-android:1.7.0] /Users/tommy19/.gradle/caches/8.14/transforms/41c3f2ccf7d3411d95a1845ea4a190a3/transformed/ui-release/AndroidManifest.xml:5:5-44
+MERGED from [androidx.compose.ui:ui-android:1.7.0] /Users/tommy19/.gradle/caches/8.14/transforms/41c3f2ccf7d3411d95a1845ea4a190a3/transformed/ui-release/AndroidManifest.xml:5:5-44
+MERGED from [androidx.autofill:autofill:1.0.0] /Users/tommy19/.gradle/caches/8.14/transforms/f435a107c2e30c82dbb3895377d8f096/transformed/autofill-1.0.0/AndroidManifest.xml:20:5-22:41
+MERGED from [androidx.autofill:autofill:1.0.0] /Users/tommy19/.gradle/caches/8.14/transforms/f435a107c2e30c82dbb3895377d8f096/transformed/autofill-1.0.0/AndroidManifest.xml:20:5-22:41
+MERGED from [androidx.graphics:graphics-path:1.0.1] /Users/tommy19/.gradle/caches/8.14/transforms/1de46ce144ceb2d6a008c51eb77dc9fb/transformed/graphics-path-1.0.1/AndroidManifest.xml:5:5-44
+MERGED from [androidx.graphics:graphics-path:1.0.1] /Users/tommy19/.gradle/caches/8.14/transforms/1de46ce144ceb2d6a008c51eb77dc9fb/transformed/graphics-path-1.0.1/AndroidManifest.xml:5:5-44
+MERGED from [androidx.emoji2:emoji2:1.3.0] /Users/tommy19/.gradle/caches/8.14/transforms/dcaad81d14b58c352dc80f50ef17a59e/transformed/emoji2-1.3.0/AndroidManifest.xml:21:5-44
+MERGED from [androidx.emoji2:emoji2:1.3.0] /Users/tommy19/.gradle/caches/8.14/transforms/dcaad81d14b58c352dc80f50ef17a59e/transformed/emoji2-1.3.0/AndroidManifest.xml:21:5-44
+MERGED from [androidx.customview:customview-poolingcontainer:1.0.0] /Users/tommy19/.gradle/caches/8.14/transforms/068d40ae7a4883152ae25c39fcf57245/transformed/customview-poolingcontainer-1.0.0/AndroidManifest.xml:20:5-21:38
+MERGED from [androidx.customview:customview-poolingcontainer:1.0.0] /Users/tommy19/.gradle/caches/8.14/transforms/068d40ae7a4883152ae25c39fcf57245/transformed/customview-poolingcontainer-1.0.0/AndroidManifest.xml:20:5-21:38
+MERGED from [androidx.core:core-ktx:1.13.1] /Users/tommy19/.gradle/caches/8.14/transforms/8bc8f0ad9eeb54427984cd2551c0768e/transformed/core-ktx-1.13.1/AndroidManifest.xml:5:5-44
+MERGED from [androidx.core:core-ktx:1.13.1] /Users/tommy19/.gradle/caches/8.14/transforms/8bc8f0ad9eeb54427984cd2551c0768e/transformed/core-ktx-1.13.1/AndroidManifest.xml:5:5-44
+MERGED from [androidx.core:core:1.13.1] /Users/tommy19/.gradle/caches/8.14/transforms/c93313df357c1b0295725774db470f41/transformed/core-1.13.1/AndroidManifest.xml:20:5-44
+MERGED from [androidx.core:core:1.13.1] /Users/tommy19/.gradle/caches/8.14/transforms/c93313df357c1b0295725774db470f41/transformed/core-1.13.1/AndroidManifest.xml:20:5-44
+MERGED from [androidx.lifecycle:lifecycle-livedata-core:2.8.3] /Users/tommy19/.gradle/caches/8.14/transforms/2a62c8749a5f2c955a0e26769dcff368/transformed/lifecycle-livedata-core-2.8.3/AndroidManifest.xml:20:5-44
+MERGED from [androidx.lifecycle:lifecycle-livedata-core:2.8.3] /Users/tommy19/.gradle/caches/8.14/transforms/2a62c8749a5f2c955a0e26769dcff368/transformed/lifecycle-livedata-core-2.8.3/AndroidManifest.xml:20:5-44
+MERGED from [androidx.lifecycle:lifecycle-viewmodel-android:2.8.3] /Users/tommy19/.gradle/caches/8.14/transforms/1349d73ea3846eb73284f7078ec74be1/transformed/lifecycle-viewmodel-release/AndroidManifest.xml:20:5-44
+MERGED from [androidx.lifecycle:lifecycle-viewmodel-android:2.8.3] /Users/tommy19/.gradle/caches/8.14/transforms/1349d73ea3846eb73284f7078ec74be1/transformed/lifecycle-viewmodel-release/AndroidManifest.xml:20:5-44
+MERGED from [androidx.lifecycle:lifecycle-process:2.8.3] /Users/tommy19/.gradle/caches/8.14/transforms/4233befcc7933220d2e806cd3e0d557f/transformed/lifecycle-process-2.8.3/AndroidManifest.xml:21:5-44
+MERGED from [androidx.lifecycle:lifecycle-process:2.8.3] /Users/tommy19/.gradle/caches/8.14/transforms/4233befcc7933220d2e806cd3e0d557f/transformed/lifecycle-process-2.8.3/AndroidManifest.xml:21:5-44
+MERGED from [androidx.lifecycle:lifecycle-runtime-ktx-android:2.8.3] /Users/tommy19/.gradle/caches/8.14/transforms/291047c39074014f842fea3460cda19b/transformed/lifecycle-runtime-ktx-release/AndroidManifest.xml:5:5-44
+MERGED from [androidx.lifecycle:lifecycle-runtime-ktx-android:2.8.3] /Users/tommy19/.gradle/caches/8.14/transforms/291047c39074014f842fea3460cda19b/transformed/lifecycle-runtime-ktx-release/AndroidManifest.xml:5:5-44
+MERGED from [androidx.lifecycle:lifecycle-runtime-android:2.8.3] /Users/tommy19/.gradle/caches/8.14/transforms/1b4468dd359ed26ff73258efd2edcb80/transformed/lifecycle-runtime-release/AndroidManifest.xml:20:5-44
+MERGED from [androidx.lifecycle:lifecycle-runtime-android:2.8.3] /Users/tommy19/.gradle/caches/8.14/transforms/1b4468dd359ed26ff73258efd2edcb80/transformed/lifecycle-runtime-release/AndroidManifest.xml:20:5-44
+MERGED from [androidx.lifecycle:lifecycle-viewmodel-ktx:2.8.3] /Users/tommy19/.gradle/caches/8.14/transforms/530d8388f177a48f0b614dffff18a76e/transformed/lifecycle-viewmodel-ktx-2.8.3/AndroidManifest.xml:5:5-44
+MERGED from [androidx.lifecycle:lifecycle-viewmodel-ktx:2.8.3] /Users/tommy19/.gradle/caches/8.14/transforms/530d8388f177a48f0b614dffff18a76e/transformed/lifecycle-viewmodel-ktx-2.8.3/AndroidManifest.xml:5:5-44
+MERGED from [androidx.lifecycle:lifecycle-runtime-compose-android:2.8.3] /Users/tommy19/.gradle/caches/8.14/transforms/549556376604857a2d296de6c7ef0840/transformed/lifecycle-runtime-compose-release/AndroidManifest.xml:5:5-44
+MERGED from [androidx.lifecycle:lifecycle-runtime-compose-android:2.8.3] /Users/tommy19/.gradle/caches/8.14/transforms/549556376604857a2d296de6c7ef0840/transformed/lifecycle-runtime-compose-release/AndroidManifest.xml:5:5-44
+MERGED from [androidx.lifecycle:lifecycle-viewmodel-savedstate:2.8.3] /Users/tommy19/.gradle/caches/8.14/transforms/337ee93f861c5cb6d1660334d9500234/transformed/lifecycle-viewmodel-savedstate-2.8.3/AndroidManifest.xml:20:5-44
+MERGED from [androidx.lifecycle:lifecycle-viewmodel-savedstate:2.8.3] /Users/tommy19/.gradle/caches/8.14/transforms/337ee93f861c5cb6d1660334d9500234/transformed/lifecycle-viewmodel-savedstate-2.8.3/AndroidManifest.xml:20:5-44
+MERGED from [androidx.savedstate:savedstate:1.2.1] /Users/tommy19/.gradle/caches/8.14/transforms/5965a354accf991bc810c5fbe4ceb910/transformed/savedstate-1.2.1/AndroidManifest.xml:20:5-44
+MERGED from [androidx.savedstate:savedstate:1.2.1] /Users/tommy19/.gradle/caches/8.14/transforms/5965a354accf991bc810c5fbe4ceb910/transformed/savedstate-1.2.1/AndroidManifest.xml:20:5-44
+MERGED from [androidx.savedstate:savedstate-ktx:1.2.1] /Users/tommy19/.gradle/caches/8.14/transforms/948db5f9b031970fe1539cde7f67fd1c/transformed/savedstate-ktx-1.2.1/AndroidManifest.xml:20:5-44
+MERGED from [androidx.savedstate:savedstate-ktx:1.2.1] /Users/tommy19/.gradle/caches/8.14/transforms/948db5f9b031970fe1539cde7f67fd1c/transformed/savedstate-ktx-1.2.1/AndroidManifest.xml:20:5-44
+MERGED from [androidx.compose.runtime:runtime-saveable-android:1.7.0] /Users/tommy19/.gradle/caches/8.14/transforms/c2cbfa305fa9b8ce3cfafcf2be5e8baf/transformed/runtime-saveable-release/AndroidManifest.xml:5:5-44
+MERGED from [androidx.compose.runtime:runtime-saveable-android:1.7.0] /Users/tommy19/.gradle/caches/8.14/transforms/c2cbfa305fa9b8ce3cfafcf2be5e8baf/transformed/runtime-saveable-release/AndroidManifest.xml:5:5-44
+MERGED from [androidx.compose.runtime:runtime-android:1.7.0] /Users/tommy19/.gradle/caches/8.14/transforms/e3a3302ad0cbc7266e7ab7f2a6de0e2e/transformed/runtime-release/AndroidManifest.xml:5:5-44
+MERGED from [androidx.compose.runtime:runtime-android:1.7.0] /Users/tommy19/.gradle/caches/8.14/transforms/e3a3302ad0cbc7266e7ab7f2a6de0e2e/transformed/runtime-release/AndroidManifest.xml:5:5-44
+MERGED from [androidx.annotation:annotation-experimental:1.4.0] /Users/tommy19/.gradle/caches/8.14/transforms/9e4d652ae3bf546952430f5a2abab718/transformed/annotation-experimental-1.4.0/AndroidManifest.xml:5:5-44
+MERGED from [androidx.annotation:annotation-experimental:1.4.0] /Users/tommy19/.gradle/caches/8.14/transforms/9e4d652ae3bf546952430f5a2abab718/transformed/annotation-experimental-1.4.0/AndroidManifest.xml:5:5-44
+MERGED from [androidx.versionedparcelable:versionedparcelable:1.1.1] /Users/tommy19/.gradle/caches/8.14/transforms/4b3d3b36b694d58b79d183f284c6bc01/transformed/versionedparcelable-1.1.1/AndroidManifest.xml:20:5-22:41
+MERGED from [androidx.versionedparcelable:versionedparcelable:1.1.1] /Users/tommy19/.gradle/caches/8.14/transforms/4b3d3b36b694d58b79d183f284c6bc01/transformed/versionedparcelable-1.1.1/AndroidManifest.xml:20:5-22:41
+MERGED from [androidx.profileinstaller:profileinstaller:1.3.1] /Users/tommy19/.gradle/caches/8.14/transforms/7447d2b89fe3de0c6fc85838df73324b/transformed/profileinstaller-1.3.1/AndroidManifest.xml:21:5-44
+MERGED from [androidx.profileinstaller:profileinstaller:1.3.1] /Users/tommy19/.gradle/caches/8.14/transforms/7447d2b89fe3de0c6fc85838df73324b/transformed/profileinstaller-1.3.1/AndroidManifest.xml:21:5-44
+MERGED from [androidx.startup:startup-runtime:1.1.1] /Users/tommy19/.gradle/caches/8.14/transforms/02ab978a1c00828f5ba02a27ba9e9028/transformed/startup-runtime-1.1.1/AndroidManifest.xml:21:5-23:41
+MERGED from [androidx.startup:startup-runtime:1.1.1] /Users/tommy19/.gradle/caches/8.14/transforms/02ab978a1c00828f5ba02a27ba9e9028/transformed/startup-runtime-1.1.1/AndroidManifest.xml:21:5-23:41
+MERGED from [androidx.tracing:tracing:1.0.0] /Users/tommy19/.gradle/caches/8.14/transforms/768b7572dac7ca9afccb39ea1f933318/transformed/tracing-1.0.0/AndroidManifest.xml:20:5-22:41
+MERGED from [androidx.tracing:tracing:1.0.0] /Users/tommy19/.gradle/caches/8.14/transforms/768b7572dac7ca9afccb39ea1f933318/transformed/tracing-1.0.0/AndroidManifest.xml:20:5-22:41
+MERGED from [androidx.interpolator:interpolator:1.0.0] /Users/tommy19/.gradle/caches/8.14/transforms/98cbb1ed270b9f4110763f9d48d9f966/transformed/interpolator-1.0.0/AndroidManifest.xml:20:5-44
+MERGED from [androidx.interpolator:interpolator:1.0.0] /Users/tommy19/.gradle/caches/8.14/transforms/98cbb1ed270b9f4110763f9d48d9f966/transformed/interpolator-1.0.0/AndroidManifest.xml:20:5-44
+MERGED from [androidx.arch.core:core-runtime:2.2.0] /Users/tommy19/.gradle/caches/8.14/transforms/61ebba233c18a72401611834cb37addf/transformed/core-runtime-2.2.0/AndroidManifest.xml:20:5-44
+MERGED from [androidx.arch.core:core-runtime:2.2.0] /Users/tommy19/.gradle/caches/8.14/transforms/61ebba233c18a72401611834cb37addf/transformed/core-runtime-2.2.0/AndroidManifest.xml:20:5-44
+	android:targetSdkVersion
+		INJECTED from /Users/tommy19/Desktop/Y4S1/EAD/Assignment/Repo/ev-charging-station-booking-system/mobile-android/EVOwner/app/src/main/AndroidManifest.xml
+	android:minSdkVersion
+		INJECTED from /Users/tommy19/Desktop/Y4S1/EAD/Assignment/Repo/ev-charging-station-booking-system/mobile-android/EVOwner/app/src/main/AndroidManifest.xml
+activity#androidx.compose.ui.tooling.PreviewActivity
+ADDED from [androidx.compose.ui:ui-tooling-android:1.7.0] /Users/tommy19/.gradle/caches/8.14/transforms/430681303e5df7409edbfb64b362d8b9/transformed/ui-tooling-release/AndroidManifest.xml:23:9-25:39
+	android:exported
+		ADDED from [androidx.compose.ui:ui-tooling-android:1.7.0] /Users/tommy19/.gradle/caches/8.14/transforms/430681303e5df7409edbfb64b362d8b9/transformed/ui-tooling-release/AndroidManifest.xml:25:13-36
+	android:name
+		ADDED from [androidx.compose.ui:ui-tooling-android:1.7.0] /Users/tommy19/.gradle/caches/8.14/transforms/430681303e5df7409edbfb64b362d8b9/transformed/ui-tooling-release/AndroidManifest.xml:24:13-71
+activity#androidx.activity.ComponentActivity
+ADDED from [androidx.compose.ui:ui-test-manifest:1.7.0] /Users/tommy19/.gradle/caches/8.14/transforms/af9d1a24448ce35cce8f3a2f1ea53194/transformed/ui-test-manifest-1.7.0/AndroidManifest.xml:23:9-25:39
+	android:exported
+		ADDED from [androidx.compose.ui:ui-test-manifest:1.7.0] /Users/tommy19/.gradle/caches/8.14/transforms/af9d1a24448ce35cce8f3a2f1ea53194/transformed/ui-test-manifest-1.7.0/AndroidManifest.xml:25:13-36
+	android:name
+		ADDED from [androidx.compose.ui:ui-test-manifest:1.7.0] /Users/tommy19/.gradle/caches/8.14/transforms/af9d1a24448ce35cce8f3a2f1ea53194/transformed/ui-test-manifest-1.7.0/AndroidManifest.xml:24:13-63
+provider#androidx.startup.InitializationProvider
+ADDED from [androidx.emoji2:emoji2:1.3.0] /Users/tommy19/.gradle/caches/8.14/transforms/dcaad81d14b58c352dc80f50ef17a59e/transformed/emoji2-1.3.0/AndroidManifest.xml:24:9-32:20
+MERGED from [androidx.lifecycle:lifecycle-process:2.8.3] /Users/tommy19/.gradle/caches/8.14/transforms/4233befcc7933220d2e806cd3e0d557f/transformed/lifecycle-process-2.8.3/AndroidManifest.xml:24:9-32:20
+MERGED from [androidx.lifecycle:lifecycle-process:2.8.3] /Users/tommy19/.gradle/caches/8.14/transforms/4233befcc7933220d2e806cd3e0d557f/transformed/lifecycle-process-2.8.3/AndroidManifest.xml:24:9-32:20
+MERGED from [androidx.profileinstaller:profileinstaller:1.3.1] /Users/tommy19/.gradle/caches/8.14/transforms/7447d2b89fe3de0c6fc85838df73324b/transformed/profileinstaller-1.3.1/AndroidManifest.xml:24:9-32:20
+MERGED from [androidx.profileinstaller:profileinstaller:1.3.1] /Users/tommy19/.gradle/caches/8.14/transforms/7447d2b89fe3de0c6fc85838df73324b/transformed/profileinstaller-1.3.1/AndroidManifest.xml:24:9-32:20
+MERGED from [androidx.startup:startup-runtime:1.1.1] /Users/tommy19/.gradle/caches/8.14/transforms/02ab978a1c00828f5ba02a27ba9e9028/transformed/startup-runtime-1.1.1/AndroidManifest.xml:26:9-30:34
+MERGED from [androidx.startup:startup-runtime:1.1.1] /Users/tommy19/.gradle/caches/8.14/transforms/02ab978a1c00828f5ba02a27ba9e9028/transformed/startup-runtime-1.1.1/AndroidManifest.xml:26:9-30:34
+	tools:node
+		ADDED from [androidx.emoji2:emoji2:1.3.0] /Users/tommy19/.gradle/caches/8.14/transforms/dcaad81d14b58c352dc80f50ef17a59e/transformed/emoji2-1.3.0/AndroidManifest.xml:28:13-31
+	android:authorities
+		ADDED from [androidx.emoji2:emoji2:1.3.0] /Users/tommy19/.gradle/caches/8.14/transforms/dcaad81d14b58c352dc80f50ef17a59e/transformed/emoji2-1.3.0/AndroidManifest.xml:26:13-68
+	android:exported
+		ADDED from [androidx.emoji2:emoji2:1.3.0] /Users/tommy19/.gradle/caches/8.14/transforms/dcaad81d14b58c352dc80f50ef17a59e/transformed/emoji2-1.3.0/AndroidManifest.xml:27:13-37
+	android:name
+		ADDED from [androidx.emoji2:emoji2:1.3.0] /Users/tommy19/.gradle/caches/8.14/transforms/dcaad81d14b58c352dc80f50ef17a59e/transformed/emoji2-1.3.0/AndroidManifest.xml:25:13-67
+meta-data#androidx.emoji2.text.EmojiCompatInitializer
+ADDED from [androidx.emoji2:emoji2:1.3.0] /Users/tommy19/.gradle/caches/8.14/transforms/dcaad81d14b58c352dc80f50ef17a59e/transformed/emoji2-1.3.0/AndroidManifest.xml:29:13-31:52
+	android:value
+		ADDED from [androidx.emoji2:emoji2:1.3.0] /Users/tommy19/.gradle/caches/8.14/transforms/dcaad81d14b58c352dc80f50ef17a59e/transformed/emoji2-1.3.0/AndroidManifest.xml:31:17-49
+	android:name
+		ADDED from [androidx.emoji2:emoji2:1.3.0] /Users/tommy19/.gradle/caches/8.14/transforms/dcaad81d14b58c352dc80f50ef17a59e/transformed/emoji2-1.3.0/AndroidManifest.xml:30:17-75
+permission#${applicationId}.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION
+ADDED from [androidx.core:core:1.13.1] /Users/tommy19/.gradle/caches/8.14/transforms/c93313df357c1b0295725774db470f41/transformed/core-1.13.1/AndroidManifest.xml:22:5-24:47
+	android:protectionLevel
+		ADDED from [androidx.core:core:1.13.1] /Users/tommy19/.gradle/caches/8.14/transforms/c93313df357c1b0295725774db470f41/transformed/core-1.13.1/AndroidManifest.xml:24:9-44
+	android:name
+		ADDED from [androidx.core:core:1.13.1] /Users/tommy19/.gradle/caches/8.14/transforms/c93313df357c1b0295725774db470f41/transformed/core-1.13.1/AndroidManifest.xml:23:9-81
+permission#com.ead.ev_owner.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION
+ADDED from [androidx.core:core:1.13.1] /Users/tommy19/.gradle/caches/8.14/transforms/c93313df357c1b0295725774db470f41/transformed/core-1.13.1/AndroidManifest.xml:22:5-24:47
+	android:protectionLevel
+		ADDED from [androidx.core:core:1.13.1] /Users/tommy19/.gradle/caches/8.14/transforms/c93313df357c1b0295725774db470f41/transformed/core-1.13.1/AndroidManifest.xml:24:9-44
+	android:name
+		ADDED from [androidx.core:core:1.13.1] /Users/tommy19/.gradle/caches/8.14/transforms/c93313df357c1b0295725774db470f41/transformed/core-1.13.1/AndroidManifest.xml:23:9-81
+uses-permission#${applicationId}.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION
+ADDED from [androidx.core:core:1.13.1] /Users/tommy19/.gradle/caches/8.14/transforms/c93313df357c1b0295725774db470f41/transformed/core-1.13.1/AndroidManifest.xml:26:5-97
+	android:name
+		ADDED from [androidx.core:core:1.13.1] /Users/tommy19/.gradle/caches/8.14/transforms/c93313df357c1b0295725774db470f41/transformed/core-1.13.1/AndroidManifest.xml:26:22-94
+uses-permission#com.ead.ev_owner.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION
+ADDED from [androidx.core:core:1.13.1] /Users/tommy19/.gradle/caches/8.14/transforms/c93313df357c1b0295725774db470f41/transformed/core-1.13.1/AndroidManifest.xml:26:5-97
+	android:name
+		ADDED from [androidx.core:core:1.13.1] /Users/tommy19/.gradle/caches/8.14/transforms/c93313df357c1b0295725774db470f41/transformed/core-1.13.1/AndroidManifest.xml:26:22-94
+meta-data#androidx.lifecycle.ProcessLifecycleInitializer
+ADDED from [androidx.lifecycle:lifecycle-process:2.8.3] /Users/tommy19/.gradle/caches/8.14/transforms/4233befcc7933220d2e806cd3e0d557f/transformed/lifecycle-process-2.8.3/AndroidManifest.xml:29:13-31:52
+	android:value
+		ADDED from [androidx.lifecycle:lifecycle-process:2.8.3] /Users/tommy19/.gradle/caches/8.14/transforms/4233befcc7933220d2e806cd3e0d557f/transformed/lifecycle-process-2.8.3/AndroidManifest.xml:31:17-49
+	android:name
+		ADDED from [androidx.lifecycle:lifecycle-process:2.8.3] /Users/tommy19/.gradle/caches/8.14/transforms/4233befcc7933220d2e806cd3e0d557f/transformed/lifecycle-process-2.8.3/AndroidManifest.xml:30:17-78
+meta-data#androidx.profileinstaller.ProfileInstallerInitializer
+ADDED from [androidx.profileinstaller:profileinstaller:1.3.1] /Users/tommy19/.gradle/caches/8.14/transforms/7447d2b89fe3de0c6fc85838df73324b/transformed/profileinstaller-1.3.1/AndroidManifest.xml:29:13-31:52
+	android:value
+		ADDED from [androidx.profileinstaller:profileinstaller:1.3.1] /Users/tommy19/.gradle/caches/8.14/transforms/7447d2b89fe3de0c6fc85838df73324b/transformed/profileinstaller-1.3.1/AndroidManifest.xml:31:17-49
+	android:name
+		ADDED from [androidx.profileinstaller:profileinstaller:1.3.1] /Users/tommy19/.gradle/caches/8.14/transforms/7447d2b89fe3de0c6fc85838df73324b/transformed/profileinstaller-1.3.1/AndroidManifest.xml:30:17-85
+receiver#androidx.profileinstaller.ProfileInstallReceiver
+ADDED from [androidx.profileinstaller:profileinstaller:1.3.1] /Users/tommy19/.gradle/caches/8.14/transforms/7447d2b89fe3de0c6fc85838df73324b/transformed/profileinstaller-1.3.1/AndroidManifest.xml:34:9-52:20
+	android:enabled
+		ADDED from [androidx.profileinstaller:profileinstaller:1.3.1] /Users/tommy19/.gradle/caches/8.14/transforms/7447d2b89fe3de0c6fc85838df73324b/transformed/profileinstaller-1.3.1/AndroidManifest.xml:37:13-35
+	android:exported
+		ADDED from [androidx.profileinstaller:profileinstaller:1.3.1] /Users/tommy19/.gradle/caches/8.14/transforms/7447d2b89fe3de0c6fc85838df73324b/transformed/profileinstaller-1.3.1/AndroidManifest.xml:38:13-36
+	android:permission
+		ADDED from [androidx.profileinstaller:profileinstaller:1.3.1] /Users/tommy19/.gradle/caches/8.14/transforms/7447d2b89fe3de0c6fc85838df73324b/transformed/profileinstaller-1.3.1/AndroidManifest.xml:39:13-57
+	android:directBootAware
+		ADDED from [androidx.profileinstaller:profileinstaller:1.3.1] /Users/tommy19/.gradle/caches/8.14/transforms/7447d2b89fe3de0c6fc85838df73324b/transformed/profileinstaller-1.3.1/AndroidManifest.xml:36:13-44
+	android:name
+		ADDED from [androidx.profileinstaller:profileinstaller:1.3.1] /Users/tommy19/.gradle/caches/8.14/transforms/7447d2b89fe3de0c6fc85838df73324b/transformed/profileinstaller-1.3.1/AndroidManifest.xml:35:13-76
+intent-filter#action:name:androidx.profileinstaller.action.INSTALL_PROFILE
+ADDED from [androidx.profileinstaller:profileinstaller:1.3.1] /Users/tommy19/.gradle/caches/8.14/transforms/7447d2b89fe3de0c6fc85838df73324b/transformed/profileinstaller-1.3.1/AndroidManifest.xml:40:13-42:29
+action#androidx.profileinstaller.action.INSTALL_PROFILE
+ADDED from [androidx.profileinstaller:profileinstaller:1.3.1] /Users/tommy19/.gradle/caches/8.14/transforms/7447d2b89fe3de0c6fc85838df73324b/transformed/profileinstaller-1.3.1/AndroidManifest.xml:41:17-91
+	android:name
+		ADDED from [androidx.profileinstaller:profileinstaller:1.3.1] /Users/tommy19/.gradle/caches/8.14/transforms/7447d2b89fe3de0c6fc85838df73324b/transformed/profileinstaller-1.3.1/AndroidManifest.xml:41:25-88
+intent-filter#action:name:androidx.profileinstaller.action.SKIP_FILE
+ADDED from [androidx.profileinstaller:profileinstaller:1.3.1] /Users/tommy19/.gradle/caches/8.14/transforms/7447d2b89fe3de0c6fc85838df73324b/transformed/profileinstaller-1.3.1/AndroidManifest.xml:43:13-45:29
+action#androidx.profileinstaller.action.SKIP_FILE
+ADDED from [androidx.profileinstaller:profileinstaller:1.3.1] /Users/tommy19/.gradle/caches/8.14/transforms/7447d2b89fe3de0c6fc85838df73324b/transformed/profileinstaller-1.3.1/AndroidManifest.xml:44:17-85
+	android:name
+		ADDED from [androidx.profileinstaller:profileinstaller:1.3.1] /Users/tommy19/.gradle/caches/8.14/transforms/7447d2b89fe3de0c6fc85838df73324b/transformed/profileinstaller-1.3.1/AndroidManifest.xml:44:25-82
+intent-filter#action:name:androidx.profileinstaller.action.SAVE_PROFILE
+ADDED from [androidx.profileinstaller:profileinstaller:1.3.1] /Users/tommy19/.gradle/caches/8.14/transforms/7447d2b89fe3de0c6fc85838df73324b/transformed/profileinstaller-1.3.1/AndroidManifest.xml:46:13-48:29
+action#androidx.profileinstaller.action.SAVE_PROFILE
+ADDED from [androidx.profileinstaller:profileinstaller:1.3.1] /Users/tommy19/.gradle/caches/8.14/transforms/7447d2b89fe3de0c6fc85838df73324b/transformed/profileinstaller-1.3.1/AndroidManifest.xml:47:17-88
+	android:name
+		ADDED from [androidx.profileinstaller:profileinstaller:1.3.1] /Users/tommy19/.gradle/caches/8.14/transforms/7447d2b89fe3de0c6fc85838df73324b/transformed/profileinstaller-1.3.1/AndroidManifest.xml:47:25-85
+intent-filter#action:name:androidx.profileinstaller.action.BENCHMARK_OPERATION
+ADDED from [androidx.profileinstaller:profileinstaller:1.3.1] /Users/tommy19/.gradle/caches/8.14/transforms/7447d2b89fe3de0c6fc85838df73324b/transformed/profileinstaller-1.3.1/AndroidManifest.xml:49:13-51:29
+action#androidx.profileinstaller.action.BENCHMARK_OPERATION
+ADDED from [androidx.profileinstaller:profileinstaller:1.3.1] /Users/tommy19/.gradle/caches/8.14/transforms/7447d2b89fe3de0c6fc85838df73324b/transformed/profileinstaller-1.3.1/AndroidManifest.xml:50:17-95
+	android:name
+		ADDED from [androidx.profileinstaller:profileinstaller:1.3.1] /Users/tommy19/.gradle/caches/8.14/transforms/7447d2b89fe3de0c6fc85838df73324b/transformed/profileinstaller-1.3.1/AndroidManifest.xml:50:25-92
