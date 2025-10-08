@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from "react";
 import {
   Box,
   Card,
@@ -24,7 +24,7 @@ import {
   LinearProgress,
   InputAdornment,
   Toolbar,
-} from '@mui/material';
+} from "@mui/material";
 import {
   Add,
   Search,
@@ -34,13 +34,13 @@ import {
   PersonOff,
   PersonAdd,
   Refresh,
-} from '@mui/icons-material';
-import { useNavigate } from 'react-router-dom';
-import { useNotificationContext } from '../context/NotificationContext';
-import { evOwnerApi } from '../api';
-import { ROUTES } from '../utils/constants';
-import { formatDateTime } from '../utils/helpers';
-import type { EVOwner } from '../types';
+} from "@mui/icons-material";
+import { useNavigate } from "react-router-dom";
+import { useNotificationContext } from "../context/NotificationContext";
+import { evOwnerApi } from "../api";
+import { ROUTES } from "../utils/constants";
+import { formatDateTime } from "../utils/helpers";
+import type { EVOwner } from "../types";
 
 const EVOwnerListPage: React.FC = () => {
   const navigate = useNavigate();
@@ -49,7 +49,7 @@ const EVOwnerListPage: React.FC = () => {
   const [evOwners, setEvOwners] = useState<EVOwner[]>([]);
   const [filteredOwners, setFilteredOwners] = useState<EVOwner[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [searchTerm, setSearchTerm] = useState('');
+  const [searchTerm, setSearchTerm] = useState("");
   const [menuAnchorEl, setMenuAnchorEl] = useState<null | HTMLElement>(null);
   const [selectedOwner, setSelectedOwner] = useState<EVOwner | null>(null);
   const [confirmDialog, setConfirmDialog] = useState<{
@@ -59,8 +59,8 @@ const EVOwnerListPage: React.FC = () => {
     action: () => void;
   }>({
     open: false,
-    title: '',
-    message: '',
+    title: "",
+    message: "",
     action: () => {},
   });
 
@@ -71,8 +71,8 @@ const EVOwnerListPage: React.FC = () => {
       setEvOwners(owners);
       setFilteredOwners(owners);
     } catch (error) {
-      showError('Failed to load EV owners');
-      console.error('Error loading EV owners:', error);
+      showError("Failed to load EV owners");
+      console.error("Error loading EV owners:", error);
     } finally {
       setIsLoading(false);
     }
@@ -84,20 +84,24 @@ const EVOwnerListPage: React.FC = () => {
 
   useEffect(() => {
     // Filter owners based on search term
-    if (searchTerm.trim() === '') {
+    if (searchTerm.trim() === "") {
       setFilteredOwners(evOwners);
     } else {
-      const filtered = evOwners.filter(owner =>
-        owner.nic.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        owner.fullName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        owner.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        owner.phoneNumber.includes(searchTerm)
+      const filtered = evOwners.filter(
+        (owner) =>
+          owner.nic.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          owner.fullName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          owner.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          owner.phoneNumber.includes(searchTerm)
       );
       setFilteredOwners(filtered);
     }
   }, [searchTerm, evOwners]);
 
-  const handleMenuOpen = (event: React.MouseEvent<HTMLElement>, owner: EVOwner) => {
+  const handleMenuOpen = (
+    event: React.MouseEvent<HTMLElement>,
+    owner: EVOwner
+  ) => {
     setMenuAnchorEl(event.currentTarget);
     setSelectedOwner(owner);
   };
@@ -109,7 +113,9 @@ const EVOwnerListPage: React.FC = () => {
 
   const handleEdit = () => {
     if (selectedOwner) {
-      navigate(ROUTES.BACKOFFICE.EV_OWNERS_EDIT.replace(':nic', selectedOwner.nic));
+      navigate(
+        ROUTES.BACKOFFICE.EV_OWNERS_EDIT.replace(":nic", selectedOwner.nic)
+      );
     }
     handleMenuClose();
   };
@@ -119,10 +125,10 @@ const EVOwnerListPage: React.FC = () => {
 
     try {
       await evOwnerApi.activate(selectedOwner.nic);
-      showSuccess('EV Owner activated successfully');
+      showSuccess("EV Owner activated successfully");
       await loadEvOwners();
     } catch (error) {
-      showError('Failed to activate EV owner');
+      showError("Failed to activate EV owner");
     }
     handleMenuClose();
   };
@@ -132,15 +138,15 @@ const EVOwnerListPage: React.FC = () => {
 
     setConfirmDialog({
       open: true,
-      title: 'Deactivate EV Owner',
+      title: "Deactivate EV Owner",
       message: `Are you sure you want to deactivate ${selectedOwner.fullName}? They won't be able to make new bookings.`,
       action: async () => {
         try {
           await evOwnerApi.deactivate(selectedOwner.nic);
-          showSuccess('EV Owner deactivated successfully');
+          showSuccess("EV Owner deactivated successfully");
           await loadEvOwners();
         } catch (error) {
-          showError('Failed to deactivate EV owner');
+          showError("Failed to deactivate EV owner");
         }
       },
     });
@@ -152,15 +158,15 @@ const EVOwnerListPage: React.FC = () => {
 
     setConfirmDialog({
       open: true,
-      title: 'Delete EV Owner',
+      title: "Delete EV Owner",
       message: `Are you sure you want to permanently delete ${selectedOwner.fullName}? This action cannot be undone.`,
       action: async () => {
         try {
           await evOwnerApi.delete(selectedOwner.nic);
-          showSuccess('EV Owner deleted successfully');
+          showSuccess("EV Owner deleted successfully");
           await loadEvOwners();
         } catch (error) {
-          showError('Failed to delete EV owner');
+          showError("Failed to delete EV owner");
         }
       },
     });
@@ -186,7 +192,7 @@ const EVOwnerListPage: React.FC = () => {
 
       {/* Toolbar */}
       <Card sx={{ mb: 3 }}>
-        <Toolbar sx={{ justifyContent: 'space-between' }}>
+        <Toolbar sx={{ justifyContent: "space-between" }}>
           <TextField
             placeholder="Search by NIC, name, email, or phone..."
             value={searchTerm}
@@ -200,7 +206,7 @@ const EVOwnerListPage: React.FC = () => {
               ),
             }}
           />
-          <Box sx={{ display: 'flex', gap: 2 }}>
+          <Box sx={{ display: "flex", gap: 2 }}>
             <Button
               variant="outlined"
               startIcon={<Refresh />}
@@ -228,13 +234,27 @@ const EVOwnerListPage: React.FC = () => {
             <Table>
               <TableHead>
                 <TableRow>
-                  <TableCell><strong>NIC</strong></TableCell>
-                  <TableCell><strong>Full Name</strong></TableCell>
-                  <TableCell><strong>Email</strong></TableCell>
-                  <TableCell><strong>Phone</strong></TableCell>
-                  <TableCell><strong>Status</strong></TableCell>
-                  <TableCell><strong>Created</strong></TableCell>
-                  <TableCell align="center"><strong>Actions</strong></TableCell>
+                  <TableCell>
+                    <strong>NIC</strong>
+                  </TableCell>
+                  <TableCell>
+                    <strong>Full Name</strong>
+                  </TableCell>
+                  <TableCell>
+                    <strong>Email</strong>
+                  </TableCell>
+                  <TableCell>
+                    <strong>Phone</strong>
+                  </TableCell>
+                  <TableCell>
+                    <strong>Status</strong>
+                  </TableCell>
+                  <TableCell>
+                    <strong>Created</strong>
+                  </TableCell>
+                  <TableCell align="center">
+                    <strong>Actions</strong>
+                  </TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
@@ -242,7 +262,11 @@ const EVOwnerListPage: React.FC = () => {
                   <TableRow>
                     <TableCell colSpan={7} align="center" sx={{ py: 4 }}>
                       <Typography color="text.secondary">
-                        {isLoading ? 'Loading...' : searchTerm ? 'No EV owners found matching your search' : 'No EV owners yet'}
+                        {isLoading
+                          ? "Loading..."
+                          : searchTerm
+                          ? "No EV owners found matching your search"
+                          : "No EV owners yet"}
                       </Typography>
                     </TableCell>
                   </TableRow>
@@ -260,9 +284,7 @@ const EVOwnerListPage: React.FC = () => {
                         </Typography>
                       </TableCell>
                       <TableCell>
-                        <Typography variant="body2">
-                          {owner.email}
-                        </Typography>
+                        <Typography variant="body2">{owner.email}</Typography>
                       </TableCell>
                       <TableCell>
                         <Typography variant="body2">
@@ -270,16 +292,16 @@ const EVOwnerListPage: React.FC = () => {
                         </Typography>
                       </TableCell>
                       <TableCell>
-                        <Box sx={{ display: 'flex', gap: 1 }}>
+                        <Box sx={{ display: "flex", gap: 1 }}>
                           <Chip
-                            label={owner.isActive ? 'Active' : 'Inactive'}
-                            color={owner.isActive ? 'success' : 'default'}
+                            label={owner.isActive ? "Active" : "Inactive"}
+                            color={owner.isActive ? "success" : "default"}
                             size="small"
                             variant="outlined"
                           />
                           <Chip
-                            label={owner.isVerified ? 'Verified' : 'Unverified'}
-                            color={owner.isVerified ? 'info' : 'warning'}
+                            label={owner.isVerified ? "Verified" : "Unverified"}
+                            color={owner.isVerified ? "info" : "warning"}
                             size="small"
                             variant="outlined"
                           />
@@ -328,7 +350,7 @@ const EVOwnerListPage: React.FC = () => {
             Activate
           </MenuItem>
         )}
-        <MenuItem onClick={handleDelete} sx={{ color: 'error.main' }}>
+        <MenuItem onClick={handleDelete} sx={{ color: "error.main" }}>
           <Delete sx={{ mr: 2 }} />
           Delete
         </MenuItem>

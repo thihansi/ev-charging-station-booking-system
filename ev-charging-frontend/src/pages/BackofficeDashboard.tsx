@@ -104,14 +104,14 @@ const BackofficeDashboard: React.FC = () => {
       try {
         // Simulate API calls
         await new Promise((resolve) => setTimeout(resolve, 1000));
-        
+
         // In a real app, you would fetch data from APIs here
         // const [ownersData, stationsData, bookingsData] = await Promise.all([
         //   evOwnerApi.getAll(),
         //   chargingStationApi.getAll(),
         //   bookingApi.getAll()
         // ]);
-        
+
         setIsLoading(false);
       } catch (error) {
         console.error("Error loading dashboard data:", error);
@@ -130,7 +130,8 @@ const BackofficeDashboard: React.FC = () => {
           Backoffice Dashboard
         </Typography>
         <Typography variant="body1" color="text.secondary">
-          Welcome back, {state.user?.fullName || "Admin"}! Here's your system overview.
+          Welcome back, {state.user?.fullName || "Admin"}! Here's your system
+          overview.
         </Typography>
       </Box>
 
@@ -139,11 +140,11 @@ const BackofficeDashboard: React.FC = () => {
       {/* Statistics Cards */}
       <Box
         sx={{
-          display: 'grid',
+          display: "grid",
           gridTemplateColumns: {
-            xs: '1fr',
-            sm: 'repeat(2, 1fr)',
-            md: 'repeat(4, 1fr)',
+            xs: "1fr",
+            sm: "repeat(2, 1fr)",
+            md: "repeat(4, 1fr)",
           },
           gap: 3,
           mb: 4,
@@ -269,8 +270,8 @@ const BackofficeDashboard: React.FC = () => {
       {/* Quick Actions and Recent Activities */}
       <Box
         sx={{
-          display: 'grid',
-          gridTemplateColumns: { xs: '1fr', md: '1fr 1fr' },
+          display: "grid",
+          gridTemplateColumns: { xs: "1fr", md: "1fr 1fr" },
           gap: 3,
         }}
       >
@@ -282,8 +283,8 @@ const BackofficeDashboard: React.FC = () => {
             </Typography>
             <Box
               sx={{
-                display: 'grid',
-                gridTemplateColumns: { xs: '1fr', sm: 'repeat(2, 1fr)' },
+                display: "grid",
+                gridTemplateColumns: { xs: "1fr", sm: "repeat(2, 1fr)" },
                 gap: 2,
                 mt: 2,
               }}

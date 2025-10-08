@@ -24,6 +24,7 @@ export const ROUTES = {
     EV_OWNERS_EDIT: "/backoffice/ev-owners/:nic/edit",
     CHARGING_STATIONS: "/backoffice/charging-stations",
     CHARGING_STATIONS_CREATE: "/backoffice/charging-stations/create",
+    CHARGING_STATIONS_VIEW: "/backoffice/charging-stations/:id",
     CHARGING_STATIONS_EDIT: "/backoffice/charging-stations/:id/edit",
     BOOKINGS: "/backoffice/bookings",
     USERS: "/backoffice/users",
