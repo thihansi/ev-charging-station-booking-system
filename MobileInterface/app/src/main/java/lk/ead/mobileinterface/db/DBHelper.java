@@ -17,13 +17,14 @@ import java.util.List;
 public class DBHelper extends SQLiteOpenHelper {
 
     // Database Info
-    private static final String DATABASE_NAME = "ev_owner.db";
+    private static final String DATABASE_NAME = "ev_app.db";
     private static final int DATABASE_VERSION = 1;
 
     // Table Names
     private static final String TABLE_USER = "users";
     private static final String TABLE_STATION = "stations";
     private static final String TABLE_BOOKING = "bookings";
+    private static final String TABLE_OPERATOR_SESSION = "operator_session";
 
     // Constructor
     public DBHelper(Context context) {
@@ -69,6 +70,15 @@ public class DBHelper extends SQLiteOpenHelper {
                 "approvedAt TEXT, " +
                 "rejectionReason TEXT)";
         db.execSQL(CREATE_BOOKING_TABLE);
+
+        // OPERATOR SESSION TABLE
+        String CREATE_OPERATOR_SESSION_TABLE = "CREATE TABLE " + TABLE_OPERATOR_SESSION + " (" +
+                "id INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                "username TEXT, " +
+                "token TEXT, " +
+                "stationId TEXT)";
+        db.execSQL(CREATE_OPERATOR_SESSION_TABLE);
+
     }
 
     @Override
@@ -236,4 +246,38 @@ public class DBHelper extends SQLiteOpenHelper {
         db.delete(TABLE_BOOKING, null, null);
         db.close();
     }
+
+
+    // -----------------------------------------------------
+    // OPERATOR SESSION OPERATIONS
+    // -----------------------------------------------------
+
+    public void saveOperatorSession(String username, String token, String stationId) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.delete("operator_session", null, null); // keep only one session
+        ContentValues values = new ContentValues();
+        values.put("username", username);
+        values.put("token", token);
+        values.put("stationId", stationId);
+        db.insert("operator_session", null, values);
+        db.close();
+    }
+
+    public String getOperatorToken() {
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery("SELECT token FROM operator_session LIMIT 1", null);
+        String token = null;
+        if (cursor.moveToFirst()) {
+            token = cursor.getString(cursor.getColumnIndexOrThrow("token"));
+        }
+        cursor.close();
+        return token;
+    }
+
+    public void clearOperatorSession() {
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.delete("operator_session", null, null);
+        db.close();
+    }
+
 }
