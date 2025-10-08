@@ -80,7 +80,10 @@ export const authApi = {
     currentPassword: string;
     newPassword: string;
   }): Promise<{ message: string }> => {
-    const response = await apiClient.put("/api/auth/change-password", passwordData);
+    const response = await apiClient.put(
+      "/api/auth/change-password",
+      passwordData
+    );
     return response.data;
   },
 };

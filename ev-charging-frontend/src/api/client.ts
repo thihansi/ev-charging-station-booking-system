@@ -21,7 +21,7 @@ apiClient.interceptors.request.use(
   (config: InternalAxiosRequestConfig) => {
     // First check for system user token
     let token = getLocalStorageItem<string>(STORAGE_KEYS.AUTH_TOKEN);
-    
+
     // If no system user token, check for EV Owner token
     if (!token) {
       token = getLocalStorageItem<string>("evOwnerToken");
@@ -54,7 +54,7 @@ apiClient.interceptors.response.use(
       // Determine which login page to redirect to based on current path
       const currentPath = window.location.pathname;
       let redirectPath = "/login";
-      
+
       if (currentPath.includes("ev-owner")) {
         redirectPath = "/ev-owner-login";
       }

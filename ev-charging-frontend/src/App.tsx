@@ -225,9 +225,15 @@ function App() {
               <Route path="/" element={<LandingPage />} />
 
               {/* EV Owner Routes */}
-              <Route path="/ev-owner-register" element={<EVOwnerRegistrationPage />} />
+              <Route
+                path="/ev-owner-register"
+                element={<EVOwnerRegistrationPage />}
+              />
               <Route path="/ev-owner-login" element={<EVOwnerLoginPage />} />
-              <Route path="/ev-owner-dashboard" element={<EVOwnerDashboardPage />} />
+              <Route
+                path="/ev-owner-dashboard"
+                element={<EVOwnerDashboardPage />}
+              />
 
               {/* Profile Page - accessible to all authenticated users */}
               <Route

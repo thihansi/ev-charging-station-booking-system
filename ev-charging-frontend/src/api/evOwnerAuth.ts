@@ -45,7 +45,9 @@ export const evOwnerAuthApi = {
   },
 
   // EV Owner Login
-  login: async (credentials: EVOwnerLoginRequest): Promise<EVOwnerLoginResponse> => {
+  login: async (
+    credentials: EVOwnerLoginRequest
+  ): Promise<EVOwnerLoginResponse> => {
     const response = await apiClient.post<EVOwnerLoginResponse>(
       "/api/evownerauth/login",
       credentials
@@ -55,7 +57,9 @@ export const evOwnerAuthApi = {
 
   // Get EV Owner Profile
   getProfile: async (): Promise<EVOwnerProfile> => {
-    const response = await apiClient.get<EVOwnerProfile>("/api/evownerauth/profile");
+    const response = await apiClient.get<EVOwnerProfile>(
+      "/api/evownerauth/profile"
+    );
     return response.data;
   },
 
@@ -63,7 +67,10 @@ export const evOwnerAuthApi = {
   updateProfile: async (
     profileData: EVOwnerProfile
   ): Promise<{ message: string; evOwner: EVOwnerProfile }> => {
-    const response = await apiClient.put("/api/evownerauth/profile", profileData);
+    const response = await apiClient.put(
+      "/api/evownerauth/profile",
+      profileData
+    );
     return response.data;
   },
 
@@ -75,7 +82,9 @@ export const evOwnerAuthApi = {
 
   // Reactivate EV Owner Account (Backoffice only)
   reactivateAccount: async (nic: string): Promise<{ message: string }> => {
-    const response = await apiClient.post(`/api/evownerauth/reactivate/${encodeURIComponent(nic)}`);
+    const response = await apiClient.post(
+      `/api/evownerauth/reactivate/${encodeURIComponent(nic)}`
+    );
     return response.data;
   },
 };

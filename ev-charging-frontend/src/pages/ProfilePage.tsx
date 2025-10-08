@@ -258,7 +258,9 @@ const ProfilePage: React.FC = () => {
                 fullWidth
                 label="Username"
                 value={profileData.username}
-                onChange={(e) => handleProfileChange("username", e.target.value)}
+                onChange={(e) =>
+                  handleProfileChange("username", e.target.value)
+                }
                 disabled={!isEditing}
                 variant={isEditing ? "outlined" : "filled"}
               />
@@ -268,13 +270,15 @@ const ProfilePage: React.FC = () => {
                 fullWidth
                 label="Full Name"
                 value={profileData.fullName}
-                onChange={(e) => handleProfileChange("fullName", e.target.value)}
+                onChange={(e) =>
+                  handleProfileChange("fullName", e.target.value)
+                }
                 disabled={!isEditing}
                 variant={isEditing ? "outlined" : "filled"}
               />
             </Box>
           </Box>
-          
+
           <Box display="flex" flexWrap="wrap" gap={3} mt={3}>
             <Box flex="1" minWidth="300px">
               <TextField
@@ -309,7 +313,7 @@ const ProfilePage: React.FC = () => {
           <Typography variant="body2" color="text.secondary" paragraph>
             Manage your account security and password settings.
           </Typography>
-          
+
           <Button
             variant="outlined"
             onClick={() => setPasswordDialog(true)}
@@ -335,7 +339,9 @@ const ProfilePage: React.FC = () => {
               label="Current Password"
               type={showPasswords.current ? "text" : "password"}
               value={passwordData.currentPassword}
-              onChange={(e) => handlePasswordChange("currentPassword", e.target.value)}
+              onChange={(e) =>
+                handlePasswordChange("currentPassword", e.target.value)
+              }
               margin="normal"
               InputProps={{
                 endAdornment: (
@@ -349,7 +355,11 @@ const ProfilePage: React.FC = () => {
                       }
                       edge="end"
                     >
-                      {showPasswords.current ? <VisibilityOff /> : <Visibility />}
+                      {showPasswords.current ? (
+                        <VisibilityOff />
+                      ) : (
+                        <Visibility />
+                      )}
                     </IconButton>
                   </InputAdornment>
                 ),
@@ -360,7 +370,9 @@ const ProfilePage: React.FC = () => {
               label="New Password"
               type={showPasswords.new ? "text" : "password"}
               value={passwordData.newPassword}
-              onChange={(e) => handlePasswordChange("newPassword", e.target.value)}
+              onChange={(e) =>
+                handlePasswordChange("newPassword", e.target.value)
+              }
               margin="normal"
               helperText="Password must be at least 6 characters long"
               InputProps={{
@@ -386,7 +398,9 @@ const ProfilePage: React.FC = () => {
               label="Confirm New Password"
               type={showPasswords.confirm ? "text" : "password"}
               value={passwordData.confirmPassword}
-              onChange={(e) => handlePasswordChange("confirmPassword", e.target.value)}
+              onChange={(e) =>
+                handlePasswordChange("confirmPassword", e.target.value)
+              }
               margin="normal"
               error={
                 passwordData.confirmPassword.length > 0 &&
@@ -410,7 +424,11 @@ const ProfilePage: React.FC = () => {
                       }
                       edge="end"
                     >
-                      {showPasswords.confirm ? <VisibilityOff /> : <Visibility />}
+                      {showPasswords.confirm ? (
+                        <VisibilityOff />
+                      ) : (
+                        <Visibility />
+                      )}
                     </IconButton>
                   </InputAdornment>
                 ),

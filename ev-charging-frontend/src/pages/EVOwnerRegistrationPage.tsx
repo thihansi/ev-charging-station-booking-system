@@ -34,14 +34,20 @@ export const EVOwnerRegistrationPage: React.FC = () => {
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
       [name]: value,
     }));
   };
 
   const validateForm = (): boolean => {
-    if (!formData.nic || !formData.name || !formData.email || !formData.phone || !formData.password) {
+    if (
+      !formData.nic ||
+      !formData.name ||
+      !formData.email ||
+      !formData.phone ||
+      !formData.password
+    ) {
       setError("All fields are required");
       return false;
     }
@@ -91,13 +97,15 @@ export const EVOwnerRegistrationPage: React.FC = () => {
     try {
       const response = await evOwnerAuthApi.register(formData);
       setSuccess(response.message);
-      
+
       // Redirect to login page after successful registration
       setTimeout(() => {
         navigate("/ev-owner-login");
       }, 2000);
     } catch (err: any) {
-      setError(err.response?.data?.message || "Registration failed. Please try again.");
+      setError(
+        err.response?.data?.message || "Registration failed. Please try again."
+      );
     } finally {
       setIsLoading(false);
     }
@@ -118,7 +126,12 @@ export const EVOwnerRegistrationPage: React.FC = () => {
           <Typography variant="h4" component="h1" gutterBottom align="center">
             EV Owner Registration
           </Typography>
-          <Typography variant="body1" color="text.secondary" align="center" sx={{ mb: 3 }}>
+          <Typography
+            variant="body1"
+            color="text.secondary"
+            align="center"
+            sx={{ mb: 3 }}
+          >
             Join our EV charging network to book charging stations
           </Typography>
 
@@ -215,7 +228,9 @@ export const EVOwnerRegistrationPage: React.FC = () => {
                 endAdornment: (
                   <InputAdornment position="end">
                     <IconButton
-                      onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                      onClick={() =>
+                        setShowConfirmPassword(!showConfirmPassword)
+                      }
                       edge="end"
                     >
                       {showConfirmPassword ? <VisibilityOff /> : <Visibility />}

@@ -42,16 +42,16 @@ export const EVOwnerDashboardPage: React.FC = () => {
     // Check if EV Owner is logged in
     const evOwnerToken = localStorage.getItem("evOwnerToken");
     const evOwnerData = localStorage.getItem("evOwnerData");
-    
+
     console.log("EV Owner token exists:", !!evOwnerToken);
     console.log("EV Owner data exists:", !!evOwnerData);
-    
+
     if (!evOwnerToken) {
       console.error("No EV Owner token found, redirecting to login");
       navigate("/ev-owner-login");
       return;
     }
-    
+
     if (evOwnerData) {
       try {
         const parsedData = JSON.parse(evOwnerData);
@@ -60,7 +60,7 @@ export const EVOwnerDashboardPage: React.FC = () => {
         console.error("Error parsing stored EV Owner data:", e);
       }
     }
-    
+
     loadDashboardData();
   }, [navigate]);
 
@@ -68,7 +68,7 @@ export const EVOwnerDashboardPage: React.FC = () => {
     try {
       setIsLoading(true);
       setError("");
-      
+
       // Load EV Owner profile
       try {
         console.log("Loading EV Owner profile...");
@@ -77,7 +77,9 @@ export const EVOwnerDashboardPage: React.FC = () => {
         console.log("Profile loaded successfully:", profileData);
       } catch (profileError: any) {
         console.error("Failed to load profile:", profileError);
-        setError("Failed to load profile. Please check if you're logged in as an EV Owner.");
+        setError(
+          "Failed to load profile. Please check if you're logged in as an EV Owner."
+        );
         return; // Don't proceed if profile loading fails
       }
 
@@ -93,11 +95,14 @@ export const EVOwnerDashboardPage: React.FC = () => {
         try {
           console.log("Trying fallback: loading all bookings...");
           const allBookings = await bookingApi.getAll();
-          const evOwnerNic = JSON.parse(localStorage.getItem("evOwnerData") || "{}").nic;
+          const evOwnerNic = JSON.parse(
+            localStorage.getItem("evOwnerData") || "{}"
+          ).nic;
           if (evOwnerNic) {
-            const myBookings = allBookings.filter(booking => 
-              booking.evOwnerNic === evOwnerNic && 
-              new Date(booking.reservationDateTime) > new Date()
+            const myBookings = allBookings.filter(
+              (booking) =>
+                booking.evOwnerNic === evOwnerNic &&
+                new Date(booking.reservationDateTime) > new Date()
             );
             setUpcomingBookings(myBookings);
             console.log("Fallback upcoming bookings loaded:", myBookings);
@@ -119,12 +124,17 @@ export const EVOwnerDashboardPage: React.FC = () => {
         try {
           console.log("Trying fallback: loading all bookings for history...");
           const allBookings = await bookingApi.getAll();
-          const evOwnerNic = JSON.parse(localStorage.getItem("evOwnerData") || "{}").nic;
+          const evOwnerNic = JSON.parse(
+            localStorage.getItem("evOwnerData") || "{}"
+          ).nic;
           if (evOwnerNic) {
-            const myPastBookings = allBookings.filter(booking => 
-              booking.evOwnerNic === evOwnerNic && 
-              new Date(booking.reservationDateTime) <= new Date()
-            ).slice(0, 5);
+            const myPastBookings = allBookings
+              .filter(
+                (booking) =>
+                  booking.evOwnerNic === evOwnerNic &&
+                  new Date(booking.reservationDateTime) <= new Date()
+              )
+              .slice(0, 5);
             setRecentBookings(myPastBookings);
             console.log("Fallback booking history loaded:", myPastBookings);
           }
@@ -143,10 +153,11 @@ export const EVOwnerDashboardPage: React.FC = () => {
         console.error("Failed to load charging stations:", stationsError);
         // Continue even if stations fail
       }
-
     } catch (err: any) {
       console.error("General dashboard error:", err);
-      setError("Failed to load dashboard data. Please try refreshing the page.");
+      setError(
+        "Failed to load dashboard data. Please try refreshing the page."
+      );
     } finally {
       setIsLoading(false);
     }
@@ -189,7 +200,12 @@ export const EVOwnerDashboardPage: React.FC = () => {
 
   if (isLoading) {
     return (
-      <Box display="flex" justifyContent="center" alignItems="center" minHeight="100vh">
+      <Box
+        display="flex"
+        justifyContent="center"
+        alignItems="center"
+        minHeight="100vh"
+      >
         <Typography>Loading dashboard...</Typography>
       </Box>
     );
@@ -208,11 +224,7 @@ export const EVOwnerDashboardPage: React.FC = () => {
             <Typography variant="body2" sx={{ mr: 2 }}>
               Welcome, {evOwner?.name}
             </Typography>
-            <IconButton
-              size="large"
-              onClick={handleMenuOpen}
-              color="inherit"
-            >
+            <IconButton size="large" onClick={handleMenuOpen} color="inherit">
               <AccountCircle />
             </IconButton>
           </Box>
@@ -289,7 +301,7 @@ export const EVOwnerDashboardPage: React.FC = () => {
                 Available Stations
               </Typography>
               <Typography variant="h3" color="success.main">
-                {nearbyStations.filter(s => s.isActive).length}
+                {nearbyStations.filter((s) => s.isActive).length}
               </Typography>
             </CardContent>
           </Card>
@@ -347,7 +359,13 @@ export const EVOwnerDashboardPage: React.FC = () => {
                 {upcomingBookings.map((booking) => (
                   <Card key={booking.id} sx={{ mb: 2 }}>
                     <CardContent>
-                      <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                      <Box
+                        sx={{
+                          display: "flex",
+                          justifyContent: "space-between",
+                          alignItems: "center",
+                        }}
+                      >
                         <Typography variant="subtitle1">
                           Station: {booking.chargingStationId}
                         </Typography>
@@ -358,11 +376,17 @@ export const EVOwnerDashboardPage: React.FC = () => {
                         />
                       </Box>
                       <Typography variant="body2" color="text.secondary">
-                        {new Date(booking.reservationDateTime).toLocaleDateString()} at{" "}
-                        {new Date(booking.reservationDateTime).toLocaleTimeString()}
+                        {new Date(
+                          booking.reservationDateTime
+                        ).toLocaleDateString()}{" "}
+                        at{" "}
+                        {new Date(
+                          booking.reservationDateTime
+                        ).toLocaleTimeString()}
                       </Typography>
                       <Typography variant="body2">
-                        Created: {new Date(booking.createdAt).toLocaleDateString()}
+                        Created:{" "}
+                        {new Date(booking.createdAt).toLocaleDateString()}
                       </Typography>
                     </CardContent>
                   </Card>
@@ -391,7 +415,14 @@ export const EVOwnerDashboardPage: React.FC = () => {
                       <Typography variant="body2" color="text.secondary">
                         {station.address}
                       </Typography>
-                      <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mt: 1 }}>
+                      <Box
+                        sx={{
+                          display: "flex",
+                          justifyContent: "space-between",
+                          alignItems: "center",
+                          mt: 1,
+                        }}
+                      >
                         <Typography variant="body2">
                           Type: {station.stationType}
                         </Typography>

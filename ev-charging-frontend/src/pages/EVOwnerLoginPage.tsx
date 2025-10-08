@@ -28,7 +28,7 @@ export const EVOwnerLoginPage: React.FC = () => {
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
       [name]: value,
     }));
@@ -47,21 +47,24 @@ export const EVOwnerLoginPage: React.FC = () => {
 
     try {
       const response = await evOwnerAuthApi.login(formData);
-      
+
       console.log("Login response:", response);
-      
+
       // Store token and user data
       localStorage.setItem("evOwnerToken", response.token);
       localStorage.setItem("evOwnerData", JSON.stringify(response.evOwner));
-      
+
       console.log("Token stored:", response.token);
       console.log("EV Owner data stored:", response.evOwner);
-      
+
       // Redirect to EV Owner dashboard
       navigate("/ev-owner-dashboard");
     } catch (err: any) {
       console.error("Login error:", err);
-      setError(err.response?.data?.message || "Login failed. Please check your credentials.");
+      setError(
+        err.response?.data?.message ||
+          "Login failed. Please check your credentials."
+      );
     } finally {
       setIsLoading(false);
     }
@@ -82,7 +85,12 @@ export const EVOwnerLoginPage: React.FC = () => {
           <Typography variant="h4" component="h1" gutterBottom align="center">
             EV Owner Login
           </Typography>
-          <Typography variant="body1" color="text.secondary" align="center" sx={{ mb: 3 }}>
+          <Typography
+            variant="body1"
+            color="text.secondary"
+            align="center"
+            sx={{ mb: 3 }}
+          >
             Sign in to book charging stations
           </Typography>
 
