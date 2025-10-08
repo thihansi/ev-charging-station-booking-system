@@ -6,7 +6,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 
 /**
  * Central database helper for the EV Owner app.
- * Creates and manages all local SQLite tables: owner, session, reservation, station_cache.
+ * Creates and manages all local SQLite tables: owner, session, reservation, station_cache
  */
 public class DbHelper extends SQLiteOpenHelper {
 
