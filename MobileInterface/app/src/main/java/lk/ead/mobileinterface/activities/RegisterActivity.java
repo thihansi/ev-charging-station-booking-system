@@ -75,13 +75,19 @@ public class RegisterActivity extends AppCompatActivity {
             public void onResponse(Call<User> call, Response<User> res) {
                 setLoading(false);
                 if (res.isSuccessful() && res.body() != null) {
-                    Toast.makeText(RegisterActivity.this, "Account created! Please log in.", Toast.LENGTH_LONG).show();
-                    startActivity(new Intent(RegisterActivity.this, LoginActivity.class));
+                    Toast.makeText(RegisterActivity.this,
+                            "Account created successfully! Please log in.",
+                            Toast.LENGTH_LONG).show();
+
+                    // ✅ Redirect to LoginActivity
+                    Intent intent = new Intent(RegisterActivity.this, EVOwnerLoginActivity.class);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+                    startActivity(intent);
                     finish();
                 } else {
-                    // Try to surface server message if available
-                    String msg = "Registration failed (" + res.code() + ")";
-                    Toast.makeText(RegisterActivity.this, msg, Toast.LENGTH_LONG).show();
+                    Toast.makeText(RegisterActivity.this,
+                            "Registration failed: " + res.code(),
+                            Toast.LENGTH_LONG).show();
                 }
             }
 

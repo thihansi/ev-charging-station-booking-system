@@ -2,6 +2,8 @@ package lk.ead.mobileinterface.api;
 
 
 import lk.ead.mobileinterface.models.Booking;
+import lk.ead.mobileinterface.models.EVOwnerLoginRequest;
+import lk.ead.mobileinterface.models.EVOwnerLoginResponse;
 import lk.ead.mobileinterface.models.StationOperatorLoginRequest;
 import lk.ead.mobileinterface.models.StationOperatorLoginResponse;
 import lk.ead.mobileinterface.models.RegisterRequest;
@@ -31,6 +33,8 @@ public interface ApiService {
 
     // Login existing EV Owner
     @POST("api/EVOwnerAuth/login")
+    Call<EVOwnerLoginResponse> login(@Body EVOwnerLoginRequest request);
+  
     Call<StationOperatorLoginResponse> login(@Body StationOperatorLoginRequest request);
 
     // Login as operator
