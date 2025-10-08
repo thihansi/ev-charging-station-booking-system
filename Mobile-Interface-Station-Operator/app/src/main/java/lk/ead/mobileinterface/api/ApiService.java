@@ -2,13 +2,9 @@ package lk.ead.mobileinterface.api;
 
 
 import lk.ead.mobileinterface.models.Booking;
-import lk.ead.mobileinterface.models.EVOwnerLoginRequest;
-import lk.ead.mobileinterface.models.EVOwnerLoginResponse;
 import lk.ead.mobileinterface.models.StationOperatorLoginRequest;
 import lk.ead.mobileinterface.models.StationOperatorLoginResponse;
-import lk.ead.mobileinterface.models.RegisterRequest;
 import lk.ead.mobileinterface.models.Station;
-import lk.ead.mobileinterface.models.User;
 
 import java.util.List;
 
@@ -27,43 +23,13 @@ public interface ApiService {
     // AUTHENTICATION
     // -------------------------------------------------------------
 
-    // Register a new EV Owner
-    @POST("api/EVOwnerAuth/register")
-    Call<User> register(@Body RegisterRequest request);
-
-    // Login existing EV Owner
-    @POST("api/EVOwnerAuth/login")
-    Call<EVOwnerLoginResponse> login(@Body EVOwnerLoginRequest request);
-  
-    Call<StationOperatorLoginResponse> login(@Body StationOperatorLoginRequest request);
-
     // Login as operator
     @POST("api/Auth/login")
     Call<StationOperatorLoginResponse> operatorLogin(@Body StationOperatorLoginRequest request);
 
-    // Get EV Owner Profile (requires token)
-    @GET("api/EVOwnerAuth/profile")
-    Call<User> getProfile(@Header("Authorization") String token);
-
-    // Update EV Owner Profile
-    @PUT("api/EVOwnerAuth/profile")
-    Call<User> updateProfile(@Header("Authorization") String token, @Body User user);
-
-    // Deactivate Account
-    @POST("api/EVOwnerAuth/deactivate")
-    Call<Void> deactivateAccount(@Header("Authorization") String token);
-
     // -------------------------------------------------------------
     // CHARGING STATIONS
     // -------------------------------------------------------------
-
-    // Get all active charging stations
-    @GET("api/ChargingStations/active")
-    Call<List<Station>> getActiveStations();
-
-    // Get station by ID
-    @GET("api/ChargingStations/{id}")
-    Call<Station> getStationById(@Path("id") int id);
 
     // -------------------------------------------------------------
     // BOOKINGS

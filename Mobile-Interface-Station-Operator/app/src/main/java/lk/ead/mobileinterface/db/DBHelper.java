@@ -22,7 +22,6 @@ public class DBHelper extends SQLiteOpenHelper {
 
     // Table Names
     private static final String TABLE_USER = "users";
-    private static final String TABLE_STATION = "stations";
     private static final String TABLE_BOOKING = "bookings";
     private static final String TABLE_OPERATOR_SESSION = "operator_session";
 
@@ -42,19 +41,6 @@ public class DBHelper extends SQLiteOpenHelper {
                 "phone TEXT, " +
                 "isActive INTEGER)";
         db.execSQL(CREATE_USER_TABLE);
-
-        // STATION TABLE
-        String CREATE_STATION_TABLE = "CREATE TABLE " + TABLE_STATION + " (" +
-                "id INTEGER PRIMARY KEY, " +
-                "name TEXT, " +
-                "address TEXT, " +
-                "latitude REAL, " +
-                "longitude REAL, " +
-                "type TEXT, " +
-                "availableSlots INTEGER, " +
-                "schedule TEXT, " +
-                "isActive INTEGER)";
-        db.execSQL(CREATE_STATION_TABLE);
 
         // BOOKING TABLE
         String CREATE_BOOKING_TABLE = "CREATE TABLE " + TABLE_BOOKING + " (" +
@@ -84,8 +70,8 @@ public class DBHelper extends SQLiteOpenHelper {
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_USER);
-        db.execSQL("DROP TABLE IF EXISTS " + TABLE_STATION);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_BOOKING);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_OPERATOR_SESSION);
         onCreate(db);
     }
 
@@ -127,60 +113,6 @@ public class DBHelper extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getWritableDatabase();
         db.delete(TABLE_USER, null, null);
         db.close();
-    }
-
-    // -----------------------------------------------------
-    // STATION OPERATIONS
-    // -----------------------------------------------------
-
-    public void insertStations(List<Station> stations) {
-        SQLiteDatabase db = this.getWritableDatabase();
-        db.beginTransaction();
-        try {
-            for (Station station : stations) {
-                ContentValues values = new ContentValues();
-                values.put("id", station.getId());
-                values.put("name", station.getName());
-                values.put("address", station.getAddress());
-                values.put("latitude", station.getLatitude());
-                values.put("longitude", station.getLongitude());
-                values.put("type", station.getType());
-                values.put("availableSlots", station.getAvailableSlots());
-                values.put("schedule", station.getSchedule());
-                values.put("isActive", station.isActive() ? 1 : 0);
-
-                db.insertWithOnConflict(TABLE_STATION, null, values, SQLiteDatabase.CONFLICT_REPLACE);
-            }
-            db.setTransactionSuccessful();
-        } finally {
-            db.endTransaction();
-            db.close();
-        }
-    }
-
-    public List<Station> getAllStations() {
-        List<Station> list = new ArrayList<>();
-        SQLiteDatabase db = this.getReadableDatabase();
-        Cursor cursor = db.rawQuery("SELECT * FROM " + TABLE_STATION, null);
-
-        if (cursor.moveToFirst()) {
-            do {
-                Station s = new Station();
-                s.setId(cursor.getInt(cursor.getColumnIndexOrThrow("id")));
-                s.setName(cursor.getString(cursor.getColumnIndexOrThrow("name")));
-                s.setAddress(cursor.getString(cursor.getColumnIndexOrThrow("address")));
-                s.setLatitude(cursor.getDouble(cursor.getColumnIndexOrThrow("latitude")));
-                s.setLongitude(cursor.getDouble(cursor.getColumnIndexOrThrow("longitude")));
-                s.setType(cursor.getString(cursor.getColumnIndexOrThrow("type")));
-                s.setAvailableSlots(cursor.getInt(cursor.getColumnIndexOrThrow("availableSlots")));
-                s.setSchedule(cursor.getString(cursor.getColumnIndexOrThrow("schedule")));
-                s.setActive(cursor.getInt(cursor.getColumnIndexOrThrow("isActive")) == 1);
-                list.add(s);
-            } while (cursor.moveToNext());
-        }
-
-        cursor.close();
-        return list;
     }
 
     // -----------------------------------------------------

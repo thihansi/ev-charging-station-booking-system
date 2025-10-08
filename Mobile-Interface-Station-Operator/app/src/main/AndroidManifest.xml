@@ -21,28 +21,16 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.MobileInterface">
         <activity
+            android:name=".activities.ReservationListActivity"
+            android:exported="false" />
+        <activity
             android:name=".activities.LoginActivity"
-            android:exported="false" />
-        <activity
-            android:name=".activities.DashboardActivity"
-            android:exported="false" />
-        <activity
-            android:name=".activities.ProfileActivity"
-            android:exported="false" />
-        <activity
-            android:name=".activities.RegisterActivity"
             android:exported="false" />
         <activity
             android:name=".activities.FinalizeActivity"
             android:exported="false" />
         <activity
-            android:name=".activities.ScanQRActivity"
-            android:exported="false" />
-        <activity
             android:name=".activities.OperatorDashboardActivity"
-            android:exported="false" />
-        <activity
-            android:name=".activities.EVOwnerLoginActivity"
             android:exported="false" />
         <activity
             android:name=".activities.MainActivity"
@@ -50,9 +38,11 @@
             android:theme="@style/Theme.MobileInterface">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="${MAPS_API_KEY}" />
