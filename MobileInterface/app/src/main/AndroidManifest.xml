@@ -21,6 +21,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.MobileInterface">
         <activity
+            android:name=".activities.LoginActivity"
+            android:exported="false" />
+        <activity
             android:name=".activities.DashboardActivity"
             android:exported="false" />
         <activity
