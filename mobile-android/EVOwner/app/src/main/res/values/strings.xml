@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name" translatable="false">EV-Owner</string>
+    <string name="google_maps_key" translatable="false">AIzaSyDPKi1ZVnrr31ziYRtsIw9m0DlIh-_W7xw</string>
+</resources>
