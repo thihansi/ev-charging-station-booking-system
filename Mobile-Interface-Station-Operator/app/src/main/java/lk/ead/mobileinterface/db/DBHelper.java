@@ -44,12 +44,12 @@ public class DBHelper extends SQLiteOpenHelper {
 
         // BOOKING TABLE
         String CREATE_BOOKING_TABLE = "CREATE TABLE " + TABLE_BOOKING + " (" +
-                "id INTEGER PRIMARY KEY, " +
+                "id TEXT PRIMARY KEY, " +
                 "evOwnerNic TEXT, " +
-                "chargingStationId INTEGER, " +
+                "chargingStationId TEXT, " +
                 "bookingDate TEXT, " +
                 "reservationDateTime TEXT, " +
-                "status TEXT, " +
+                "status INTEGER, " +
                 "isActive INTEGER, " +
                 "qrCode TEXT, " +
                 "approvedBy TEXT, " +
@@ -115,29 +115,50 @@ public class DBHelper extends SQLiteOpenHelper {
         db.close();
     }
 
-    // -----------------------------------------------------
-    // BOOKING OPERATIONS
-    // -----------------------------------------------------
+    // ==============================
+    // BOOKING OPERATIONS (DBHelper)
+    // ==============================
 
-    public void insertBookings(List<Booking> bookings) {
+    // Upsert ONE booking (insert or replace by primary key "id")
+    public void upsertBooking(Booking b) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues v = new ContentValues();
+        v.put("id", b.getId());
+        v.put("evOwnerNic", b.getEvOwnerNic());
+        v.put("chargingStationId", b.getChargingStationId());
+        v.put("bookingDate", b.getBookingDate());
+        v.put("reservationDateTime", b.getReservationDateTime());
+        v.put("status", b.getStatus());                    // int
+        v.put("isActive", b.isActive() ? 1 : 0);           // boolean -> 0/1
+        v.put("qrCode", b.getQrCode());
+        v.put("approvedBy", b.getApprovedBy());
+        v.put("approvedAt", b.getApprovedAt());
+        v.put("rejectionReason", b.getRejectionReason());
+        db.insertWithOnConflict(TABLE_BOOKING, null, v, SQLiteDatabase.CONFLICT_REPLACE);
+        db.close();
+    }
+
+    // Replace ALL bookings in a single transaction (use after API fetch)
+    public void replaceAllBookings(List<Booking> bookings) {
         SQLiteDatabase db = this.getWritableDatabase();
         db.beginTransaction();
         try {
+            db.delete(TABLE_BOOKING, null, null);
+            ContentValues v = new ContentValues();
             for (Booking b : bookings) {
-                ContentValues values = new ContentValues();
-                values.put("id", b.getId());
-                values.put("evOwnerNic", b.getEvOwnerNic());
-                values.put("chargingStationId", b.getChargingStationId());
-                values.put("bookingDate", b.getBookingDate());
-                values.put("reservationDateTime", b.getReservationDateTime());
-                values.put("status", b.getStatus().toString());
-                values.put("isActive", b.isActive() ? 1 : 0);
-                values.put("qrCode", b.getQrCode());
-                values.put("approvedBy", b.getApprovedBy());
-                values.put("approvedAt", b.getApprovedAt());
-                values.put("rejectionReason", b.getRejectionReason());
-
-                db.insertWithOnConflict(TABLE_BOOKING, null, values, SQLiteDatabase.CONFLICT_REPLACE);
+                v.clear();
+                v.put("id", b.getId());
+                v.put("evOwnerNic", b.getEvOwnerNic());
+                v.put("chargingStationId", b.getChargingStationId());
+                v.put("bookingDate", b.getBookingDate());
+                v.put("reservationDateTime", b.getReservationDateTime());
+                v.put("status", b.getStatus());
+                v.put("isActive", b.isActive() ? 1 : 0);
+                v.put("qrCode", b.getQrCode());
+                v.put("approvedBy", b.getApprovedBy());
+                v.put("approvedAt", b.getApprovedAt());
+                v.put("rejectionReason", b.getRejectionReason());
+                db.insertWithOnConflict(TABLE_BOOKING, null, v, SQLiteDatabase.CONFLICT_REPLACE);
             }
             db.setTransactionSuccessful();
         } finally {
@@ -146,37 +167,130 @@ public class DBHelper extends SQLiteOpenHelper {
         }
     }
 
+    // Get ALL bookings
     public List<Booking> getAllBookings() {
         List<Booking> list = new ArrayList<>();
         SQLiteDatabase db = this.getReadableDatabase();
-        Cursor cursor = db.rawQuery("SELECT * FROM " + TABLE_BOOKING, null);
-
-        if (cursor.moveToFirst()) {
-            do {
-                Booking b = new Booking();
-                b.setId(cursor.getInt(cursor.getColumnIndexOrThrow("id")));
-                b.setEvOwnerNic(cursor.getString(cursor.getColumnIndexOrThrow("evOwnerNic")));
-                b.setChargingStationId(cursor.getInt(cursor.getColumnIndexOrThrow("chargingStationId")));
-                b.setBookingDate(cursor.getString(cursor.getColumnIndexOrThrow("bookingDate")));
-                b.setReservationDateTime(cursor.getString(cursor.getColumnIndexOrThrow("reservationDateTime")));
-                b.setStatus(BookingStatus.valueOf(cursor.getString(cursor.getColumnIndexOrThrow("status"))));
-                b.setActive(cursor.getInt(cursor.getColumnIndexOrThrow("isActive")) == 1);
-                b.setQrCode(cursor.getString(cursor.getColumnIndexOrThrow("qrCode")));
-                b.setApprovedBy(cursor.getString(cursor.getColumnIndexOrThrow("approvedBy")));
-                b.setApprovedAt(cursor.getString(cursor.getColumnIndexOrThrow("approvedAt")));
-                b.setRejectionReason(cursor.getString(cursor.getColumnIndexOrThrow("rejectionReason")));
-                list.add(b);
-            } while (cursor.moveToNext());
+        Cursor c = db.rawQuery("SELECT * FROM " + TABLE_BOOKING + " ORDER BY reservationDateTime DESC", null);
+        try {
+            if (c.moveToFirst()) {
+                do { list.add(mapBooking(c)); } while (c.moveToNext());
+            }
+        } finally {
+            c.close();
         }
-
-        cursor.close();
         return list;
     }
 
+    // Get ONE booking by id
+    public Booking getBookingById(String id) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor c = db.rawQuery("SELECT * FROM " + TABLE_BOOKING + " WHERE id = ?", new String[]{ id });
+        try {
+            if (c.moveToFirst()) return mapBooking(c);
+            return null;
+        } finally {
+            c.close();
+        }
+    }
+
+    // Update ONLY status (e.g., finalize charging -> COMPLETED)
+    public void updateBookingStatus(String id, int newStatus) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues v = new ContentValues();
+        v.put("status", newStatus);
+        db.update(TABLE_BOOKING, v, "id = ?", new String[]{ id });
+        db.close();
+    }
+
+    // Delete ONE booking
+    public void deleteBookingById(String id) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.delete(TABLE_BOOKING, "id = ?", new String[]{ id });
+        db.close();
+    }
+
+    // Delete ALL bookings
     public void clearBookings() {
         SQLiteDatabase db = this.getWritableDatabase();
         db.delete(TABLE_BOOKING, null, null);
         db.close();
+    }
+
+    // ----- Convenience queries for counts/sections (used by dashboard/reservations) -----
+
+    // Count pending
+    public int countPending() {
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor c = db.rawQuery("SELECT COUNT(*) FROM " + TABLE_BOOKING + " WHERE status = 0", null);
+        try { return c.moveToFirst() ? c.getInt(0) : 0; }
+        finally { c.close(); }
+    }
+
+    // Count approved with reservationDateTime > now (expects ISO 'Z' strings)
+    public int countApprovedFutureUtcNow() {
+        String nowIso = isoNowUtc();
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor c = db.rawQuery(
+                "SELECT COUNT(*) FROM " + TABLE_BOOKING + " WHERE status = 1 AND reservationDateTime > ?",
+                new String[]{ nowIso }
+        );
+        try { return c.moveToFirst() ? c.getInt(0) : 0; }
+        finally { c.close(); }
+    }
+
+    // Current/Upcoming list: status in (1=Approved, 3=Charging) and date >= now
+    public List<Booking> getCurrentUpcoming() {
+        String nowIso = isoNowUtc();
+        List<Booking> list = new ArrayList<>();
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor c = db.rawQuery(
+                "SELECT * FROM " + TABLE_BOOKING +
+                        " WHERE (status = 1 OR status = 3) AND reservationDateTime >= ?" +
+                        " ORDER BY reservationDateTime ASC", new String[]{ nowIso });
+        try {
+            if (c.moveToFirst()) { do { list.add(mapBooking(c)); } while (c.moveToNext()); }
+        } finally { c.close(); }
+        return list;
+    }
+
+    // Completed list
+    public List<Booking> getCompleted() {
+        List<Booking> list = new ArrayList<>();
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor c = db.rawQuery(
+                "SELECT * FROM " + TABLE_BOOKING + " WHERE status = 4 ORDER BY reservationDateTime DESC", null);
+        try {
+            if (c.moveToFirst()) { do { list.add(mapBooking(c)); } while (c.moveToNext()); }
+        } finally { c.close(); }
+        return list;
+    }
+
+    // ==============================
+    // Private helpers
+    // ==============================
+
+    private Booking mapBooking(Cursor c) {
+        Booking b = new Booking();
+        b.setId(c.getString(c.getColumnIndexOrThrow("id")));
+        b.setEvOwnerNic(c.getString(c.getColumnIndexOrThrow("evOwnerNic")));
+        b.setChargingStationId(c.getString(c.getColumnIndexOrThrow("chargingStationId")));
+        b.setBookingDate(c.getString(c.getColumnIndexOrThrow("bookingDate")));
+        b.setReservationDateTime(c.getString(c.getColumnIndexOrThrow("reservationDateTime")));
+        b.setStatus(c.getInt(c.getColumnIndexOrThrow("status")));                 // int
+        b.setActive(c.getInt(c.getColumnIndexOrThrow("isActive")) == 1);
+        b.setQrCode(c.getString(c.getColumnIndexOrThrow("qrCode")));
+        b.setApprovedBy(c.getString(c.getColumnIndexOrThrow("approvedBy")));
+        b.setApprovedAt(c.getString(c.getColumnIndexOrThrow("approvedAt")));
+        b.setRejectionReason(c.getString(c.getColumnIndexOrThrow("rejectionReason")));
+        return b;
+    }
+
+    // ISO now in UTC matching saved format (used for simple string comparison)
+    private String isoNowUtc() {
+        java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", java.util.Locale.US);
+        sdf.setTimeZone(java.util.TimeZone.getTimeZone("UTC"));
+        return sdf.format(new java.util.Date());
     }
 
 

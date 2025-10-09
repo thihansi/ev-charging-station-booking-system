@@ -6,4 +6,5 @@
     <color name="primary_dark">#388E3C</color>
     <color name="text_gray">#616161</color>
     <color name="background_light">#F9F9F9</color>
+<!--    <color name="text_gray">#666666</color>-->
 </resources>

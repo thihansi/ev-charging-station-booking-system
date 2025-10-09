@@ -35,9 +35,8 @@ public interface ApiService {
     // BOOKINGS
     // -------------------------------------------------------------
 
-    // Create new booking
-    @POST("api/Bookings")
-    Call<Booking> createBooking(@Header("Authorization") String token, @Body Booking booking);
+    @GET("api/Bookings")
+    Call<List<Booking>> getAllBookings(@Header("Authorization") String bearerToken);
 
     @GET("api/Bookings/pending")
     Call<List<Booking>> getPendingBookings(@Header("Authorization") String bearerToken);
@@ -46,25 +45,15 @@ public interface ApiService {
     @GET("api/Bookings/my-bookings")
     Call<List<Booking>> getMyBookings(@Header("Authorization") String token);
 
-    // Get upcoming bookings
-    @GET("api/Bookings/my-bookings/upcoming")
-    Call<List<Booking>> getUpcomingBookings(@Header("Authorization") String token);
-
-    // Get history bookings
-    @GET("api/Bookings/my-bookings/history")
-    Call<List<Booking>> getHistoryBookings(@Header("Authorization") String token);
+    @GET("api/Bookings/{id}")
+    Call<Booking> getBookingById(@Header("Authorization") String bearerToken, @Path("id") String id);
 
     // Get QR code for approved booking
     @GET("api/Bookings/{id}/qrcode")
     Call<Booking> getBookingQRCode(@Header("Authorization") String token, @Path("id") int bookingId);
 
-    // Update booking (change date/time)
-    @PUT("api/Bookings/{id}")
-    Call<Booking> updateBooking(@Header("Authorization") String token, @Path("id") int bookingId, @Body Booking booking);
 
-    // Cancel booking
-    @DELETE("api/Bookings/{id}")
-    Call<Void> cancelBooking(@Header("Authorization") String token, @Path("id") int bookingId);
-
+    @POST("api/Bookings/validate-qr")
+    Call<Booking> validateQR(@Header("Authorization") String bearerToken, @Body String qrCode); // API expects raw string
 
 }

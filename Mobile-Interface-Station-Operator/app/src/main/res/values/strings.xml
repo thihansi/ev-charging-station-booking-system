@@ -54,4 +54,15 @@
     <string name="Logout">Logout</string>
     <string name="Login">Login</string>
     <string name="Create_An_Account">Create an account</string>
+
+
+    <string name="title_reservations">Reservations</string>
+    <string name="pending_0">Pending: 0</string>
+    <string name="approved_future_0">Approved (future): 0</string>
+    <string name="current_and_upcoming">Current &amp; Upcoming</string>
+    <string name="completed">Completed</string>
+
+    <string name="label_station_id">Station ID:</string>
+    <string name="label_reservation_time_sample">2025-10-12T10:00</string>
+    <string name="label_status_pending">Status: Pending</string>
 </resources>
