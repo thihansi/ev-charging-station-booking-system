@@ -1,5 +1,5 @@
 // API Configuration
-export const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "https://it223-hvhwgha5b2h5gbcg.southindia-01.azurewebsites.net";
+export const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || ""; // Empty string enables Vite proxy for CORS workaround
 
 // Local Storage Keys
 export const STORAGE_KEYS = {

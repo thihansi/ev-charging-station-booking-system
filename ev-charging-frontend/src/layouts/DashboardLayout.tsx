@@ -83,11 +83,11 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
 
   // Get the correct profile route based on user role
   const getProfileRoute = () => {
-    return isBackoffice ? ROUTES.ADMIN.PROFILE : ROUTES.OPERATOR.PROFILE;
+    return ROUTES.PROFILE; // Both backoffice and operator use the same profile route
   };
 
   // Get menu items based on user role
-  const menuItems = isBackoffice ? MENU_ITEMS.ADMIN : MENU_ITEMS.OPERATOR;
+  const menuItems = isBackoffice ? MENU_ITEMS.BACKOFFICE : MENU_ITEMS.OPERATOR;
 
   // Icon mapping
   const getIcon = (iconName: string) => {

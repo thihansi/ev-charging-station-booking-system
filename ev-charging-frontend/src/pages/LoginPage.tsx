@@ -51,7 +51,7 @@ const LoginPage: React.FC = () => {
 
       const redirectPath =
         state.user.role === USER_ROLES.BACKOFFICE
-          ? ROUTES.ADMIN.DASHBOARD
+          ? ROUTES.BACKOFFICE.DASHBOARD
           : ROUTES.OPERATOR.DASHBOARD;
       
       console.log('🎯 LoginPage: Redirecting to:', redirectPath);
@@ -114,7 +114,7 @@ const LoginPage: React.FC = () => {
   if (state.isAuthenticated && state.user) {
     const redirectPath =
       state.user.role === USER_ROLES.BACKOFFICE
-        ? ROUTES.ADMIN.DASHBOARD
+        ? ROUTES.BACKOFFICE.DASHBOARD
         : ROUTES.OPERATOR.DASHBOARD;
     return <Navigate to={redirectPath} replace />;
   }

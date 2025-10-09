@@ -7,7 +7,7 @@ import type {
 import { API_BASE_URL, STORAGE_KEYS, HTTP_STATUS } from "../utils/constants";
 import { getLocalStorageItem, removeLocalStorageItem } from "../utils/helpers";
 
-// Create axios instance with backend API URL
+// Create axios instance
 const apiClient: AxiosInstance = axios.create({
   baseURL: API_BASE_URL,
   timeout: 30000,
@@ -38,22 +38,19 @@ apiClient.interceptors.request.use(
   }
 );
 
-// Response interceptor to handle common errors and 401 redirects
+// Response interceptor to handle common errors
 apiClient.interceptors.response.use(
   (response: AxiosResponse) => {
     return response;
   },
   (error) => {
-    if (error.response?.status === HTTP_STATUS.UNAUTHORIZED || error.response?.status === 403) {
+    if (error.response?.status === HTTP_STATUS.UNAUTHORIZED) {
       // Clear auth data for both system users and EV owners
       removeLocalStorageItem(STORAGE_KEYS.AUTH_TOKEN);
       removeLocalStorageItem(STORAGE_KEYS.USER_PROFILE);
       removeLocalStorageItem("evOwnerToken");
       removeLocalStorageItem("evOwnerData");
 
-      // Clear localStorage and redirect to login
-      localStorage.clear();
-      
       // Determine which login page to redirect to based on current path
       const currentPath = window.location.pathname;
       let redirectPath = "/login";

@@ -31,7 +31,6 @@ import {
   Clear as ClearIcon,
 } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
-import { authApi } from "../api";
 
 interface UserRegistrationData {
   username: string;
@@ -156,6 +155,11 @@ const UserRegistrationPage: React.FC = () => {
     setError("");
 
     try {
+      const endpoint =
+        formData.role === "Backoffice"
+          ? "/api/auth/create-backoffice-user"
+          : "/api/auth/create-station-operator";
+
       const requestBody = {
         username: formData.username,
         password: formData.password,
@@ -167,12 +171,25 @@ const UserRegistrationPage: React.FC = () => {
           }),
       };
 
-      if (formData.role === "Backoffice") {
-        await authApi.createBackofficeUser(requestBody);
-      } else {
-        await authApi.createStationOperator(requestBody);
+      const response = await fetch(
+        `${
+          import.meta.env.VITE_API_BASE_URL || "https://localhost:7001"
+        }${endpoint}`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(requestBody),
+        }
+      );
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || "Registration failed");
       }
 
+      await response.json();
       setSuccess(true);
       setError("");
 

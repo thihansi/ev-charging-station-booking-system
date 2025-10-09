@@ -57,7 +57,7 @@ export const LoginDebugPage: React.FC = () => {
 
       // Step 4: Check role and expected redirect
       const expectedRoute = profileResponse.role === USER_ROLES.BACKOFFICE 
-        ? ROUTES.ADMIN.DASHBOARD 
+        ? ROUTES.BACKOFFICE.DASHBOARD 
         : ROUTES.OPERATOR.DASHBOARD;
       
       console.log('🎯 Expected redirect route:', expectedRoute);
@@ -322,7 +322,7 @@ export const LoginDebugPage: React.FC = () => {
                     <TableCell>
                       <code>
                         {profileResult.role === USER_ROLES.BACKOFFICE 
-                          ? ROUTES.ADMIN.DASHBOARD 
+                          ? ROUTES.BACKOFFICE.DASHBOARD 
                           : ROUTES.OPERATOR.DASHBOARD}
                       </code>
                     </TableCell>
@@ -364,8 +364,8 @@ export const LoginDebugPage: React.FC = () => {
                   <TableCell><code>"{ROUTES.OPERATOR.DASHBOARD}"</code></TableCell>
                 </TableRow>
                 <TableRow>
-                  <TableCell><strong>ROUTES.ADMIN.DASHBOARD</strong></TableCell>
-                  <TableCell><code>"{ROUTES.ADMIN.DASHBOARD}"</code></TableCell>
+                  <TableCell><strong>ROUTES.BACKOFFICE.DASHBOARD</strong></TableCell>
+                  <TableCell><code>"{ROUTES.BACKOFFICE.DASHBOARD}"</code></TableCell>
                 </TableRow>
               </TableBody>
             </Table>
