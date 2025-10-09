@@ -2,8 +2,8 @@ package lk.ead.mobileinterface.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.widget.TextView;
 import android.widget.Button;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -41,6 +41,13 @@ public class OperatorDashboardActivity extends AppCompatActivity {
     private static final int STATUS_CANCELLED = 4; // past
     private static final int STATUS_ACTIVE    = 5; // active/charging
 
+    // Expand/Collapse flags
+    private boolean showAllActive = false;
+    private boolean showAllUpcoming = false;
+    private boolean showAllPast = false;
+
+    private List<Booking> cachedAll = new ArrayList<>();
+
     private RecyclerView rvActive, rvUpcoming, rvPast;
     private BookingCardAdapter adActive, adUpcoming, adPast;
     private TextView btnViewAllActive, btnViewAllUpcoming, btnViewAllPast;
@@ -68,9 +75,9 @@ public class OperatorDashboardActivity extends AppCompatActivity {
         rvUpcoming.setLayoutManager(new LinearLayoutManager(this));
         rvPast.setLayoutManager(new LinearLayoutManager(this));
 
-        adActive = new BookingCardAdapter(new ArrayList<>(), this::openDetails);
+        adActive   = new BookingCardAdapter(new ArrayList<>(), this::openDetails);
         adUpcoming = new BookingCardAdapter(new ArrayList<>(), this::openDetails);
-        adPast = new BookingCardAdapter(new ArrayList<>(), this::openDetails);
+        adPast     = new BookingCardAdapter(new ArrayList<>(), this::openDetails);
 
         rvActive.setAdapter(adActive);
         rvUpcoming.setAdapter(adUpcoming);
@@ -80,16 +87,25 @@ public class OperatorDashboardActivity extends AppCompatActivity {
         db  = new DBHelper(this);
 
         // 1) Render from local cache first
-        renderSections(db.getAllBookings());
+        cachedAll = db.getAllBookings();
+        renderSections(cachedAll);
 
         // 2) Refresh from API
         fetchAndCache();
 
-        // btnScan.setOnClickListener(v -> startActivity(new Intent(this, ScanQRActivity.class)));
-
-        btnViewAllActive.setOnClickListener(v -> openList("active"));
-        btnViewAllUpcoming.setOnClickListener(v -> openList("upcoming"));
-        btnViewAllPast.setOnClickListener(v -> openList("past"));
+        // Expand/Collapse toggles
+        btnViewAllActive.setOnClickListener(v -> {
+            showAllActive = !showAllActive;
+            renderSections(cachedAll);
+        });
+        btnViewAllUpcoming.setOnClickListener(v -> {
+            showAllUpcoming = !showAllUpcoming;
+            renderSections(cachedAll);
+        });
+        btnViewAllPast.setOnClickListener(v -> {
+            showAllPast = !showAllPast;
+            renderSections(cachedAll);
+        });
 
         btnLogout.setOnClickListener(v -> {
             new SessionManager(this).clearSession();
@@ -116,9 +132,9 @@ public class OperatorDashboardActivity extends AppCompatActivity {
                                     "Failed to fetch bookings", Toast.LENGTH_SHORT).show();
                             return;
                         }
-                        List<Booking> list = resp.body().bookings;
-                        db.replaceAllBookings(list);   // keep your local cache up to date
-                        renderSections(list);          // redraw cards
+                        cachedAll = resp.body().bookings;
+                        db.replaceAllBookings(cachedAll);
+                        renderSections(cachedAll);
                     }
 
                     @Override
@@ -141,14 +157,13 @@ public class OperatorDashboardActivity extends AppCompatActivity {
             int s = b.getStatus();
             Date resv = parseIso(b.getReservationDateTime());
 
-            if (s == STATUS_ACTIVE) { // 5
+            if (s == STATUS_ACTIVE) {
                 active.add(b);
-            } else if (s == STATUS_APPROVED && resv != null && resv.after(now)) { // 1 + future
+            } else if (s == STATUS_APPROVED && resv != null && resv.after(now)) {
                 upcoming.add(b);
-            } else if (s == STATUS_COMPLETED || s == STATUS_CANCELLED) { // 3 or 4
+            } else if (s == STATUS_COMPLETED || s == STATUS_CANCELLED) {
                 past.add(b);
             }
-            // Pending (0) and Rejected (2) are not shown on dashboard
         }
 
         // Sort: upcoming soonest first, past newest first
@@ -157,14 +172,19 @@ public class OperatorDashboardActivity extends AppCompatActivity {
         Collections.sort(upcoming, byResvAsc);
         Collections.sort(past, byResvDesc);
 
-        // Limit preview counts on dashboard
-        adActive.submit(limit(active, 1));
-        adUpcoming.submit(limit(upcoming, 3));
-        adPast.submit(limit(past, 3));
+        // Preview vs View-all
+        adActive.submit(showAllActive ? active : limit(active, 1));
+        adUpcoming.submit(showAllUpcoming ? upcoming : limit(upcoming, 3));
+        adPast.submit(showAllPast ? past : limit(past, 3));
+
+        // Update the button labels based on state and list sizes
+        btnViewAllActive.setText(showAllActive ? "View less" : (active.size() > 1 ? "View all" : "View all"));
+        btnViewAllUpcoming.setText(showAllUpcoming ? "View less" : (upcoming.size() > 3 ? "View all" : "View all"));
+        btnViewAllPast.setText(showAllPast ? "View less" : (past.size() > 3 ? "View all" : "View all"));
     }
 
     private List<Booking> limit(List<Booking> src, int n) {
-        if (src.size() <= n) return src;
+        if (src == null || src.size() <= n) return src;
         return new ArrayList<>(src.subList(0, n));
     }
 
@@ -176,7 +196,9 @@ public class OperatorDashboardActivity extends AppCompatActivity {
     private Date parseIso(String iso) {
         try {
             if (iso == null) return null;
-            String pat = iso.contains(".") ? "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'" : "yyyy-MM-dd'T'HH:mm:ss'Z'";
+            String pat = iso.contains(".")
+                    ? "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"
+                    : "yyyy-MM-dd'T'HH:mm:ss'Z'";
             SimpleDateFormat f = new SimpleDateFormat(pat, Locale.US);
             f.setTimeZone(TimeZone.getTimeZone("UTC"));
             return f.parse(iso);
@@ -185,12 +207,6 @@ public class OperatorDashboardActivity extends AppCompatActivity {
 
     private void openDetails(Booking b) {
         Intent i = new Intent(this, ReservationListActivity.class);
-        startActivity(i);
-    }
-
-    private void openList(String section) {
-        Intent i = new Intent(this, ReservationListActivity.class);
-        i.putExtra("filter", section); // "active" | "upcoming" | "past"
         startActivity(i);
     }
 }
