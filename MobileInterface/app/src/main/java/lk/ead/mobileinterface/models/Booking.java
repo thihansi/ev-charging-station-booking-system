@@ -1,29 +1,51 @@
 package lk.ead.mobileinterface.models;
 
+import com.google.gson.annotations.SerializedName;
 import lk.ead.mobileinterface.enumeration.BookingStatus;
 
 public class Booking {
 
-    private int id;                         // Unique booking ID
-    private String evOwnerNic;              // NIC of the EV owner
-    private int chargingStationId;          // Station ID (foreign key)
-    private String bookingDate;             // Date when booking was created
-    private String reservationDateTime;     // Reserved date/time for charging
-    private BookingStatus status;                 // Booking status (Pending, Approved, etc.)
-    private boolean isActive;               // Whether booking is currently active
-    private String qrCode;                  // Base64 QR code (if approved)
-    private String approvedBy;              // Operator who approved (if any)
-    private String approvedAt;              // Approval timestamp
-    private String rejectionReason;         // Reason if rejected
+    @SerializedName("id")
+    private int id;                          // Unique booking ID
+
+    @SerializedName("evOwnerNic")
+    private String evOwnerNic;               // NIC of the EV owner
+
+    @SerializedName("chargingStationId")
+    private String chargingStationId;           // Station ID (foreign key)
+
+    @SerializedName("bookingDate")
+    private String bookingDate;              // Date when booking was created
+
+    @SerializedName("reservationDateTime")
+    private String reservationDateTime;      // Reserved date/time for charging
+
+    @SerializedName("status")
+    private BookingStatus status;            // Booking status (Pending, Approved, etc.)
+
+    @SerializedName("isActive")
+    private boolean isActive;                // Whether booking is currently active
+
+    @SerializedName("qrCode")
+    private String qrCode;                   // Base64 QR code (if approved)
+
+    @SerializedName("approvedBy")
+    private String approvedBy;               // Operator who approved (if any)
+
+    @SerializedName("approvedAt")
+    private String approvedAt;               // Approval timestamp
+
+    @SerializedName("rejectionReason")
+    private String rejectionReason;          // Reason if rejected
 
     // Empty constructor (required for JSON parsing)
     public Booking() {}
 
     // All-args constructor
-    public Booking(int id, String evOwnerNic, int chargingStationId,
-                      String bookingDate, String reservationDateTime,
+    public Booking(int id, String evOwnerNic, String chargingStationId,
+                   String bookingDate, String reservationDateTime,
                    BookingStatus status, boolean isActive, String qrCode,
-                      String approvedBy, String approvedAt, String rejectionReason) {
+                   String approvedBy, String approvedAt, String rejectionReason) {
         this.id = id;
         this.evOwnerNic = evOwnerNic;
         this.chargingStationId = chargingStationId;
@@ -44,8 +66,8 @@ public class Booking {
     public String getEvOwnerNic() { return evOwnerNic; }
     public void setEvOwnerNic(String evOwnerNic) { this.evOwnerNic = evOwnerNic; }
 
-    public int getChargingStationId() { return chargingStationId; }
-    public void setChargingStationId(int chargingStationId) { this.chargingStationId = chargingStationId; }
+    public String getChargingStationId() { return chargingStationId; }
+    public void setChargingStationId(String chargingStationId) { this.chargingStationId = chargingStationId; }
 
     public String getBookingDate() { return bookingDate; }
     public void setBookingDate(String bookingDate) { this.bookingDate = bookingDate; }
@@ -73,13 +95,13 @@ public class Booking {
 
     @Override
     public String toString() {
-        return "BookingDto{" +
+        return "Booking{" +
                 "id=" + id +
                 ", evOwnerNic='" + evOwnerNic + '\'' +
                 ", chargingStationId=" + chargingStationId +
                 ", bookingDate='" + bookingDate + '\'' +
                 ", reservationDateTime='" + reservationDateTime + '\'' +
-                ", status='" + status + '\'' +
+                ", status=" + (status != null ? status.toString() : "Unknown") +
                 ", isActive=" + isActive +
                 ", qrCode='" + qrCode + '\'' +
                 ", approvedBy='" + approvedBy + '\'' +

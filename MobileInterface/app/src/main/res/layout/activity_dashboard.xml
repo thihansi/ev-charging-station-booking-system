@@ -11,12 +11,11 @@
         android:id="@+id/tvTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:paddingBottom="8dp"
         android:text="Dashboard"
         android:textSize="22sp"
-        android:textStyle="bold" />
+        android:textStyle="bold"
+        android:paddingBottom="8dp" />
 
-    <!-- Counts row -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -24,7 +23,6 @@
         android:paddingBottom="8dp"
         android:weightSum="2">
 
-        <!-- Pending -->
         <LinearLayout
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -52,7 +50,6 @@
             android:layout_width="8dp"
             android:layout_height="match_parent" />
 
-        <!-- Approved -->
         <LinearLayout
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -77,19 +74,18 @@
         </LinearLayout>
     </LinearLayout>
 
-    <!-- Nearby toggle -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="end|center_vertical"
         android:orientation="horizontal"
+        android:gravity="end|center_vertical"
         android:paddingBottom="8dp">
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:paddingEnd="8dp"
-            android:text="Nearby (10 km)" />
+            android:text="Nearby (10 km)"
+            android:paddingEnd="8dp" />
 
         <Switch
             android:id="@+id/swNearby"
@@ -97,7 +93,6 @@
             android:layout_height="wrap_content" />
     </LinearLayout>
 
-    <!-- SINGLE map container -->
     <FrameLayout
         android:id="@+id/mapContainer"
         android:layout_width="match_parent"
@@ -111,7 +106,6 @@
             android:layout_height="match_parent" />
     </FrameLayout>
 
-    <!-- Progress -->
     <ProgressBar
         android:id="@+id/progressBar"
         style="?android:attr/progressBarStyleLarge"
@@ -121,7 +115,6 @@
         android:layout_marginTop="8dp"
         android:visibility="gone" />
 
-    <!-- Bottom Navigation -->
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/bottomNavigation"
         android:layout_width="match_parent"

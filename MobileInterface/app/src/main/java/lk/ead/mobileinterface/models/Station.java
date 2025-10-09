@@ -1,24 +1,44 @@
 package lk.ead.mobileinterface.models;
 
+import com.google.gson.annotations.SerializedName;
+import lk.ead.mobileinterface.enumeration.StationType;
+
 public class Station {
 
-    private int id;                 // Unique station ID
-    private String name;            // Station name
-    private String address;         // Physical address
-    private double latitude;        // Latitude coordinate
-    private double longitude;       // Longitude coordinate
-    private String type;            // Station type (enum value from backend, e.g., "AC", "DC", "Fast")
-    private int availableSlots;     // Number of available charging slots
-    private String schedule;        // Operating schedule
-    private boolean isActive;       // Whether the station is active
+    @SerializedName("id")
+    private String id;                  // Unique station ID
+
+    @SerializedName("name")
+    private String name;             // Station name
+
+    @SerializedName("address")
+    private String address;          // Physical address
+
+    @SerializedName("latitude")
+    private double latitude;         // Latitude coordinate
+
+    @SerializedName("longitude")
+    private double longitude;        // Longitude coordinate
+
+    @SerializedName("type")
+    private StationType type;        // Enum: AC / DC
+
+    @SerializedName("availableSlots")
+    private int availableSlots;      // Number of available charging slots
+
+    @SerializedName("schedule")
+    private String schedule;         // Operating schedule
+
+    @SerializedName("isActive")
+    private boolean isActive;        // Whether the station is active
 
     // Empty constructor (required for JSON parsing)
     public Station() {}
 
     // All-args constructor
-    public Station(int id, String name, String address, double latitude,
-                      double longitude, String type, int availableSlots,
-                      String schedule, boolean isActive) {
+    public Station(String id, String name, String address, double latitude,
+                   double longitude, StationType type, int availableSlots,
+                   String schedule, boolean isActive) {
         this.id = id;
         this.name = name;
         this.address = address;
@@ -31,8 +51,8 @@ public class Station {
     }
 
     // Getters and Setters
-    public int getId() { return id; }
-    public void setId(int id) { this.id = id; }
+    public String getId() { return id; }
+    public void setId(String id) { this.id = id; }
 
     public String getName() { return name; }
     public void setName(String name) { this.name = name; }
@@ -46,8 +66,8 @@ public class Station {
     public double getLongitude() { return longitude; }
     public void setLongitude(double longitude) { this.longitude = longitude; }
 
-    public String getType() { return type; }
-    public void setType(String type) { this.type = type; }
+    public StationType getType() { return type; }
+    public void setType(StationType type) { this.type = type; }
 
     public int getAvailableSlots() { return availableSlots; }
     public void setAvailableSlots(int availableSlots) { this.availableSlots = availableSlots; }
@@ -58,16 +78,15 @@ public class Station {
     public boolean isActive() { return isActive; }
     public void setActive(boolean active) { isActive = active; }
 
-    // Optional: helpful for debugging
     @Override
     public String toString() {
-        return "StationDto{" +
+        return "Station{" +
                 "id=" + id +
                 ", name='" + name + '\'' +
                 ", address='" + address + '\'' +
                 ", latitude=" + latitude +
                 ", longitude=" + longitude +
-                ", type='" + type + '\'' +
+                ", type=" + (type != null ? type.toString() : "Unknown") +
                 ", availableSlots=" + availableSlots +
                 ", schedule='" + schedule + '\'' +
                 ", isActive=" + isActive +
