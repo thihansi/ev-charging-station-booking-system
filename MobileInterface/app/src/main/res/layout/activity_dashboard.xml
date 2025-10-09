@@ -16,6 +16,7 @@
         android:textStyle="bold"
         android:paddingBottom="8dp" />
 
+    <!-- Counts row -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -23,13 +24,20 @@
         android:paddingBottom="8dp"
         android:weightSum="2">
 
+        <!-- Pending card (clickable) -->
         <LinearLayout
+            android:id="@+id/cardPending"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:background="@android:color/darker_gray"
             android:orientation="vertical"
-            android:padding="10dp">
+            android:padding="10dp"
+            android:minHeight="72dp"
+            android:clickable="true"
+            android:focusable="true"
+            android:foreground="?attr/selectableItemBackground"
+            android:contentDescription="Open pending reservations">
 
             <TextView
                 android:layout_width="wrap_content"
@@ -50,13 +58,20 @@
             android:layout_width="8dp"
             android:layout_height="match_parent" />
 
+        <!-- Approved card (clickable) -->
         <LinearLayout
+            android:id="@+id/cardApproved"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:background="@android:color/darker_gray"
             android:orientation="vertical"
-            android:padding="10dp">
+            android:padding="10dp"
+            android:minHeight="72dp"
+            android:clickable="true"
+            android:focusable="true"
+            android:foreground="?attr/selectableItemBackground"
+            android:contentDescription="Open approved reservations">
 
             <TextView
                 android:layout_width="wrap_content"
@@ -74,6 +89,7 @@
         </LinearLayout>
     </LinearLayout>
 
+    <!-- Nearby toggle -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -93,6 +109,7 @@
             android:layout_height="wrap_content" />
     </LinearLayout>
 
+    <!-- Map -->
     <FrameLayout
         android:id="@+id/mapContainer"
         android:layout_width="match_parent"
@@ -106,6 +123,7 @@
             android:layout_height="match_parent" />
     </FrameLayout>
 
+    <!-- Inline progress -->
     <ProgressBar
         android:id="@+id/progressBar"
         style="?android:attr/progressBarStyleLarge"
@@ -115,10 +133,12 @@
         android:layout_marginTop="8dp"
         android:visibility="gone" />
 
+    <!-- Bottom Navigation -->
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/bottomNavigation"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="?android:attr/windowBackground"
-        app:menu="@menu/bottom_nav_menu" />
+        app:menu="@menu/bottom_nav_menu"
+        app:itemHorizontalTranslationEnabled="false" />
 </LinearLayout>

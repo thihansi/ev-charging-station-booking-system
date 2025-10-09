@@ -1,14 +1,29 @@
 package lk.ead.mobileinterface.models;
 
+import com.google.gson.annotations.SerializedName;
+
 public class EVOwnerLoginResponse {
-    private String token;  // JWT
-    private User user;     // Logged-in EV Owner (nic, name, email, phone, isActive)
 
-    public EVOwnerLoginResponse() {}
+    @SerializedName("token")
+    private String token;
 
-    public String getToken() { return token; }
-    public void setToken(String token) { this.token = token; }
+    // 👇 change from "user" → "evOwner"
+    @SerializedName("evOwner")
+    private User evOwner;
 
-    public User getUser() { return user; }
-    public void setUser(User user) { this.user = user; }
+    public String getToken() {
+        return token;
+    }
+
+    public void setToken(String token) {
+        this.token = token;
+    }
+
+    public User getEvOwner() {
+        return evOwner;
+    }
+
+    public void setEvOwner(User evOwner) {
+        this.evOwner = evOwner;
+    }
 }

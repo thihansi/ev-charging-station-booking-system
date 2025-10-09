@@ -49,6 +49,7 @@ public class EVOwnerLoginActivity extends AppCompatActivity {
         if (EVOwnerSessionManager.getToken(this) != null) {
             goToDashboard();
         }
+
     }
 
     private void attemptLogin() {
@@ -66,7 +67,7 @@ public class EVOwnerLoginActivity extends AppCompatActivity {
                         if (res.isSuccessful() && res.body() != null) {
                             EVOwnerLoginResponse body = res.body();
                             String token = body.getToken();
-                            User user = body.getUser();
+                            User user = body.getEvOwner();
 
                             if (TextUtils.isEmpty(token)) {
                                 Toast.makeText(EVOwnerLoginActivity.this, "No token returned", Toast.LENGTH_LONG).show();
@@ -74,7 +75,10 @@ public class EVOwnerLoginActivity extends AppCompatActivity {
                             }
 
                             EVOwnerSessionManager.saveToken(EVOwnerLoginActivity.this, token);
-                            if (user != null) EVOwnerSessionManager.saveNic(EVOwnerLoginActivity.this, user.getNic());
+                            if (user != null && user.getNic() != null) {
+                                EVOwnerSessionManager.saveNic(EVOwnerLoginActivity.this, user.getNic());
+                            }
+
 
                             Toast.makeText(EVOwnerLoginActivity.this, "Welcome!", Toast.LENGTH_SHORT).show();
                             goToDashboard();

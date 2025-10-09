@@ -34,6 +34,7 @@ import lk.ead.mobileinterface.R;
 import lk.ead.mobileinterface.api.ApiClient;
 import lk.ead.mobileinterface.api.ApiService;
 import lk.ead.mobileinterface.db.DBHelper;
+import lk.ead.mobileinterface.enumeration.BookingStatus;
 import lk.ead.mobileinterface.models.Booking;
 import lk.ead.mobileinterface.models.Station;
 import lk.ead.mobileinterface.utils.EVOwnerSessionManager;
@@ -69,6 +70,22 @@ public class DashboardActivity extends AppCompatActivity implements OnMapReadyCa
         tvApprovedCount = findViewById(R.id.tvApprovedCount);
         progress = findViewById(R.id.progressBar);
         swNearby = findViewById(R.id.swNearby);
+
+        // inside onCreate(), after findViewById(...)
+        View cardPending = findViewById(R.id.cardPending);
+        View cardApproved = findViewById(R.id.cardApproved);
+
+        cardPending.setOnClickListener(v -> {
+            Intent i = new Intent(this, BookingsListActivity.class);
+            i.putExtra("filterStatusCode", 0); // 0 = Pending
+            startActivity(i);
+        });
+
+        cardApproved.setOnClickListener(v -> {
+            Intent i = new Intent(this, BookingsListActivity.class);
+            i.putExtra("filterStatusCode", 1); // 1 = Approved
+            startActivity(i);
+        });
 
         fused = LocationServices.getFusedLocationProviderClient(this);
         api = ApiClient.getClient().create(ApiService.class);
@@ -130,12 +147,18 @@ public class DashboardActivity extends AppCompatActivity implements OnMapReadyCa
                 if (res.isSuccessful() && res.body() != null) {
                     int pending = 0, approvedFuture = 0;
                     for (Booking b : res.body()) {
-                        if (b.getStatus() != null) {
-                            switch (b.getStatus()) {
-                                case Pending: pending++; break;
-                                case Approved: approvedFuture++; break;
-                                default: break;
-                            }
+                        BookingStatus status = b.getStatus();
+                        if (status == null) continue;
+
+                        switch (status) {
+                            case Pending:
+                                pending++;
+                                break;
+                            case Approved:
+                                approvedFuture++;
+                                break;
+                            default:
+                                break;
                         }
                     }
                     tvPendingCount.setText(String.valueOf(pending));

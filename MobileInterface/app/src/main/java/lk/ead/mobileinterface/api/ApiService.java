@@ -2,6 +2,7 @@ package lk.ead.mobileinterface.api;
 
 
 import lk.ead.mobileinterface.models.Booking;
+import lk.ead.mobileinterface.models.CreateBookingRequest;
 import lk.ead.mobileinterface.models.EVOwnerLoginRequest;
 import lk.ead.mobileinterface.models.EVOwnerLoginResponse;
 import lk.ead.mobileinterface.models.EVOwnerRegisterRequest;
@@ -63,7 +64,10 @@ public interface ApiService {
 
     // Create new booking
     @POST("api/Bookings")
-    Call<Booking> createBooking(@Header("Authorization") String token, @Body Booking booking);
+    Call<Booking> createBooking(
+            @Header("Authorization") String bearer,
+            @Body CreateBookingRequest body
+    );
 
     // Get all bookings of logged-in user
     @GET("api/Bookings/my-bookings")
@@ -83,9 +87,9 @@ public interface ApiService {
 
     // Update booking (change date/time)
     @PUT("api/Bookings/{id}")
-    Call<Booking> updateBooking(@Header("Authorization") String token, @Path("id") int bookingId, @Body Booking booking);
+    Call<Booking> updateBooking(@Header("Authorization") String token, @Path("id") String bookingId, @Body Booking booking);
 
     // Cancel booking
     @DELETE("api/Bookings/{id}")
-    Call<Void> cancelBooking(@Header("Authorization") String token, @Path("id") int bookingId);
+    Call<Void> cancelBooking(@Header("Authorization") String token, @Path("id") String bookingId);
 }

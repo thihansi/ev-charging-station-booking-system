@@ -6,43 +6,45 @@ import lk.ead.mobileinterface.enumeration.BookingStatus;
 public class Booking {
 
     @SerializedName("id")
-    private int id;                          // Unique booking ID
+    private String id; // Unique booking ID
 
-    @SerializedName("evOwnerNic")
-    private String evOwnerNic;               // NIC of the EV owner
+    @SerializedName("evOwnerNIC") // ✅ matches backend JSON (case-sensitive)
+    private String evOwnerNic;
 
     @SerializedName("chargingStationId")
-    private String chargingStationId;           // Station ID (foreign key)
+    private String chargingStationId;
 
     @SerializedName("bookingDate")
-    private String bookingDate;              // Date when booking was created
+    private String bookingDate;
 
     @SerializedName("reservationDateTime")
-    private String reservationDateTime;      // Reserved date/time for charging
+    private String reservationDateTime;
 
     @SerializedName("status")
-    private BookingStatus status;            // Booking status (Pending, Approved, etc.)
+    private int statusCode; // raw backend integer (0–4)
+
+    private transient BookingStatus status;
 
     @SerializedName("isActive")
-    private boolean isActive;                // Whether booking is currently active
+    private boolean isActive;
 
     @SerializedName("qrCode")
-    private String qrCode;                   // Base64 QR code (if approved)
+    private String qrCode;
 
     @SerializedName("approvedBy")
-    private String approvedBy;               // Operator who approved (if any)
+    private String approvedBy;
 
     @SerializedName("approvedAt")
-    private String approvedAt;               // Approval timestamp
+    private String approvedAt;
 
     @SerializedName("rejectionReason")
-    private String rejectionReason;          // Reason if rejected
+    private String rejectionReason;
 
-    // Empty constructor (required for JSON parsing)
+    // Empty constructor (required for Gson)
     public Booking() {}
 
     // All-args constructor
-    public Booking(int id, String evOwnerNic, String chargingStationId,
+    public Booking(String id, String evOwnerNic, String chargingStationId,
                    String bookingDate, String reservationDateTime,
                    BookingStatus status, boolean isActive, String qrCode,
                    String approvedBy, String approvedAt, String rejectionReason) {
@@ -52,6 +54,7 @@ public class Booking {
         this.bookingDate = bookingDate;
         this.reservationDateTime = reservationDateTime;
         this.status = status;
+        this.statusCode = (status != null) ? status.getValue() : 0; // ensure sync
         this.isActive = isActive;
         this.qrCode = qrCode;
         this.approvedBy = approvedBy;
@@ -59,9 +62,10 @@ public class Booking {
         this.rejectionReason = rejectionReason;
     }
 
-    // Getters and Setters
-    public int getId() { return id; }
-    public void setId(int id) { this.id = id; }
+    // -------------------- Getters & Setters --------------------
+
+    public String getId() { return id; }
+    public void setId(String id) { this.id = id; }
 
     public String getEvOwnerNic() { return evOwnerNic; }
     public void setEvOwnerNic(String evOwnerNic) { this.evOwnerNic = evOwnerNic; }
@@ -75,8 +79,22 @@ public class Booking {
     public String getReservationDateTime() { return reservationDateTime; }
     public void setReservationDateTime(String reservationDateTime) { this.reservationDateTime = reservationDateTime; }
 
-    public BookingStatus getStatus() { return status; }
-    public void setStatus(BookingStatus status) { this.status = status; }
+    public int getStatusCode() { return statusCode; }
+
+    public void setStatusCode(int statusCode) {
+        this.statusCode = statusCode;
+        this.status = BookingStatus.fromInt(statusCode); // auto-map
+    }
+
+    public BookingStatus getStatus() {
+        if (status == null) status = BookingStatus.fromInt(statusCode);
+        return status;
+    }
+
+    public void setStatus(BookingStatus status) {
+        this.status = status;
+        this.statusCode = (status != null) ? status.getValue() : 0;
+    }
 
     public boolean isActive() { return isActive; }
     public void setActive(boolean active) { isActive = active; }
@@ -96,12 +114,12 @@ public class Booking {
     @Override
     public String toString() {
         return "Booking{" +
-                "id=" + id +
+                "id='" + id + '\'' +
                 ", evOwnerNic='" + evOwnerNic + '\'' +
-                ", chargingStationId=" + chargingStationId +
+                ", chargingStationId='" + chargingStationId + '\'' +
                 ", bookingDate='" + bookingDate + '\'' +
                 ", reservationDateTime='" + reservationDateTime + '\'' +
-                ", status=" + (status != null ? status.toString() : "Unknown") +
+                ", status=" + (status != null ? status.name() : "Unknown") +
                 ", isActive=" + isActive +
                 ", qrCode='" + qrCode + '\'' +
                 ", approvedBy='" + approvedBy + '\'' +

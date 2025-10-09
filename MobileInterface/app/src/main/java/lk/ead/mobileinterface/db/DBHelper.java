@@ -59,7 +59,7 @@ public class DBHelper extends SQLiteOpenHelper {
 
         // BOOKING TABLE
         String CREATE_BOOKING_TABLE = "CREATE TABLE " + TABLE_BOOKING + " (" +
-                "id INTEGER PRIMARY KEY, " +
+                "id TEXT PRIMARY KEY, " +
                 "evOwnerNic TEXT, " +
                 "chargingStationId INTEGER, " +
                 "bookingDate TEXT, " +
@@ -232,7 +232,7 @@ public class DBHelper extends SQLiteOpenHelper {
         if (cursor.moveToFirst()) {
             do {
                 Booking b = new Booking();
-                b.setId(cursor.getInt(cursor.getColumnIndexOrThrow("id")));
+                b.setId(cursor.getString(cursor.getColumnIndexOrThrow("id")));
                 b.setEvOwnerNic(cursor.getString(cursor.getColumnIndexOrThrow("evOwnerNic")));
                 b.setChargingStationId(cursor.getString(cursor.getColumnIndexOrThrow("chargingStationId")));
                 b.setBookingDate(cursor.getString(cursor.getColumnIndexOrThrow("bookingDate")));

@@ -27,7 +27,10 @@ import lk.ead.mobileinterface.api.ApiClient;
 import lk.ead.mobileinterface.api.ApiService;
 import lk.ead.mobileinterface.db.DBHelper;
 import lk.ead.mobileinterface.enumeration.StationType;
+import lk.ead.mobileinterface.models.Booking;
+import lk.ead.mobileinterface.models.CreateBookingRequest;
 import lk.ead.mobileinterface.models.Station;
+import lk.ead.mobileinterface.utils.EVOwnerSessionManager;
 import retrofit2.Call;
 import retrofit2.Response;
 
@@ -246,7 +249,8 @@ public class BookingsActivity extends AppCompatActivity {
     }
 
     private void confirmSummary() {
-        if (stations.isEmpty() || spStation.getSelectedItem() == null || "No stations".contentEquals(spStation.getSelectedItem().toString())) {
+        if (stations == null || stations.isEmpty() || spStation.getSelectedItem() == null
+                || "No stations".contentEquals(spStation.getSelectedItem().toString())) {
             Toast.makeText(this, "Please sync stations from Home first.", Toast.LENGTH_SHORT).show();
             return;
         }
@@ -254,7 +258,73 @@ public class BookingsActivity extends AppCompatActivity {
             Toast.makeText(this, "Please select date and time.", Toast.LENGTH_SHORT).show();
             return;
         }
-        Toast.makeText(this, "Booking ready:\n" + tvSummary.getText(), Toast.LENGTH_LONG).show();
-        // TODO: build BookingRequest and call API
+
+        // Selected station (by spinner index)
+        int idx = spStation.getSelectedItemPosition();
+        Station chosen = stations.get(Math.max(idx, 0));
+        if (chosen == null || chosen.getId() == null) {
+            Toast.makeText(this, "Invalid station.", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        // nic from your session manager (adjust names if needed)
+        String nic = EVOwnerSessionManager.getNic(this);
+
+
+        // Combine date+time already stored in selectedCal
+        String isoWhen = toIsoLocalDateTime(selectedCal); // e.g., 2025-10-09T15:30:00
+
+        // Build request
+        CreateBookingRequest req = new CreateBookingRequest(nic, chosen.getId(), isoWhen);
+
+        // Auth header
+        String token = EVOwnerSessionManager.getToken(this);
+
+        if (token == null || nic == null) {
+            Toast.makeText(this, "Session expired. Please login again.", Toast.LENGTH_LONG).show();
+            return;
+        }
+        String bearer = "Bearer " + token;
+
+        // Call API
+        ApiService api = lk.ead.mobileinterface.api.ApiClient.getClient().create(ApiService.class);
+        retrofit2.Call<Booking> call = api.createBooking(bearer, req);
+
+        // Optional: disable button to prevent double-taps
+        btnConfirm.setEnabled(false);
+
+        call.enqueue(new retrofit2.Callback<Booking>() {
+            @Override
+            public void onResponse(retrofit2.Call<Booking> call, retrofit2.Response<Booking> res) {
+                btnConfirm.setEnabled(true);
+                if (res.isSuccessful() && res.body() != null) {
+                    Booking created = res.body();
+                    Toast.makeText(BookingsActivity.this, "Booking created!", Toast.LENGTH_LONG).show();
+
+                    // You can navigate or reset the UI here:
+                     startActivity(new Intent(BookingsActivity.this, DashboardActivity.class));
+                     finish();
+
+                } else if (res.code() == 400) {
+                    Toast.makeText(BookingsActivity.this, "Bad request. Check date/time or station.", Toast.LENGTH_LONG).show();
+                } else if (res.code() == 401) {
+                    Toast.makeText(BookingsActivity.this, "Unauthorized. Please login again.", Toast.LENGTH_LONG).show();
+                } else {
+                    Toast.makeText(BookingsActivity.this, "Create failed (" + res.code() + ")", Toast.LENGTH_LONG).show();
+                }
+            }
+
+            @Override
+            public void onFailure(retrofit2.Call<Booking> call, Throwable t) {
+                btnConfirm.setEnabled(true);
+                Toast.makeText(BookingsActivity.this, "Network error: " + t.getMessage(), Toast.LENGTH_LONG).show();
+            }
+        });
+    }
+
+    /** Formats Calendar to ISO-8601 without timezone suffix (server-friendly): yyyy-MM-dd'T'HH:mm:ss */
+    private String toIsoLocalDateTime(java.util.Calendar cal) {
+        java.text.SimpleDateFormat f = new java.text.SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", java.util.Locale.getDefault());
+        return f.format(cal.getTime());
     }
 }

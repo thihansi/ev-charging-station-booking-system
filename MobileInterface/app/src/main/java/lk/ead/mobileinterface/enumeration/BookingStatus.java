@@ -1,42 +1,27 @@
 package lk.ead.mobileinterface.enumeration;
 
 public enum BookingStatus {
-    Pending(0),
-    Approved(1),
-    Rejected(2),
-    Completed(3),
-    Cancelled(4);
+    Pending(0, "Pending"),
+    Approved(1, "Approved"),
+    Rejected(2, "Rejected"),
+    Completed(3, "Completed"),
+    Cancelled(4, "Cancelled");
 
     private final int value;
+    private final String label;
 
-    BookingStatus(int value) {
+    BookingStatus(int value, String label) {
         this.value = value;
+        this.label = label;
     }
 
-    public int getValue() {
-        return value;
-    }
+    public int getValue() { return value; }
+    public String getLabel() { return label; }
 
-    // Convert backend int → enum
-    public static BookingStatus fromInt(int value) {
-        for (BookingStatus status : BookingStatus.values()) {
-            if (status.value == value) {
-                return status;
-            }
+    public static BookingStatus fromInt(int val) {
+        for (BookingStatus s : values()) {
+            if (s.value == val) return s;
         }
-        return null;
-    }
-
-    // For display in UI (optional)
-    @Override
-    public String toString() {
-        switch (this) {
-            case Pending: return "Pending";
-            case Approved: return "Approved";
-            case Rejected: return "Rejected";
-            case Completed: return "Completed";
-            case Cancelled: return "Cancelled";
-            default: return "Unknown";
-        }
+        return Pending; // default fallback
     }
 }
