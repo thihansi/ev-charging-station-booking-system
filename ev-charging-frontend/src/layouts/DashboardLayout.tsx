@@ -81,8 +81,13 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
     }
   };
 
+  // Get the correct profile route based on user role
+  const getProfileRoute = () => {
+    return isBackoffice ? ROUTES.ADMIN.PROFILE : ROUTES.OPERATOR.PROFILE;
+  };
+
   // Get menu items based on user role
-  const menuItems = isBackoffice ? MENU_ITEMS.BACKOFFICE : MENU_ITEMS.OPERATOR;
+  const menuItems = isBackoffice ? MENU_ITEMS.ADMIN : MENU_ITEMS.OPERATOR;
 
   // Icon mapping
   const getIcon = (iconName: string) => {
@@ -126,7 +131,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
 
       {/* Navigation Menu */}
       <List sx={{ flex: 1, py: 2 }}>
-        {menuItems.map((item) => {
+        {menuItems.map((item: { title: string; path: string; icon: string }) => {
           const isActive = isActiveRoute(location.pathname, item.path);
 
           return (
@@ -246,7 +251,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
           >
             <MenuItem
               onClick={() => {
-                handleNavigate(ROUTES.PROFILE);
+                handleNavigate(getProfileRoute());
                 handleProfileMenuClose();
               }}
             >

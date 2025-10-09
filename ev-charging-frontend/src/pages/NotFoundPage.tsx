@@ -11,7 +11,7 @@ const NotFoundPage: React.FC = () => {
 
   const handleGoHome = () => {
     if (state.user?.role === USER_ROLES.BACKOFFICE) {
-      navigate(ROUTES.BACKOFFICE.DASHBOARD);
+      navigate(ROUTES.ADMIN.DASHBOARD);
     } else if (state.user?.role === USER_ROLES.STATION_OPERATOR) {
       navigate(ROUTES.OPERATOR.DASHBOARD);
     } else {

@@ -12,47 +12,60 @@ import { useNavigate, useParams } from "react-router-dom";
 import { useNotificationContext } from "../context/NotificationContext";
 import { evOwnerApi } from "../api";
 import { ROUTES } from "../utils/constants";
-import type { CreateEVOwnerRequest } from "../types";
+import type { CreateEVOwnerRequest, UpdateEVOwnerRequest } from "../types";
 
 const EVOwnerFormPage: React.FC = () => {
   const navigate = useNavigate();
-  const { id } = useParams<{ id: string }>();
+  const { nic } = useParams<{ nic: string }>();
   const { showSuccess, showError } = useNotificationContext();
   const [isLoading, setIsLoading] = useState(false);
-  const isEdit = !!id;
+  const isEdit = !!nic;
 
   const [formData, setFormData] = useState<CreateEVOwnerRequest>({
     nic: "",
-    fullName: "",
+    name: "",
     email: "",
-    phoneNumber: "",
-    address: "",
+    phone: "",
+    isActive: true, // Default to active
     password: "",
   });
+
+  // Store original data for edit mode
+  const [originalData, setOriginalData] = useState<CreateEVOwnerRequest | null>(null);
 
   const [errors, setErrors] = useState<Partial<CreateEVOwnerRequest>>({});
 
   useEffect(() => {
-    if (isEdit && id) {
-      loadEvOwner(id);
+    if (isEdit && nic) {
+      loadEvOwner(nic);
     }
-  }, [isEdit, id]);
+  }, [isEdit, nic]);
 
   const loadEvOwner = async (nic: string) => {
     setIsLoading(true);
     try {
       const evOwner = await evOwnerApi.getByNic(nic);
-      setFormData({
+      const ownerData = {
         nic: evOwner.nic,
-        fullName: evOwner.fullName,
+        name: evOwner.name,
         email: evOwner.email,
-        phoneNumber: evOwner.phoneNumber,
-        address: evOwner.address,
+        phone: evOwner.phone,
+        isActive: evOwner.isActive,
         password: "", // Password field for updates
+      };
+      setOriginalData(ownerData);
+      // Keep form data empty for placeholders in edit mode
+      setFormData({
+        nic: "",
+        name: "",
+        email: "",
+        phone: "",
+        isActive: evOwner.isActive,
+        password: "",
       });
     } catch (error) {
       showError("Failed to load EV owner details");
-      navigate(ROUTES.BACKOFFICE.EV_OWNERS);
+      navigate(ROUTES.ADMIN.EV_OWNERS);
     } finally {
       setIsLoading(false);
     }
@@ -61,37 +74,39 @@ const EVOwnerFormPage: React.FC = () => {
   const validateForm = (): boolean => {
     const newErrors: Partial<CreateEVOwnerRequest> = {};
 
-    if (!formData.nic.trim()) {
+    // For edit mode, use original data as fallback for validation
+    const nicValue = isEdit && originalData ? (formData.nic || originalData.nic) : formData.nic;
+    const nameValue = isEdit && originalData ? (formData.name || originalData.name) : formData.name;
+    const emailValue = isEdit && originalData ? (formData.email || originalData.email) : formData.email;
+    const phoneValue = isEdit && originalData ? (formData.phone || originalData.phone) : formData.phone;
+
+    if (!nicValue.trim()) {
       newErrors.nic = "NIC is required";
-    } else if (!/^[0-9]{9}[vVxX]|[0-9]{12}$/.test(formData.nic)) {
+    } else if (!/^[0-9]{9}[vVxX]|[0-9]{12}$/.test(nicValue)) {
       newErrors.nic = "Invalid NIC format";
     }
 
-    if (!formData.fullName.trim()) {
-      newErrors.fullName = "Full name is required";
+    if (!nameValue.trim()) {
+      newErrors.name = "Name is required";
     }
 
-    if (!formData.email.trim()) {
+    if (!emailValue.trim()) {
       newErrors.email = "Email is required";
-    } else if (!/^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/.test(formData.email)) {
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailValue)) {
       newErrors.email = "Invalid email format";
     }
 
-    if (!formData.phoneNumber.trim()) {
-      newErrors.phoneNumber = "Phone number is required";
+    if (!phoneValue.trim()) {
+      newErrors.phone = "Phone number is required";
     } else if (
-      !/^[0-9]{10}$/.test(formData.phoneNumber.replace(/[^0-9]/g, ""))
+      !/^[0-9]{10}$/.test(phoneValue.replace(/[^0-9]/g, ""))
     ) {
-      newErrors.phoneNumber = "Invalid phone number format";
+      newErrors.phone = "Invalid phone number format";
     }
 
-    if (!formData.address.trim()) {
-      newErrors.address = "Address is required";
-    }
-
-    if (!isEdit && !formData.password.trim()) {
+    if (!isEdit && !formData.password?.trim()) {
       newErrors.password = "Password is required";
-    } else if (!isEdit && formData.password.length < 6) {
+    } else if (!isEdit && formData.password && formData.password.length < 6) {
       newErrors.password = "Password must be at least 6 characters";
     }
 
@@ -123,15 +138,41 @@ const EVOwnerFormPage: React.FC = () => {
 
     setIsLoading(true);
     try {
-      if (isEdit) {
-        await evOwnerApi.update(formData.nic, formData);
+      if (isEdit && originalData) {
+        // For edit mode, only send fields that have been changed
+        const updateData: UpdateEVOwnerRequest = {};
+        
+        if (formData.name.trim() && formData.name.trim() !== originalData.name) {
+          updateData.name = formData.name.trim();
+        }
+        if (formData.email.trim() && formData.email.trim() !== originalData.email) {
+          updateData.email = formData.email.trim();
+        }
+        if (formData.phone.trim() && formData.phone.trim() !== originalData.phone) {
+          updateData.phone = formData.phone.trim();
+        }
+        if (formData.isActive !== originalData.isActive) {
+          updateData.isActive = formData.isActive;
+        }
+        
+        // If no changes were made, use original data
+        if (Object.keys(updateData).length === 0) {
+          updateData.name = originalData.name;
+          updateData.email = originalData.email;
+          updateData.phone = originalData.phone;
+          updateData.isActive = originalData.isActive;
+        }
+        
+        console.log("Updating EV Owner with data:", updateData);
+        await evOwnerApi.update(originalData.nic, updateData);
         showSuccess("EV Owner updated successfully");
       } else {
         await evOwnerApi.create(formData);
         showSuccess("EV Owner created successfully");
       }
-      navigate(ROUTES.BACKOFFICE.EV_OWNERS);
+      navigate(ROUTES.ADMIN.EV_OWNERS);
     } catch (error: any) {
+      console.error("Error updating EV Owner:", error);
       showError(
         error.response?.data?.message ||
           `Failed to ${isEdit ? "update" : "create"} EV owner`
@@ -175,6 +216,7 @@ const EVOwnerFormPage: React.FC = () => {
               <TextField
                 label="NIC Number"
                 value={formData.nic}
+                placeholder={isEdit && originalData ? originalData.nic : "Enter NIC number"}
                 onChange={(e) => handleInputChange("nic", e.target.value)}
                 disabled={isEdit}
                 error={!!errors.nic}
@@ -184,11 +226,12 @@ const EVOwnerFormPage: React.FC = () => {
               />
 
               <TextField
-                label="Full Name"
-                value={formData.fullName}
-                onChange={(e) => handleInputChange("fullName", e.target.value)}
-                error={!!errors.fullName}
-                helperText={errors.fullName}
+                label="Name"
+                value={formData.name}
+                placeholder={isEdit && originalData ? originalData.name : "Enter full name"}
+                onChange={(e) => handleInputChange("name", e.target.value)}
+                error={!!errors.name}
+                helperText={errors.name}
                 fullWidth
                 required
               />
@@ -197,6 +240,7 @@ const EVOwnerFormPage: React.FC = () => {
                 label="Email Address"
                 type="email"
                 value={formData.email}
+                placeholder={isEdit && originalData ? originalData.email : "Enter email address"}
                 onChange={(e) => handleInputChange("email", e.target.value)}
                 error={!!errors.email}
                 helperText={errors.email}
@@ -206,12 +250,13 @@ const EVOwnerFormPage: React.FC = () => {
 
               <TextField
                 label="Phone Number"
-                value={formData.phoneNumber}
+                value={formData.phone}
+                placeholder={isEdit && originalData ? originalData.phone : "Enter phone number"}
                 onChange={(e) =>
-                  handleInputChange("phoneNumber", e.target.value)
+                  handleInputChange("phone", e.target.value)
                 }
-                error={!!errors.phoneNumber}
-                helperText={errors.phoneNumber}
+                error={!!errors.phone}
+                helperText={errors.phone}
                 fullWidth
                 required
               />
@@ -225,23 +270,11 @@ const EVOwnerFormPage: React.FC = () => {
                 mb: 4,
               }}
             >
-              <TextField
-                label="Address"
-                value={formData.address}
-                onChange={(e) => handleInputChange("address", e.target.value)}
-                error={!!errors.address}
-                helperText={errors.address}
-                multiline
-                rows={3}
-                fullWidth
-                required
-              />
-
               {!isEdit && (
                 <TextField
                   label="Password"
                   type="password"
-                  value={formData.password}
+                  value={formData.password || ""}
                   onChange={(e) =>
                     handleInputChange("password", e.target.value)
                   }
@@ -269,7 +302,7 @@ const EVOwnerFormPage: React.FC = () => {
               <Button
                 variant="outlined"
                 startIcon={<Cancel />}
-                onClick={() => navigate(ROUTES.BACKOFFICE.EV_OWNERS)}
+                onClick={() => navigate(ROUTES.ADMIN.EV_OWNERS)}
                 disabled={isLoading}
               >
                 Cancel

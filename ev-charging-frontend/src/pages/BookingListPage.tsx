@@ -16,6 +16,11 @@ import {
   IconButton,
   Menu,
   MenuItem,
+  Popover,
+  List,
+  ListItem,
+  ListItemIcon,
+  ListItemText,
   Dialog,
   DialogTitle,
   DialogContent,
@@ -36,10 +41,14 @@ import {
   MoreVert,
   CheckCircle,
   Cancel,
-  Schedule,
   Visibility,
   Edit,
   Delete,
+  AccessTime,
+  ThumbUp,
+  Done,
+  Block,
+  Close,
 } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
 import { useNotificationContext } from "../context/NotificationContext";
@@ -48,6 +57,7 @@ import { bookingApi } from "../api";
 import { ROUTES } from "../utils/constants";
 import { formatDateTime } from "../utils/helpers";
 import type { Booking, BookingStatus } from "../types";
+import { getBookingStatusDisplay, getBookingStatusColor } from "../types";
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -98,7 +108,6 @@ const BookingListPage: React.FC = () => {
     "Rejected",
     "Completed",
     "Cancelled",
-    "NoShow",
   ];
 
   useEffect(() => {
@@ -133,7 +142,7 @@ const BookingListPage: React.FC = () => {
           booking.chargingStationId
             .toLowerCase()
             .includes(searchTerm.toLowerCase()) ||
-          booking.evOwner?.fullName
+          booking.evOwner?.name
             ?.toLowerCase()
             .includes(searchTerm.toLowerCase()) ||
           booking.chargingStation?.name
@@ -142,12 +151,7 @@ const BookingListPage: React.FC = () => {
       );
     }
 
-    // Filter by status
-    if (statusFilter !== "All") {
-      filtered = filtered.filter((booking) => booking.status === statusFilter);
-    }
-
-    // Filter by tabs
+    // Filter by tabs (tabs override status filter)
     if (tabValue === 1) {
       // Pending bookings tab
       filtered = filtered.filter((booking) => booking.status === "Pending");
@@ -157,9 +161,22 @@ const BookingListPage: React.FC = () => {
         (booking) =>
           booking.status === "Approved" || booking.status === "Completed"
       );
+    } else if (tabValue === 0) {
+      // All bookings tab - apply status filter only if not on specific tabs
+      if (statusFilter !== "All") {
+        filtered = filtered.filter((booking) => booking.status === statusFilter);
+      }
     }
 
     setFilteredBookings(filtered);
+  };
+
+  const handleTabChange = (_: React.SyntheticEvent, newValue: number) => {
+    setTabValue(newValue);
+    // Reset status filter when switching to specific tabs
+    if (newValue === 1 || newValue === 2) {
+      setStatusFilter("All");
+    }
   };
 
   const handleMenuClick = (
@@ -178,7 +195,7 @@ const BookingListPage: React.FC = () => {
   const handleView = () => {
     if (selectedBooking) {
       navigate(
-        ROUTES.BACKOFFICE.BOOKINGS_VIEW.replace(":id", selectedBooking.id)
+        ROUTES.ADMIN.BOOKINGS_VIEW.replace(":id", selectedBooking.id)
       );
     }
     handleMenuClose();
@@ -187,7 +204,7 @@ const BookingListPage: React.FC = () => {
   const handleEdit = () => {
     if (selectedBooking) {
       navigate(
-        ROUTES.BACKOFFICE.BOOKINGS_EDIT.replace(":id", selectedBooking.id)
+        ROUTES.ADMIN.BOOKINGS_EDIT.replace(":id", selectedBooking.id)
       );
     }
     handleMenuClose();
@@ -253,26 +270,6 @@ const BookingListPage: React.FC = () => {
     handleMenuClose();
   };
 
-  const handleMarkNoShow = () => {
-    if (!selectedBooking) return;
-
-    setConfirmDialog({
-      open: true,
-      title: "Mark as No-Show",
-      message: `Are you sure you want to mark booking ${selectedBooking.id} as no-show?`,
-      action: async () => {
-        try {
-          await bookingApi.markNoShow(selectedBooking.id);
-          showSuccess("Booking marked as no-show");
-          await loadBookings();
-        } catch (error) {
-          showError("Failed to mark booking as no-show");
-        }
-      },
-    });
-    handleMenuClose();
-  };
-
   const handleCancel = () => {
     if (!selectedBooking) return;
 
@@ -293,20 +290,22 @@ const BookingListPage: React.FC = () => {
     handleMenuClose();
   };
 
-  const getStatusColor = (status: BookingStatus) => {
+  const getStatusColor = getBookingStatusColor;
+
+  const getStatusIcon = (status: BookingStatus) => {
     switch (status) {
       case "Pending":
-        return "warning";
+        return <AccessTime sx={{ fontSize: 16 }} />;
       case "Approved":
-        return "info";
+        return <ThumbUp sx={{ fontSize: 16 }} />;
       case "Completed":
-        return "success";
+        return <Done sx={{ fontSize: 16 }} />;
       case "Rejected":
+        return <Block sx={{ fontSize: 16 }} />;
       case "Cancelled":
-      case "NoShow":
-        return "error";
+        return <Close sx={{ fontSize: 16 }} />;
       default:
-        return "default";
+        return <AccessTime sx={{ fontSize: 16 }} />;
     }
   };
 
@@ -324,16 +323,29 @@ const BookingListPage: React.FC = () => {
     );
   };
 
-  const canMarkNoShow = (booking: Booking) => {
-    return (
-      booking.status === "Approved" &&
-      (user?.role === "Backoffice" || user?.role === "StationOperator")
-    );
-  };
-
   const handleConfirmAction = () => {
     confirmDialog.action();
     setConfirmDialog({ ...confirmDialog, open: false });
+  };
+
+  // Get tab indicator color based on selected tab
+  const getTabIndicatorColor = () => {
+    switch (tabValue) {
+      case 0: return '#1976d2'; // Blue for All Bookings
+      case 1: return '#f57c00'; // Orange for Pending
+      case 2: return '#2e7d32'; // Green for Active
+      default: return '#1976d2';
+    }
+  };
+
+  // Get tab text color when selected
+  const getTabTextColor = () => {
+    switch (tabValue) {
+      case 0: return '#1976d2'; // Blue for All Bookings
+      case 1: return '#f57c00'; // Orange for Pending
+      case 2: return '#2e7d32'; // Green for Active
+      default: return '#1976d2';
+    }
   };
 
   const getPendingCount = () => {
@@ -362,11 +374,86 @@ const BookingListPage: React.FC = () => {
       <Card sx={{ mb: 3 }}>
         <Tabs
           value={tabValue}
-          onChange={(_, newValue) => setTabValue(newValue)}
+          onChange={handleTabChange}
+          sx={{
+            '& .MuiTabs-indicator': {
+              backgroundColor: getTabIndicatorColor(),
+              height: 3,
+            },
+            '& .MuiTab-root': {
+              textTransform: 'uppercase',
+              fontWeight: 600,
+              minHeight: 48,
+              color: '#666',
+              '&.Mui-selected': {
+                color: getTabTextColor(),
+              },
+            },
+          }}
         >
-          <Tab label={`All Bookings (${bookings.length})`} />
-          <Tab label={`Pending (${getPendingCount()})`} />
-          <Tab label={`Active (${getActiveCount()})`} />
+          <Tab 
+            label={
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                <Box
+                  sx={{
+                    width: 8,
+                    height: 8,
+                    borderRadius: '50%',
+                    backgroundColor: '#1976d2',
+                  }}
+                />
+                {`ALL BOOKINGS (${bookings.length})`}
+              </Box>
+            }
+            sx={{
+              '&.Mui-selected': {
+                color: '#1976d2',
+                backgroundColor: 'rgba(25, 118, 210, 0.08)',
+              },
+            }}
+          />
+          <Tab 
+            label={
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                <Box
+                  sx={{
+                    width: 8,
+                    height: 8,
+                    borderRadius: '50%',
+                    backgroundColor: '#f57c00',
+                  }}
+                />
+                {`PENDING (${getPendingCount()})`}
+              </Box>
+            }
+            sx={{
+              '&.Mui-selected': {
+                color: '#f57c00',
+                backgroundColor: 'rgba(245, 124, 0, 0.08)',
+              },
+            }}
+          />
+          <Tab 
+            label={
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                <Box
+                  sx={{
+                    width: 8,
+                    height: 8,
+                    borderRadius: '50%',
+                    backgroundColor: '#2e7d32',
+                  }}
+                />
+                {`ACTIVE (${getActiveCount()})`}
+              </Box>
+            }
+            sx={{
+              '&.Mui-selected': {
+                color: '#2e7d32',
+                backgroundColor: 'rgba(46, 125, 50, 0.08)',
+              },
+            }}
+          />
         </Tabs>
       </Card>
 
@@ -398,7 +485,7 @@ const BookingListPage: React.FC = () => {
               >
                 {statusList.map((status) => (
                   <MenuItem key={status} value={status}>
-                    {status}
+                    {status === "All" ? "All" : getBookingStatusDisplay(status as BookingStatus)}
                   </MenuItem>
                 ))}
               </Select>
@@ -413,13 +500,7 @@ const BookingListPage: React.FC = () => {
             >
               Refresh
             </Button>
-            <Button
-              variant="contained"
-              startIcon={<Add />}
-              onClick={() => navigate(ROUTES.BACKOFFICE.BOOKINGS_CREATE)}
-            >
-              Create Booking
-            </Button>
+            {/* Note: Only EV Owners can create bookings per API specification */}
           </Box>
         </Toolbar>
       </Card>
@@ -440,9 +521,28 @@ const BookingListPage: React.FC = () => {
 
       {/* Actions Menu */}
       <Menu
+        id="action-menu"
         anchorEl={menuAnchorEl}
         open={Boolean(menuAnchorEl)}
         onClose={handleMenuClose}
+        anchorOrigin={{
+          vertical: 'bottom',
+          horizontal: 'center',
+        }}
+        transformOrigin={{
+          vertical: 'top',
+          horizontal: 'center',
+        }}
+        disableScrollLock={true}
+        MenuListProps={{
+          'aria-labelledby': 'basic-button',
+        }}
+        PaperProps={{
+          style: {
+            maxHeight: 200,
+            width: '20ch',
+          },
+        }}
       >
         <MenuItem onClick={handleView}>
           <Visibility fontSize="small" sx={{ mr: 1 }} />
@@ -475,12 +575,6 @@ const BookingListPage: React.FC = () => {
           <MenuItem onClick={handleComplete} sx={{ color: "success.main" }}>
             <CheckCircle fontSize="small" sx={{ mr: 1 }} />
             Complete
-          </MenuItem>
-        )}
-        {selectedBooking && canMarkNoShow(selectedBooking) && (
-          <MenuItem onClick={handleMarkNoShow} sx={{ color: "warning.main" }}>
-            <Schedule fontSize="small" sx={{ mr: 1 }} />
-            Mark No-Show
           </MenuItem>
         )}
         <MenuItem onClick={handleCancel} sx={{ color: "error.main" }}>
@@ -550,7 +644,7 @@ const BookingListPage: React.FC = () => {
                           variant="contained"
                           startIcon={<Add />}
                           onClick={() =>
-                            navigate(ROUTES.BACKOFFICE.BOOKINGS_CREATE)
+                            navigate(ROUTES.ADMIN.BOOKINGS_CREATE)
                           }
                           sx={{ mt: 2 }}
                         >
@@ -570,7 +664,7 @@ const BookingListPage: React.FC = () => {
                       <TableCell>
                         <Box>
                           <Typography variant="body2" fontWeight="medium">
-                            {booking.evOwner?.fullName || booking.evOwnerNic}
+                            {booking.evOwner?.name || booking.evOwnerNic}
                           </Typography>
                           <Typography variant="caption" color="text.secondary">
                             {booking.evOwnerNic}
@@ -590,9 +684,11 @@ const BookingListPage: React.FC = () => {
                       </TableCell>
                       <TableCell>
                         <Chip
-                          label={booking.status}
+                          icon={getStatusIcon(booking.status)}
+                          label={getBookingStatusDisplay(booking.status)}
                           color={getStatusColor(booking.status)}
                           size="small"
+                          variant="filled"
                         />
                       </TableCell>
                       <TableCell>
@@ -602,8 +698,12 @@ const BookingListPage: React.FC = () => {
                       </TableCell>
                       <TableCell align="center">
                         <IconButton
+                          id={`action-button-${booking.id}`}
                           size="small"
                           onClick={(e) => handleMenuClick(e, booking)}
+                          aria-controls={Boolean(menuAnchorEl) ? 'action-menu' : undefined}
+                          aria-haspopup="true"
+                          aria-expanded={Boolean(menuAnchorEl) ? 'true' : undefined}
                         >
                           <MoreVert />
                         </IconButton>

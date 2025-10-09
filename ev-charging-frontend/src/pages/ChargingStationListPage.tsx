@@ -117,7 +117,7 @@ const ChargingStationListPage: React.FC = () => {
   const handleView = () => {
     if (selectedStation) {
       navigate(
-        ROUTES.BACKOFFICE.CHARGING_STATIONS_VIEW.replace(
+        ROUTES.ADMIN.CHARGING_STATIONS_VIEW.replace(
           ":id",
           selectedStation.id
         )
@@ -129,7 +129,7 @@ const ChargingStationListPage: React.FC = () => {
   const handleEdit = () => {
     if (selectedStation) {
       navigate(
-        ROUTES.BACKOFFICE.CHARGING_STATIONS_EDIT.replace(
+        ROUTES.ADMIN.CHARGING_STATIONS_EDIT.replace(
           ":id",
           selectedStation.id
         )
@@ -212,7 +212,7 @@ const ChargingStationListPage: React.FC = () => {
               variant="contained"
               startIcon={<Add />}
               onClick={() =>
-                navigate(ROUTES.BACKOFFICE.CHARGING_STATIONS_CREATE)
+                navigate(ROUTES.ADMIN.CHARGING_STATIONS_CREATE)
               }
             >
               Add Charging Station
@@ -254,7 +254,7 @@ const ChargingStationListPage: React.FC = () => {
                           variant="contained"
                           startIcon={<Add />}
                           onClick={() =>
-                            navigate(ROUTES.BACKOFFICE.CHARGING_STATIONS_CREATE)
+                            navigate(ROUTES.ADMIN.CHARGING_STATIONS_CREATE)
                           }
                           sx={{ mt: 2 }}
                         >

@@ -23,6 +23,7 @@ import type {
   ChargingStation,
   BookingStatus,
 } from "../types";
+import { getBookingStatusDisplay } from "../types";
 
 const BookingFormPage: React.FC = () => {
   const navigate = useNavigate();
@@ -38,6 +39,8 @@ const BookingFormPage: React.FC = () => {
 
   const [booking, setBooking] = useState<Booking | null>(null);
   const [evOwners, setEvOwners] = useState<EVOwner[]>([]);
+  const [evOwnerSearchTerm, setEvOwnerSearchTerm] = useState("");
+  const [searchingEvOwner, setSearchingEvOwner] = useState(false);
   const [chargingStations, setChargingStations] = useState<ChargingStation[]>(
     []
   );
@@ -60,14 +63,29 @@ const BookingFormPage: React.FC = () => {
 
   const loadInitialData = async () => {
     try {
-      const [evOwnersData, stationsData] = await Promise.all([
-        evOwnerApi.getAll(),
-        chargingStationApi.getAll(),
-      ]);
-      setEvOwners(evOwnersData);
+      // Only load charging stations - EV owners will be search-based
+      const stationsData = await chargingStationApi.getAll();
       setChargingStations(stationsData.filter((station) => station.isActive));
     } catch (error) {
       showError("Failed to load form data");
+    }
+  };
+
+  const searchEvOwner = async (nic: string) => {
+    if (!nic.trim() || nic.length < 3) {
+      setEvOwners([]);
+      return;
+    }
+
+    setSearchingEvOwner(true);
+    try {
+      const evOwner = await evOwnerApi.getByNic(nic.trim());
+      setEvOwners([evOwner]);
+    } catch (error) {
+      // If not found, clear the list
+      setEvOwners([]);
+    } finally {
+      setSearchingEvOwner(false);
     }
   };
 
@@ -86,19 +104,23 @@ const BookingFormPage: React.FC = () => {
         reservationDateTime: bookingData.reservationDateTime.slice(0, 16), // Format for datetime-local input
       });
 
-      // Set selected options
-      const evOwner = evOwners.find(
-        (owner) => owner.nic === bookingData.evOwnerNic
-      );
+      // Load the specific EV owner for this booking
+      try {
+        const evOwner = await evOwnerApi.getByNic(bookingData.evOwnerNic);
+        setSelectedEvOwner(evOwner);
+        setEvOwners([evOwner]); // Add to search results
+      } catch (error) {
+        console.warn("Could not load EV owner details");
+      }
+
+      // Set selected station
       const station = chargingStations.find(
         (station) => station.id === bookingData.chargingStationId
       );
-
-      if (evOwner) setSelectedEvOwner(evOwner);
       if (station) setSelectedStation(station);
     } catch (error) {
       showError("Failed to load booking details");
-      navigate(ROUTES.BACKOFFICE.BOOKINGS);
+      navigate(ROUTES.ADMIN.BOOKINGS);
     } finally {
       setIsInitialLoading(false);
     }
@@ -151,19 +173,28 @@ const BookingFormPage: React.FC = () => {
         showSuccess("Booking created successfully");
       }
 
-      navigate(ROUTES.BACKOFFICE.BOOKINGS);
+      navigate(ROUTES.ADMIN.BOOKINGS);
     } catch (error: any) {
-      showError(
-        error.response?.data?.message ||
-          `Failed to ${isEditMode ? "update" : "create"} booking`
-      );
+      console.error("[Booking Creation Error]", error);
+      
+      // Handle specific API errors
+      if (error.response?.status === 403) {
+        showError("Access denied: Only EV owners can create bookings. Admins can only view and manage existing bookings.");
+      } else if (error.response?.status === 401) {
+        showError("Authentication required: Please log in as an EV owner to create bookings.");
+      } else {
+        showError(
+          error.response?.data?.message ||
+            `Failed to ${isEditMode ? "update" : "create"} booking. ${error.response?.status === 403 ? "This feature is only available to EV owners." : ""}`
+        );
+      }
     } finally {
       setIsLoading(false);
     }
   };
 
   const handleCancel = () => {
-    navigate(ROUTES.BACKOFFICE.BOOKINGS);
+    navigate(ROUTES.ADMIN.BOOKINGS);
   };
 
   const handleEvOwnerChange = (evOwner: EVOwner | null) => {
@@ -252,6 +283,16 @@ const BookingFormPage: React.FC = () => {
 
   return (
     <Box>
+      {/* API Limitation Warning */}
+      {!isEditMode && (
+        <Alert severity="warning" sx={{ mb: 3 }}>
+          <Typography variant="body2">
+            <strong>Important:</strong> According to the API specification, only EV owners can create new bookings. 
+            This form is for demonstration purposes. In production, booking creation should be available only to authenticated EV owners.
+          </Typography>
+        </Alert>
+      )}
+
       {/* Header */}
       <Box sx={{ mb: 4, display: "flex", alignItems: "center", gap: 2 }}>
         <Button
@@ -287,7 +328,7 @@ const BookingFormPage: React.FC = () => {
           }
           sx={{ mb: 3 }}
         >
-          Current Status: <strong>{booking.status}</strong>
+          Current Status: <strong>{getBookingStatusDisplay(booking.status)}</strong>
           {booking.status === "Pending" && " - Waiting for approval"}
           {booking.status === "Approved" && " - Ready for charging session"}
           {booking.status === "Completed" && " - Charging session completed"}
@@ -314,17 +355,25 @@ const BookingFormPage: React.FC = () => {
                   <Autocomplete
                     value={selectedEvOwner}
                     onChange={(_, newValue) => handleEvOwnerChange(newValue)}
+                    inputValue={evOwnerSearchTerm}
+                    onInputChange={(_, newInputValue) => {
+                      setEvOwnerSearchTerm(newInputValue);
+                      searchEvOwner(newInputValue);
+                    }}
                     options={evOwners}
                     getOptionLabel={(option) =>
-                      `${option.fullName} (${option.nic})`
+                      `${option.name} (${option.nic})`
                     }
                     disabled={isEditMode} // Can't change EV Owner in edit mode
+                    loading={searchingEvOwner}
+                    filterOptions={(x) => x} // Disable local filtering since we use API search
                     renderInput={(params) => (
                       <TextField
                         {...params}
                         label="EV Owner"
+                        placeholder="Type NIC to search..."
                         error={Boolean(errors.evOwnerNic)}
-                        helperText={errors.evOwnerNic}
+                        helperText={errors.evOwnerNic || "Enter at least 3 characters to search"}
                         required
                       />
                     )}
@@ -332,14 +381,21 @@ const BookingFormPage: React.FC = () => {
                       <li {...props}>
                         <Box>
                           <Typography variant="body2" fontWeight="medium">
-                            {option.fullName}
+                            {option.name}
                           </Typography>
                           <Typography variant="caption" color="text.secondary">
-                            NIC: {option.nic} | Phone: {option.phoneNumber}
+                            NIC: {option.nic} | Phone: {option.phone}
                           </Typography>
                         </Box>
                       </li>
                     )}
+                    noOptionsText={
+                      evOwnerSearchTerm.length < 3 
+                        ? "Type at least 3 characters to search" 
+                        : searchingEvOwner 
+                        ? "Searching..." 
+                        : "No EV owner found"
+                    }
                   />
 
                   {/* Charging Station Selection */}
@@ -461,13 +517,13 @@ const BookingFormPage: React.FC = () => {
                   </Typography>
                   <Box sx={{ display: "grid", gap: 1 }}>
                     <Typography variant="body2">
-                      <strong>Name:</strong> {selectedEvOwner.fullName}
+                      <strong>Name:</strong> {selectedEvOwner.name}
                     </Typography>
                     <Typography variant="body2">
                       <strong>NIC:</strong> {selectedEvOwner.nic}
                     </Typography>
                     <Typography variant="body2">
-                      <strong>Phone:</strong> {selectedEvOwner.phoneNumber}
+                      <strong>Phone:</strong> {selectedEvOwner.phone}
                     </Typography>
                     <Typography variant="body2">
                       <strong>Email:</strong> {selectedEvOwner.email}

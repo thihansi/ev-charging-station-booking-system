@@ -21,7 +21,6 @@ import {
 } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
 import { ROUTES } from "../utils/constants";
-import { ApiTestComponent } from "../components/ApiTestComponent";
 
 const LandingPage: React.FC = () => {
   const theme = useTheme();
@@ -182,9 +181,9 @@ const LandingPage: React.FC = () => {
                   },
                 }}
                 endIcon={<ArrowForward />}
-                onClick={() => navigate("/ev-owner-login")}
+                onClick={() => navigate(ROUTES.LOGIN)}
               >
-                EV Owner Login
+                Admin/Operator Login
               </Button>
               <Button
                 variant="outlined"
@@ -200,34 +199,14 @@ const LandingPage: React.FC = () => {
                     bgcolor: alpha(theme.palette.common.white, 0.1),
                   },
                 }}
-                onClick={() => navigate(ROUTES.LOGIN)}
+                onClick={() => navigate(ROUTES.USER_REGISTRATION)}
               >
-                Operator Login
-              </Button>
-              <Button
-                variant="text"
-                size="large"
-                sx={{
-                  color: "white",
-                  px: 4,
-                  py: 1.5,
-                  fontSize: "1rem",
-                  textDecoration: "underline",
-                  "&:hover": {
-                    bgcolor: alpha(theme.palette.common.white, 0.1),
-                  },
-                }}
-                onClick={() => navigate("/ev-owner-register")}
-              >
-                New EV Owner? Register
+                Create Admin Account
               </Button>
             </Box>
           </Box>
         </Container>
       </Box>
-
-      {/* API Configuration Test - Temporary Debug Component */}
-      <ApiTestComponent />
 
       {/* Stats Section */}
       <Box sx={{ py: 6, bgcolor: "background.paper" }}>

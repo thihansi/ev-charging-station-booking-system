@@ -9,6 +9,12 @@ export interface User {
 
 export type UserRole = "Backoffice" | "StationOperator";
 
+export interface SystemUser {
+  id: string;
+  username: string;
+  role: string;
+}
+
 export interface LoginRequest {
   username: string;
   password: string;
@@ -29,30 +35,27 @@ export interface CreateUserRequest {
 // EV Owner related types
 export interface EVOwner {
   nic: string;
-  fullName: string;
-  phoneNumber: string;
+  name: string; // API uses 'name', not 'fullName'
   email: string;
-  address: string;
+  phone: string; // API uses 'phone', not 'phoneNumber'
   isActive: boolean;
-  isVerified: boolean;
-  createdAt: string;
-  updatedAt: string;
 }
 
 export interface CreateEVOwnerRequest {
   nic: string;
-  fullName: string;
-  phoneNumber: string;
+  name: string; // API uses 'name'
   email: string;
-  address: string;
-  password: string;
+  phone: string; // API uses 'phone'
+  isActive?: boolean; // Optional, defaults to true
+  password?: string; // Optional for profile-only creation
 }
 
 export interface UpdateEVOwnerRequest {
-  fullName?: string;
-  phoneNumber?: string;
+  nic?: string;
+  name?: string;
   email?: string;
-  address?: string;
+  phone?: string;
+  isActive?: boolean;
 }
 
 // Charging Station related types
@@ -114,15 +117,80 @@ export interface Booking {
 }
 
 export type BookingStatus =
-  | "Pending"
-  | "Approved"
-  | "Rejected"
-  | "Completed"
-  | "Cancelled"
-  | "NoShow";
+  | "Pending"    // 0
+  | "Approved"   // 1
+  | "Rejected"   // 2
+  | "Completed"  // 3
+  | "Cancelled"; // 4
+
+// Enum mapping for backend compatibility
+export const BookingStatusEnum = {
+  Pending: 0,
+  Approved: 1,
+  Rejected: 2,
+  Completed: 3,
+  Cancelled: 4
+} as const;
+
+// Reverse mapping from numeric values to string
+export const BookingStatusFromEnum: Record<number, BookingStatus> = {
+  0: "Pending",
+  1: "Approved", 
+  2: "Rejected",
+  3: "Completed",
+  4: "Cancelled"
+};
+
+// User-friendly status display names
+export const BookingStatusDisplay: Record<BookingStatus, string> = {
+  Pending: "Pending",
+  Approved: "Approved", 
+  Rejected: "Rejected",
+  Completed: "Completed",
+  Cancelled: "Cancelled"
+};
+
+// Function to get display name for status
+export const getBookingStatusDisplay = (status: BookingStatus | number): string => {
+  if (typeof status === 'number') {
+    const statusString = BookingStatusFromEnum[status];
+    return statusString ? BookingStatusDisplay[statusString] : 'Unknown';
+  }
+  return BookingStatusDisplay[status] || 'Unknown';
+};
+
+// Function to get status color for UI components
+export const getBookingStatusColor = (status: BookingStatus): "default" | "primary" | "secondary" | "error" | "info" | "success" | "warning" => {
+  switch (status) {
+    case 'Pending':
+      return 'warning';
+    case 'Approved':
+      return 'success';
+    case 'Rejected':
+      return 'error';
+    case 'Completed':
+      return 'primary';
+    case 'Cancelled':
+      return 'error';
+    default:
+      return 'default';
+  }
+};
 
 export interface CreateBookingRequest {
   evOwnerNic: string;
+  chargingStationId: string;
+  reservationDateTime: string;
+}
+
+// EV Owner booking request (no evOwnerNic needed - from JWT)
+export interface CreateEVOwnerBookingRequest {
+  chargingStationId: string;
+  reservationDateTime: string;
+}
+
+// Booking summary request for preview
+export interface BookingSummaryRequest {
   chargingStationId: string;
   reservationDateTime: string;
 }

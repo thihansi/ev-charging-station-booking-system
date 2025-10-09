@@ -26,9 +26,11 @@ import QRScannerPage from "./pages/QRScannerPage";
 import LandingPage from "./pages/LandingPage";
 import UserRegistrationPage from "./pages/UserRegistrationPage";
 import ProfilePage from "./pages/ProfilePage";
-import { EVOwnerRegistrationPage } from "./pages/EVOwnerRegistrationPage";
-import { EVOwnerLoginPage } from "./pages/EVOwnerLoginPage";
-import { EVOwnerDashboardPage } from "./pages/EVOwnerDashboardPage";
+import SystemUsersPage from "./pages/SystemUsersPage";
+import ProfileTestPage from "./pages/ProfileTestPage";
+import { APITestPage } from "./pages/APITestPage";
+import { APIConnectionTest } from "./components/APIConnectionTest";
+import { LoginDebugPage } from "./pages/LoginDebugPage";
 import { ROUTES, USER_ROLES } from "./utils/constants";
 
 function App() {
@@ -50,10 +52,22 @@ function App() {
                 element={<UnauthorizedPage />}
               />
               <Route path={ROUTES.NOT_FOUND} element={<NotFoundPage />} />
+              
+              {/* API Test Route - For backend connectivity testing */}
+              <Route path="/api-test" element={<APITestPage />} />
+              
+              {/* Route Test Page - For debugging navigation issues */}
+              <Route path="/route-test" element={<ProfileTestPage />} />
+              
+              {/* Simple API Connection Test */}
+              <Route path="/test-connection" element={<APIConnectionTest />} />
+              
+              {/* Login Debug Tool */}
+              <Route path="/login-debug" element={<LoginDebugPage />} />
 
-              {/* Protected Backoffice Routes */}
+              {/* Admin Dashboard */}
               <Route
-                path={ROUTES.BACKOFFICE.DASHBOARD}
+                path={ROUTES.ADMIN.DASHBOARD}
                 element={
                   <ProtectedRoute requiredRole={USER_ROLES.BACKOFFICE}>
                     <DashboardLayout>
@@ -63,9 +77,21 @@ function App() {
                 }
               />
 
+              {/* System Users Management */}
+              <Route
+                path={ROUTES.ADMIN.USERS}
+                element={
+                  <ProtectedRoute requiredRole={USER_ROLES.BACKOFFICE}>
+                    <DashboardLayout>
+                      <SystemUsersPage />
+                    </DashboardLayout>
+                  </ProtectedRoute>
+                }
+              />
+
               {/* EV Owner Management Routes */}
               <Route
-                path={ROUTES.BACKOFFICE.EV_OWNERS}
+                path={ROUTES.ADMIN.EV_OWNERS}
                 element={
                   <ProtectedRoute requiredRole={USER_ROLES.BACKOFFICE}>
                     <DashboardLayout>
@@ -75,7 +101,7 @@ function App() {
                 }
               />
               <Route
-                path={ROUTES.BACKOFFICE.EV_OWNERS_CREATE}
+                path={ROUTES.ADMIN.EV_OWNERS_CREATE}
                 element={
                   <ProtectedRoute requiredRole={USER_ROLES.BACKOFFICE}>
                     <DashboardLayout>
@@ -85,7 +111,7 @@ function App() {
                 }
               />
               <Route
-                path={ROUTES.BACKOFFICE.EV_OWNERS_EDIT}
+                path={ROUTES.ADMIN.EV_OWNERS_EDIT}
                 element={
                   <ProtectedRoute requiredRole={USER_ROLES.BACKOFFICE}>
                     <DashboardLayout>
@@ -97,7 +123,7 @@ function App() {
 
               {/* Charging Station Management Routes */}
               <Route
-                path={ROUTES.BACKOFFICE.CHARGING_STATIONS}
+                path={ROUTES.ADMIN.CHARGING_STATIONS}
                 element={
                   <ProtectedRoute requiredRole={USER_ROLES.BACKOFFICE}>
                     <DashboardLayout>
@@ -107,7 +133,7 @@ function App() {
                 }
               />
               <Route
-                path={ROUTES.BACKOFFICE.CHARGING_STATIONS_CREATE}
+                path={ROUTES.ADMIN.CHARGING_STATIONS_CREATE}
                 element={
                   <ProtectedRoute requiredRole={USER_ROLES.BACKOFFICE}>
                     <DashboardLayout>
@@ -117,7 +143,7 @@ function App() {
                 }
               />
               <Route
-                path={ROUTES.BACKOFFICE.CHARGING_STATIONS_VIEW}
+                path={ROUTES.ADMIN.CHARGING_STATIONS_VIEW}
                 element={
                   <ProtectedRoute requiredRole={USER_ROLES.BACKOFFICE}>
                     <DashboardLayout>
@@ -127,7 +153,7 @@ function App() {
                 }
               />
               <Route
-                path={ROUTES.BACKOFFICE.CHARGING_STATIONS_EDIT}
+                path={ROUTES.ADMIN.CHARGING_STATIONS_EDIT}
                 element={
                   <ProtectedRoute requiredRole={USER_ROLES.BACKOFFICE}>
                     <DashboardLayout>
@@ -139,7 +165,7 @@ function App() {
 
               {/* Booking Management Routes */}
               <Route
-                path={ROUTES.BACKOFFICE.BOOKINGS}
+                path={ROUTES.ADMIN.BOOKINGS}
                 element={
                   <ProtectedRoute requiredRole={USER_ROLES.BACKOFFICE}>
                     <DashboardLayout>
@@ -148,8 +174,21 @@ function App() {
                   </ProtectedRoute>
                 }
               />
+              {/* Note: Booking creation removed - only EV owners can create bookings per API */}
+              {/* 
               <Route
-                path={ROUTES.BACKOFFICE.BOOKINGS_CREATE}
+                path={ROUTES.ADMIN.BOOKINGS_CREATE}
+                element={
+                  <ProtectedRoute requiredRole={USER_ROLES.BACKOFFICE}>
+                    <DashboardLayout>
+                      <BookingFormPage />
+                    </DashboardLayout>
+                  </ProtectedRoute>
+                }
+              />
+              */}
+              <Route
+                path={ROUTES.ADMIN.BOOKINGS_VIEW}
                 element={
                   <ProtectedRoute requiredRole={USER_ROLES.BACKOFFICE}>
                     <DashboardLayout>
@@ -159,7 +198,7 @@ function App() {
                 }
               />
               <Route
-                path={ROUTES.BACKOFFICE.BOOKINGS_VIEW}
+                path={ROUTES.ADMIN.BOOKINGS_EDIT}
                 element={
                   <ProtectedRoute requiredRole={USER_ROLES.BACKOFFICE}>
                     <DashboardLayout>
@@ -168,12 +207,14 @@ function App() {
                   </ProtectedRoute>
                 }
               />
+
+              {/* Admin Profile Route */}
               <Route
-                path={ROUTES.BACKOFFICE.BOOKINGS_EDIT}
+                path={ROUTES.ADMIN.PROFILE}
                 element={
                   <ProtectedRoute requiredRole={USER_ROLES.BACKOFFICE}>
                     <DashboardLayout>
-                      <BookingFormPage />
+                      <ProfilePage />
                     </DashboardLayout>
                   </ProtectedRoute>
                 }
@@ -191,7 +232,7 @@ function App() {
                 }
               />
               <Route
-                path={ROUTES.OPERATOR.BOOKINGS}
+                path={ROUTES.OPERATOR.BOOKINGS_PENDING}
                 element={
                   <ProtectedRoute requiredRole={USER_ROLES.STATION_OPERATOR}>
                     <DashboardLayout>
@@ -201,11 +242,11 @@ function App() {
                 }
               />
               <Route
-                path={ROUTES.OPERATOR.STATIONS}
+                path={ROUTES.OPERATOR.BOOKINGS_HISTORY}
                 element={
                   <ProtectedRoute requiredRole={USER_ROLES.STATION_OPERATOR}>
                     <DashboardLayout>
-                      <ChargingStationListPage />
+                      <BookingListPage />
                     </DashboardLayout>
                   </ProtectedRoute>
                 }
@@ -220,32 +261,19 @@ function App() {
                   </ProtectedRoute>
                 }
               />
-
-              {/* Landing Page */}
-              <Route path="/" element={<LandingPage />} />
-
-              {/* EV Owner Routes */}
               <Route
-                path="/ev-owner-register"
-                element={<EVOwnerRegistrationPage />}
-              />
-              <Route path="/ev-owner-login" element={<EVOwnerLoginPage />} />
-              <Route
-                path="/ev-owner-dashboard"
-                element={<EVOwnerDashboardPage />}
-              />
-
-              {/* Profile Page - accessible to all authenticated users */}
-              <Route
-                path={ROUTES.PROFILE}
+                path={ROUTES.OPERATOR.PROFILE}
                 element={
-                  <ProtectedRoute>
+                  <ProtectedRoute requiredRole={USER_ROLES.STATION_OPERATOR}>
                     <DashboardLayout>
                       <ProfilePage />
                     </DashboardLayout>
                   </ProtectedRoute>
                 }
               />
+
+              {/* Landing Page */}
+              <Route path="/" element={<LandingPage />} />
 
               {/* Dashboard redirect - redirect to appropriate dashboard based on role */}
               <Route
@@ -280,7 +308,7 @@ const DashboardRedirect: React.FC = () => {
 
   const redirectPath =
     state.user.role === USER_ROLES.BACKOFFICE
-      ? ROUTES.BACKOFFICE.DASHBOARD
+      ? ROUTES.ADMIN.DASHBOARD
       : ROUTES.OPERATOR.DASHBOARD;
 
   return <Navigate to={redirectPath} replace />;

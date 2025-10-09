@@ -1,28 +1,47 @@
 import apiClient from "./client";
+import { transformBookingForBackend, transformEVOwnerBookingForBackend } from "./utils";
 import type {
   Booking,
   CreateBookingRequest,
+  CreateEVOwnerBookingRequest,
+  BookingSummaryRequest,
   UpdateBookingRequest,
+  BookingStatus,
 } from "../types";
+import { BookingStatusFromEnum } from "../types";
+
+// Transform booking response from backend (handles numeric status to string)
+const transformBookingFromBackend = (backendBooking: any): Booking => {
+  return {
+    ...backendBooking,
+    status: typeof backendBooking.status === 'number' 
+      ? BookingStatusFromEnum[backendBooking.status] 
+      : backendBooking.status
+  };
+};
 
 export const bookingApi = {
   // Get all bookings
   getAll: async (): Promise<Booking[]> => {
-    const response = await apiClient.get<Booking[]>("/api/bookings");
-    return response.data;
+    const response = await apiClient.get<any[]>("/api/bookings");
+    return response.data.map(transformBookingFromBackend);
   },
 
   // Get booking by ID
   getById: async (id: string): Promise<Booking> => {
-    const response = await apiClient.get<Booking>(`/api/bookings/${id}`);
-    return response.data;
+    const response = await apiClient.get<any>(`/api/bookings/${id}`);
+    return transformBookingFromBackend(response.data);
   },
 
-  // Create new booking
+  // Create new booking (Admin/Backoffice)
   create: async (
     bookingData: CreateBookingRequest
   ): Promise<{ message: string; id: string }> => {
-    const response = await apiClient.post("/api/bookings", bookingData);
+    console.log("[Booking API] Creating booking with data:", bookingData);
+    const transformedData = transformBookingForBackend(bookingData);
+    console.log("[Booking API] Transformed data for backend:", transformedData);
+    const response = await apiClient.post("/api/bookings", transformedData);
+    console.log("[Booking API] Response:", response.data);
     return response.data;
   },
 
@@ -59,32 +78,26 @@ export const bookingApi = {
     return response.data;
   },
 
-  // Mark as no-show
-  markNoShow: async (id: string): Promise<{ message: string }> => {
-    const response = await apiClient.post(`/api/bookings/${id}/no-show`);
-    return response.data;
-  },
-
   // Get bookings by EV Owner NIC
   getByEvOwner: async (nic: string): Promise<Booking[]> => {
-    const response = await apiClient.get<Booking[]>(
+    const response = await apiClient.get<any[]>(
       `/api/bookings/evowner/${encodeURIComponent(nic)}`
     );
-    return response.data;
+    return response.data.map(transformBookingFromBackend);
   },
 
   // Get bookings by charging station
   getByStation: async (stationId: string): Promise<Booking[]> => {
-    const response = await apiClient.get<Booking[]>(
+    const response = await apiClient.get<any[]>(
       `/api/bookings/station/${stationId}`
     );
-    return response.data;
+    return response.data.map(transformBookingFromBackend);
   },
 
   // Get pending bookings
   getPending: async (): Promise<Booking[]> => {
-    const response = await apiClient.get<Booking[]>("/api/bookings/pending");
-    return response.data;
+    const response = await apiClient.get<any[]>("/api/bookings/pending");
+    return response.data.map(transformBookingFromBackend);
   },
 
   // Validate QR code
@@ -94,25 +107,57 @@ export const bookingApi = {
     const response = await apiClient.post("/api/bookings/validate-qr", {
       qrCode,
     });
-    return response.data;
+    return {
+      ...response.data,
+      booking: response.data.booking ? transformBookingFromBackend(response.data.booking) : undefined
+    };
   },
 
   // EV Owner specific endpoints
 
+  // Preview booking summary before creation (EV Owner)
+  previewBooking: async (
+    summaryData: BookingSummaryRequest
+  ): Promise<{
+    bookingId: string;
+    evOwnerName: string;
+    evOwnerNIC: string;
+    chargingStationName: string;
+    chargingStationAddress: string;
+    reservationDateTime: string;
+    estimatedDuration: string;
+    estimatedCost: number;
+  }> => {
+    const response = await apiClient.post("/api/bookings/summary", summaryData);
+    return response.data;
+  },
+
+  // Create booking as EV Owner (no evOwnerNic needed)
+  createAsEVOwner: async (
+    bookingData: CreateEVOwnerBookingRequest
+  ): Promise<{ message: string; booking: Booking }> => {
+    const transformedData = transformEVOwnerBookingForBackend(bookingData);
+    const response = await apiClient.post("/api/bookings", transformedData);
+    return {
+      ...response.data,
+      booking: transformBookingFromBackend(response.data.booking)
+    };
+  },
+
   // Get my upcoming bookings (EV Owner)
   getMyUpcomingBookings: async (): Promise<Booking[]> => {
-    const response = await apiClient.get<Booking[]>(
+    const response = await apiClient.get<any[]>(
       "/api/bookings/my-bookings/upcoming"
     );
-    return response.data;
+    return response.data.map(transformBookingFromBackend);
   },
 
   // Get my booking history (EV Owner)
   getMyBookingHistory: async (): Promise<Booking[]> => {
-    const response = await apiClient.get<Booking[]>(
+    const response = await apiClient.get<any[]>(
       "/api/bookings/my-bookings/history"
     );
-    return response.data;
+    return response.data.map(transformBookingFromBackend);
   },
 
   // Get booking summary (EV Owner)
@@ -126,7 +171,10 @@ export const bookingApi = {
     const response = await apiClient.get(
       `/api/bookings/my-bookings/summary/${id}`
     );
-    return response.data;
+    return {
+      ...response.data,
+      booking: transformBookingFromBackend(response.data.booking)
+    };
   },
 
   // Generate QR code for booking

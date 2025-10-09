@@ -118,7 +118,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   useEffect(() => {
     const initializeAuth = async () => {
       try {
-        const token = getLocalStorageItem<string>(STORAGE_KEYS.AUTH_TOKEN);
+        const token = localStorage.getItem("token");
         const user = getLocalStorageItem<User>(STORAGE_KEYS.USER_PROFILE);
 
         if (token && user) {
@@ -135,7 +135,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
               "Failed to verify token, clearing auth data:",
               error.message
             );
-            removeLocalStorageItem(STORAGE_KEYS.AUTH_TOKEN);
+            localStorage.removeItem("token");
             removeLocalStorageItem(STORAGE_KEYS.USER_PROFILE);
             dispatch({ type: "AUTH_LOGOUT" });
           }
@@ -163,7 +163,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         console.log("✅ Login successful, token received");
 
         // Store token temporarily
-        setLocalStorageItem(STORAGE_KEYS.AUTH_TOKEN, loginResponse.token);
+        localStorage.setItem("token", loginResponse.token);
 
         // Fetch user profile
         console.log("👤 Fetching user profile...");
@@ -183,7 +183,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         dispatch({ type: "AUTH_FAILURE", payload: errorMessage });
 
         // Clear any stored data on login failure
-        removeLocalStorageItem(STORAGE_KEYS.AUTH_TOKEN);
+        localStorage.removeItem("token");
         removeLocalStorageItem(STORAGE_KEYS.USER_PROFILE);
 
         throw error;
@@ -195,7 +195,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   // Logout function
   const logout = useCallback((): void => {
     // Clear localStorage
-    removeLocalStorageItem(STORAGE_KEYS.AUTH_TOKEN);
+    localStorage.removeItem("token");
     removeLocalStorageItem(STORAGE_KEYS.USER_PROFILE);
 
     // Update state

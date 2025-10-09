@@ -42,7 +42,24 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
 
   // Check role-based access
   if (requiredRole && state.user.role !== requiredRole) {
+    console.warn("[ProtectedRoute] Access denied:", {
+      requiredRole,
+      userRole: state.user.role,
+      user: state.user,
+      path: location.pathname,
+      match: state.user.role === requiredRole
+    });
     return <Navigate to={ROUTES.UNAUTHORIZED} replace />;
+  }
+
+  // Log successful access in development
+  if (import.meta.env.DEV) {
+    console.log("[ProtectedRoute] Access granted:", {
+      requiredRole,
+      userRole: state.user.role,
+      user: state.user,
+      path: location.pathname
+    });
   }
 
   return <>{children}</>;

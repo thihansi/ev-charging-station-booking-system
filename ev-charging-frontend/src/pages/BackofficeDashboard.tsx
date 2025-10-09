@@ -17,11 +17,14 @@ import {
   MoreVert,
   Notifications,
   Assessment,
+  Refresh,
 } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { useNotificationContext } from "../context/NotificationContext";
 import { ROUTES } from "../utils/constants";
+import { bookingApi, evOwnerApi, chargingStationApi } from "../api";
+import type { EVOwner } from "../types";
 
 const BackofficeDashboard: React.FC = () => {
   const navigate = useNavigate();
@@ -29,15 +32,15 @@ const BackofficeDashboard: React.FC = () => {
   const { showSuccess } = useNotificationContext();
   const [isLoading, setIsLoading] = useState(true);
 
-  // Sample dashboard statistics
-  const [stats] = useState({
-    totalEvOwners: 1247,
-    activeEvOwners: 156,
-    totalStations: 89,
-    operationalStations: 82,
-    totalBookings: 3456,
-    pendingBookings: 23,
-    monthlyRevenue: 125678,
+  // Real dashboard statistics
+  const [stats, setStats] = useState({
+    totalEvOwners: 0,
+    activeEvOwners: 0,
+    totalStations: 0,
+    operationalStations: 0,
+    totalBookings: 0,
+    pendingBookings: 0,
+    monthlyRevenue: 0,
   });
 
   // Sample recent activities
@@ -72,21 +75,21 @@ const BackofficeDashboard: React.FC = () => {
       description: "Register a new electric vehicle owner",
       icon: <People />,
       color: "primary",
-      action: () => navigate(ROUTES.BACKOFFICE.EV_OWNERS_CREATE),
+      action: () => navigate(ROUTES.ADMIN.EV_OWNERS_CREATE),
     },
     {
       title: "Add Charging Station",
       description: "Register a new charging station",
       icon: <EvStation />,
       color: "info",
-      action: () => navigate(ROUTES.BACKOFFICE.CHARGING_STATIONS_CREATE),
+      action: () => navigate(ROUTES.ADMIN.CHARGING_STATIONS_CREATE),
     },
     {
       title: "View Bookings",
       description: "Manage booking requests",
       icon: <CalendarToday />,
       color: "warning",
-      action: () => navigate(ROUTES.BACKOFFICE.BOOKINGS),
+      action: () => navigate(ROUTES.ADMIN.BOOKINGS),
     },
     {
       title: "Generate Reports",
@@ -97,42 +100,76 @@ const BackofficeDashboard: React.FC = () => {
     },
   ];
 
-  useEffect(() => {
-    // Simulate loading dashboard data
-    const loadDashboardData = async () => {
-      setIsLoading(true);
+  const loadDashboardData = async () => {
+    setIsLoading(true);
+    try {
+      // Fetch data from APIs
+      const [bookings, stations] = await Promise.all([
+        bookingApi.getAll(),
+        chargingStationApi.getAll()
+      ]);
+
+      // Try to fetch EV owners
+      let evOwners: EVOwner[] = [];
       try {
-        // Simulate API calls
-        await new Promise((resolve) => setTimeout(resolve, 1000));
-
-        // In a real app, you would fetch data from APIs here
-        // const [ownersData, stationsData, bookingsData] = await Promise.all([
-        //   evOwnerApi.getAll(),
-        //   chargingStationApi.getAll(),
-        //   bookingApi.getAll()
-        // ]);
-
-        setIsLoading(false);
+        evOwners = await evOwnerApi.getAll();
       } catch (error) {
-        console.error("Error loading dashboard data:", error);
-        setIsLoading(false);
+        console.warn("Could not fetch EV owners:", error);
       }
-    };
 
+      // Calculate statistics from real data
+      const pendingBookings = bookings.filter(b => {
+        if (typeof b.status === 'string') {
+          return b.status === "Pending";
+        } else if (typeof b.status === 'number') {
+          return b.status === 0; // 0 is Pending in the backend enum
+        }
+        return false;
+      }).length;
+      const operationalStations = stations.filter(s => s.isActive).length;
+
+      setStats({
+        totalEvOwners: evOwners.length,
+        activeEvOwners: evOwners.length, // All registered owners are considered active
+        totalStations: stations.length,
+        operationalStations: operationalStations,
+        totalBookings: bookings.length,
+        pendingBookings: pendingBookings,
+        monthlyRevenue: 0, // Revenue calculation would need additional business logic
+      });
+
+      setIsLoading(false);
+    } catch (error) {
+      console.error("Error loading dashboard data:", error);
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
     loadDashboardData();
   }, []);
 
   return (
     <Box>
       {/* Header */}
-      <Box sx={{ mb: 4 }}>
-        <Typography variant="h4" component="h1" gutterBottom fontWeight="bold">
-          Backoffice Dashboard
-        </Typography>
-        <Typography variant="body1" color="text.secondary">
-          Welcome back, {state.user?.fullName || "Admin"}! Here's your system
-          overview.
-        </Typography>
+      <Box sx={{ mb: 4, display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+        <Box>
+          <Typography variant="h4" component="h1" gutterBottom fontWeight="bold">
+            Backoffice Dashboard
+          </Typography>
+          <Typography variant="body1" color="text.secondary">
+            Welcome back, {state.user?.fullName || "Admin"}! Here's your system
+            overview.
+          </Typography>
+        </Box>
+        <IconButton 
+          onClick={loadDashboardData} 
+          disabled={isLoading}
+          color="primary"
+          sx={{ mt: 1 }}
+        >
+          <Refresh />
+        </IconButton>
       </Box>
 
       {isLoading && <LinearProgress sx={{ mb: 4 }} />}
@@ -251,12 +288,12 @@ const BackofficeDashboard: React.FC = () => {
                   Monthly Revenue
                 </Typography>
                 <Typography variant="h4" fontWeight="bold">
-                  ${stats.monthlyRevenue.toLocaleString()}
+                  {stats.monthlyRevenue > 0 ? `$${stats.monthlyRevenue.toLocaleString()}` : 'N/A'}
                 </Typography>
                 <Chip
                   icon={<TrendingUp />}
-                  label="+12% vs last month"
-                  color="success"
+                  label={stats.monthlyRevenue > 0 ? "+12% vs last month" : "Revenue tracking TBD"}
+                  color={stats.monthlyRevenue > 0 ? "success" : "default"}
                   size="small"
                   sx={{ mt: 1 }}
                 />

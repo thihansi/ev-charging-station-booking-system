@@ -5,456 +5,374 @@ import {
   CardContent,
   Typography,
   Avatar,
-  Button,
-  TextField,
-  Divider,
-  Alert,
   Chip,
-  IconButton,
+  Button,
+  Alert,
+  LinearProgress,
+  Divider,
+  TextField,
   Dialog,
   DialogTitle,
   DialogContent,
   DialogActions,
-  InputAdornment,
 } from "@mui/material";
 import {
   Person,
-  Edit,
-  Save,
-  Cancel,
-  Visibility,
-  VisibilityOff,
   AdminPanelSettings,
   Engineering,
+  Edit,
+  Security,
+  Refresh,
+  Save,
+  Cancel,
 } from "@mui/icons-material";
 import { useAuth } from "../context/AuthContext";
 import { useNotificationContext } from "../context/NotificationContext";
 import { authApi } from "../api";
-import { USER_ROLES } from "../utils/constants";
-
-interface ProfileData {
-  username: string;
-  fullName: string;
-  email: string;
-  role: string;
-}
-
-interface PasswordData {
-  currentPassword: string;
-  newPassword: string;
-  confirmPassword: string;
-}
 
 const ProfilePage: React.FC = () => {
   const { state } = useAuth();
   const { showSuccess, showError } = useNotificationContext();
-
-  // Profile editing state
-  const [isEditing, setIsEditing] = useState(false);
-  const [profileData, setProfileData] = useState<ProfileData>({
-    username: state.user?.username || "",
+  const [isLoading, setIsLoading] = useState(false);
+  const [profileData, setProfileData] = useState(state.user);
+  const [editDialogOpen, setEditDialogOpen] = useState(false);
+  const [editForm, setEditForm] = useState({
     fullName: state.user?.fullName || "",
     email: state.user?.email || "",
-    role: state.user?.role || "",
+    username: state.user?.username || "",
   });
 
-  // Password change state
-  const [passwordDialog, setPasswordDialog] = useState(false);
-  const [passwordData, setPasswordData] = useState<PasswordData>({
-    currentPassword: "",
-    newPassword: "",
-    confirmPassword: "",
-  });
-  const [showPasswords, setShowPasswords] = useState({
-    current: false,
-    new: false,
-    confirm: false,
-  });
-
-  // Loading states
-  const [isUpdating, setIsUpdating] = useState(false);
-  const [isChangingPassword, setIsChangingPassword] = useState(false);
-
-  // Handle profile data changes
-  const handleProfileChange = (field: keyof ProfileData, value: string) => {
-    setProfileData((prev) => ({
-      ...prev,
-      [field]: value,
-    }));
-  };
-
-  // Handle password data changes
-  const handlePasswordChange = (field: keyof PasswordData, value: string) => {
-    setPasswordData((prev) => ({
-      ...prev,
-      [field]: value,
-    }));
-  };
-
-  // Save profile changes
-  const handleSaveProfile = async () => {
-    try {
-      setIsUpdating(true);
-      await authApi.updateProfile({
-        username: profileData.username,
-        fullName: profileData.fullName,
-        email: profileData.email,
-      });
-      showSuccess("Profile updated successfully");
-      setIsEditing(false);
-    } catch (error: any) {
-      showError(error.response?.data?.message || "Failed to update profile");
-    } finally {
-      setIsUpdating(false);
-    }
-  };
-
-  // Cancel editing
-  const handleCancelEdit = () => {
-    setProfileData({
-      username: state.user?.username || "",
-      fullName: state.user?.fullName || "",
-      email: state.user?.email || "",
-      role: state.user?.role || "",
-    });
-    setIsEditing(false);
-  };
-
-  // Change password
-  const handleChangePassword = async () => {
-    if (passwordData.newPassword !== passwordData.confirmPassword) {
-      showError("New passwords do not match");
-      return;
-    }
-
-    if (passwordData.newPassword.length < 6) {
-      showError("Password must be at least 6 characters long");
-      return;
-    }
-
-    try {
-      setIsChangingPassword(true);
-      await authApi.changePassword({
-        currentPassword: passwordData.currentPassword,
-        newPassword: passwordData.newPassword,
-      });
-      showSuccess("Password changed successfully");
-      setPasswordDialog(false);
-      setPasswordData({
-        currentPassword: "",
-        newPassword: "",
-        confirmPassword: "",
-      });
-    } catch (error: any) {
-      showError(error.response?.data?.message || "Failed to change password");
-    } finally {
-      setIsChangingPassword(false);
-    }
-  };
-
-  // Get role display info
-  const getRoleInfo = (role: string) => {
+  const getRoleIcon = (role: string) => {
     switch (role) {
-      case USER_ROLES.BACKOFFICE:
-        return {
-          label: "Backoffice Admin",
-          color: "primary" as const,
-          icon: <AdminPanelSettings />,
-        };
-      case USER_ROLES.STATION_OPERATOR:
-        return {
-          label: "Station Operator",
-          color: "secondary" as const,
-          icon: <Engineering />,
-        };
+      case "Backoffice":
+        return <AdminPanelSettings sx={{ fontSize: 40 }} />;
+      case "StationOperator":
+        return <Engineering sx={{ fontSize: 40 }} />;
       default:
-        return {
-          label: role,
-          color: "default" as const,
-          icon: <Person />,
-        };
+        return <Person sx={{ fontSize: 40 }} />;
     }
   };
 
-  const roleInfo = getRoleInfo(profileData.role);
+  const getRoleColor = (role: string): "primary" | "secondary" | "success" | "error" | "warning" | "info" => {
+    switch (role) {
+      case "Backoffice":
+        return "primary";
+      case "StationOperator":
+        return "info";
+      default:
+        return "secondary";
+    }
+  };
 
-  if (!state.user) {
-    return (
-      <Box p={3}>
-        <Alert severity="error">User information not available</Alert>
-      </Box>
-    );
-  }
+  const getRoleDescription = (role: string) => {
+    switch (role) {
+      case "Backoffice":
+        return "Full administrative access to the system including user management, station management, and booking oversight.";
+      case "StationOperator":
+        return "Operational access to manage charging stations, process bookings, and handle day-to-day operations.";
+      default:
+        return "System user with limited access.";
+    }
+  };
+
+  const refreshProfile = async () => {
+    setIsLoading(true);
+    try {
+      const updatedProfile = await authApi.getProfile();
+      setProfileData(updatedProfile);
+      setEditForm({
+        fullName: updatedProfile?.fullName || "",
+        email: updatedProfile?.email || "",
+        username: updatedProfile?.username || "",
+      });
+      showSuccess("Profile refreshed successfully");
+    } catch (error: any) {
+      console.error("Error refreshing profile:", error);
+      showError("Failed to refresh profile");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleEditProfile = () => {
+    setEditForm({
+      fullName: profileData?.fullName || "",
+      email: profileData?.email || "",
+      username: profileData?.username || "",
+    });
+    setEditDialogOpen(true);
+  };
+
+  const handleSaveProfile = async () => {
+    setIsLoading(true);
+    try {
+      // Note: Backend doesn't actually support profile updates for system users
+      // This is a UI simulation - in reality would need backend support
+      
+      // For now, we'll just update the local state since the backend doesn't support profile updates
+      const updatedProfile = {
+        ...profileData!,
+        fullName: editForm.fullName,
+        email: editForm.email,
+        username: editForm.username,
+      };
+      
+      setProfileData(updatedProfile);
+      setEditDialogOpen(false);
+      
+      // In a real implementation, you would:
+      // 1. Call authApi.updateProfile(updatedProfile)
+      // 2. Update the auth context with the new user data
+      // 3. Store the updated profile in localStorage
+      
+      showSuccess("Profile updated successfully! (Note: Changes are local only - backend API doesn't support profile updates)");
+    } catch (error: any) {
+      console.error("Error updating profile:", error);
+      showError("Failed to update profile");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleCancelEdit = () => {
+    setEditDialogOpen(false);
+    setEditForm({
+      fullName: profileData?.fullName || "",
+      email: profileData?.email || "",
+      username: profileData?.username || "",
+    });
+  };
+
+  const getInitials = (name?: string, username?: string) => {
+    if (name) {
+      return name
+        .split(" ")
+        .map(word => word.charAt(0).toUpperCase())
+        .slice(0, 2)
+        .join("");
+    }
+    return username?.charAt(0).toUpperCase() || "U";
+  };
 
   return (
-    <Box p={3}>
-      <Typography variant="h4" gutterBottom>
-        Profile Settings
-      </Typography>
+    <Box>
+      {/* Header */}
+      <Box sx={{ mb: 4, display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+        <Box>
+          <Typography variant="h4" component="h1" gutterBottom fontWeight="bold">
+            My Profile
+          </Typography>
+          <Typography variant="body1" color="text.secondary">
+            View and manage your account information
+          </Typography>
+        </Box>
+        <Button
+          variant="outlined"
+          startIcon={<Refresh />}
+          onClick={refreshProfile}
+          disabled={isLoading}
+        >
+          Refresh
+        </Button>
+      </Box>
 
-      {/* Profile Information Card */}
-      <Card sx={{ mb: 3 }}>
-        <CardContent>
-          <Box display="flex" alignItems="center" mb={3}>
+      {isLoading && <LinearProgress sx={{ mb: 4 }} />}
+
+      {/* Profile Information Alert */}
+      <Alert severity="warning" sx={{ mb: 4 }}>
+        <Typography variant="body2">
+          <strong>Backend Limitation:</strong> The current API does not support profile updates for system users. 
+          Profile editing below is for demonstration purposes only and changes are stored locally.
+        </Typography>
+      </Alert>
+
+      {/* Profile Card */}
+      <Card sx={{ mb: 4 }}>
+        <CardContent sx={{ p: 4 }}>
+          {/* Profile Header */}
+          <Box sx={{ display: "flex", alignItems: "flex-start", gap: 3, mb: 4 }}>
             <Avatar
               sx={{
                 width: 80,
                 height: 80,
-                bgcolor: "primary.main",
+                bgcolor: `${getRoleColor(profileData?.role || "")}.main`,
                 fontSize: "2rem",
-                mr: 3,
+                fontWeight: "bold"
               }}
             >
-              {profileData.username.charAt(0).toUpperCase()}
+              {getInitials(profileData?.fullName, profileData?.username)}
             </Avatar>
-            <Box flexGrow={1}>
-              <Typography variant="h5" gutterBottom>
-                {profileData.fullName || profileData.username}
+            
+            <Box sx={{ flex: 1 }}>
+              <Typography variant="h5" fontWeight="bold" gutterBottom>
+                {profileData?.fullName || profileData?.username || "System User"}
               </Typography>
-              <Chip
-                icon={roleInfo.icon}
-                label={roleInfo.label}
-                color={roleInfo.color}
-                size="small"
-              />
+              
+              <Box sx={{ display: "flex", alignItems: "center", gap: 2, mb: 2 }}>
+                {getRoleIcon(profileData?.role || "")}
+                <Chip
+                  label={profileData?.role || "Unknown Role"}
+                  color={getRoleColor(profileData?.role || "")}
+                  size="medium"
+                />
+              </Box>
+              
+              <Typography variant="body1" color="text.secondary" sx={{ mb: 2 }}>
+                @{profileData?.username}
+              </Typography>
+              
+              <Typography variant="body2" color="text.secondary">
+                {getRoleDescription(profileData?.role || "")}
+              </Typography>
             </Box>
+          </Box>
+
+          <Divider sx={{ my: 3 }} />
+
+          {/* Account Details */}
+          <Typography variant="h6" gutterBottom sx={{ mb: 3 }}>
+            Account Details
+          </Typography>
+
+          <Box sx={{ display: "grid", gridTemplateColumns: { xs: "1fr", md: "repeat(2, 1fr)" }, gap: 3 }}>
             <Box>
-              {!isEditing ? (
-                <Button
-                  variant="outlined"
-                  startIcon={<Edit />}
-                  onClick={() => setIsEditing(true)}
-                >
-                  Edit Profile
-                </Button>
-              ) : (
-                <Box display="flex" gap={1}>
-                  <Button
-                    variant="contained"
-                    startIcon={<Save />}
-                    onClick={handleSaveProfile}
-                    disabled={isUpdating}
-                  >
-                    Save
-                  </Button>
-                  <Button
-                    variant="outlined"
-                    startIcon={<Cancel />}
-                    onClick={handleCancelEdit}
-                    disabled={isUpdating}
-                  >
-                    Cancel
-                  </Button>
-                </Box>
-              )}
+              <Typography variant="subtitle2" color="text.secondary" gutterBottom>
+                User ID
+              </Typography>
+              <Typography variant="body1" fontWeight="medium">
+                {profileData?.id || "Not available"}
+              </Typography>
             </Box>
-          </Box>
 
-          <Divider sx={{ mb: 3 }} />
+            <Box>
+              <Typography variant="subtitle2" color="text.secondary" gutterBottom>
+                Username
+              </Typography>
+              <Typography variant="body1" fontWeight="medium">
+                {profileData?.username || "Not available"}
+              </Typography>
+            </Box>
 
-          <Box display="flex" flexWrap="wrap" gap={3}>
-            <Box flex="1" minWidth="300px">
-              <TextField
-                fullWidth
-                label="Username"
-                value={profileData.username}
-                onChange={(e) =>
-                  handleProfileChange("username", e.target.value)
-                }
-                disabled={!isEditing}
-                variant={isEditing ? "outlined" : "filled"}
-              />
+            <Box>
+              <Typography variant="subtitle2" color="text.secondary" gutterBottom>
+                Role
+              </Typography>
+              <Typography variant="body1" fontWeight="medium">
+                {profileData?.role || "Not available"}
+              </Typography>
             </Box>
-            <Box flex="1" minWidth="300px">
-              <TextField
-                fullWidth
-                label="Full Name"
-                value={profileData.fullName}
-                onChange={(e) =>
-                  handleProfileChange("fullName", e.target.value)
-                }
-                disabled={!isEditing}
-                variant={isEditing ? "outlined" : "filled"}
-              />
-            </Box>
-          </Box>
 
-          <Box display="flex" flexWrap="wrap" gap={3} mt={3}>
-            <Box flex="1" minWidth="300px">
-              <TextField
-                fullWidth
-                label="Email"
-                type="email"
-                value={profileData.email}
-                onChange={(e) => handleProfileChange("email", e.target.value)}
-                disabled={!isEditing}
-                variant={isEditing ? "outlined" : "filled"}
-              />
+            <Box>
+              <Typography variant="subtitle2" color="text.secondary" gutterBottom>
+                Full Name
+              </Typography>
+              <Typography variant="body1" fontWeight="medium">
+                {profileData?.fullName || "Not set"}
+              </Typography>
             </Box>
-            <Box flex="1" minWidth="300px">
-              <TextField
-                fullWidth
-                label="Role"
-                value={roleInfo.label}
-                disabled
-                variant="filled"
-              />
+
+            <Box>
+              <Typography variant="subtitle2" color="text.secondary" gutterBottom>
+                Email
+              </Typography>
+              <Typography variant="body1" fontWeight="medium">
+                {profileData?.email || "Not set"}
+              </Typography>
             </Box>
           </Box>
         </CardContent>
       </Card>
 
-      {/* Security Settings Card */}
-      <Card>
-        <CardContent>
-          <Typography variant="h6" gutterBottom>
-            Security Settings
-          </Typography>
-          <Typography variant="body2" color="text.secondary" paragraph>
-            Manage your account security and password settings.
-          </Typography>
+      {/* Action Cards */}
+      <Box sx={{ display: "grid", gridTemplateColumns: { xs: "1fr", md: "repeat(2, 1fr)" }, gap: 3 }}>
+        <Card>
+          <CardContent>
+            <Box sx={{ display: "flex", alignItems: "center", gap: 2, mb: 2 }}>
+              <Edit color="action" />
+              <Typography variant="h6">
+                Profile Updates
+              </Typography>
+            </Box>
+            <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
+              Edit your profile information (changes are stored locally only).
+            </Typography>
+            <Button
+              variant="contained"
+              color="primary"
+              fullWidth
+              startIcon={<Edit />}
+              onClick={handleEditProfile}
+              disabled={isLoading}
+            >
+              Edit Profile
+            </Button>
+          </CardContent>
+        </Card>
 
-          <Button
-            variant="outlined"
-            onClick={() => setPasswordDialog(true)}
-            sx={{ mt: 2 }}
-          >
-            Change Password
-          </Button>
-        </CardContent>
-      </Card>
+        <Card>
+          <CardContent>
+            <Box sx={{ display: "flex", alignItems: "center", gap: 2, mb: 2 }}>
+              <Security color="action" />
+              <Typography variant="h6">
+                Security Settings
+              </Typography>
+            </Box>
+            <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
+              Password changes must be handled by your administrator.
+            </Typography>
+            <Button
+              variant="outlined"
+              disabled
+              fullWidth
+              startIcon={<Security />}
+            >
+              Change Password (Not Available)
+            </Button>
+          </CardContent>
+        </Card>
+      </Box>
 
-      {/* Password Change Dialog */}
-      <Dialog
-        open={passwordDialog}
-        onClose={() => setPasswordDialog(false)}
-        maxWidth="sm"
-        fullWidth
-      >
-        <DialogTitle>Change Password</DialogTitle>
+      {/* Edit Profile Dialog */}
+      <Dialog open={editDialogOpen} onClose={handleCancelEdit} maxWidth="sm" fullWidth>
+        <DialogTitle>Edit Profile</DialogTitle>
         <DialogContent>
-          <Box sx={{ pt: 2 }}>
+          <Box sx={{ pt: 2, display: 'flex', flexDirection: 'column', gap: 3 }}>
             <TextField
+              label="Username"
               fullWidth
-              label="Current Password"
-              type={showPasswords.current ? "text" : "password"}
-              value={passwordData.currentPassword}
-              onChange={(e) =>
-                handlePasswordChange("currentPassword", e.target.value)
-              }
-              margin="normal"
-              InputProps={{
-                endAdornment: (
-                  <InputAdornment position="end">
-                    <IconButton
-                      onClick={() =>
-                        setShowPasswords((prev) => ({
-                          ...prev,
-                          current: !prev.current,
-                        }))
-                      }
-                      edge="end"
-                    >
-                      {showPasswords.current ? (
-                        <VisibilityOff />
-                      ) : (
-                        <Visibility />
-                      )}
-                    </IconButton>
-                  </InputAdornment>
-                ),
-              }}
+              value={editForm.username}
+              onChange={(e) => setEditForm({ ...editForm, username: e.target.value })}
+              disabled // Username typically shouldn't be editable
+              helperText="Username cannot be changed"
             />
             <TextField
+              label="Full Name"
               fullWidth
-              label="New Password"
-              type={showPasswords.new ? "text" : "password"}
-              value={passwordData.newPassword}
-              onChange={(e) =>
-                handlePasswordChange("newPassword", e.target.value)
-              }
-              margin="normal"
-              helperText="Password must be at least 6 characters long"
-              InputProps={{
-                endAdornment: (
-                  <InputAdornment position="end">
-                    <IconButton
-                      onClick={() =>
-                        setShowPasswords((prev) => ({
-                          ...prev,
-                          new: !prev.new,
-                        }))
-                      }
-                      edge="end"
-                    >
-                      {showPasswords.new ? <VisibilityOff /> : <Visibility />}
-                    </IconButton>
-                  </InputAdornment>
-                ),
-              }}
+              value={editForm.fullName}
+              onChange={(e) => setEditForm({ ...editForm, fullName: e.target.value })}
+              placeholder="Enter your full name"
             />
             <TextField
+              label="Email"
+              type="email"
               fullWidth
-              label="Confirm New Password"
-              type={showPasswords.confirm ? "text" : "password"}
-              value={passwordData.confirmPassword}
-              onChange={(e) =>
-                handlePasswordChange("confirmPassword", e.target.value)
-              }
-              margin="normal"
-              error={
-                passwordData.confirmPassword.length > 0 &&
-                passwordData.newPassword !== passwordData.confirmPassword
-              }
-              helperText={
-                passwordData.confirmPassword.length > 0 &&
-                passwordData.newPassword !== passwordData.confirmPassword
-                  ? "Passwords do not match"
-                  : ""
-              }
-              InputProps={{
-                endAdornment: (
-                  <InputAdornment position="end">
-                    <IconButton
-                      onClick={() =>
-                        setShowPasswords((prev) => ({
-                          ...prev,
-                          confirm: !prev.confirm,
-                        }))
-                      }
-                      edge="end"
-                    >
-                      {showPasswords.confirm ? (
-                        <VisibilityOff />
-                      ) : (
-                        <Visibility />
-                      )}
-                    </IconButton>
-                  </InputAdornment>
-                ),
-              }}
+              value={editForm.email}
+              onChange={(e) => setEditForm({ ...editForm, email: e.target.value })}
+              placeholder="Enter your email address"
             />
           </Box>
         </DialogContent>
         <DialogActions>
-          <Button
-            onClick={() => setPasswordDialog(false)}
-            disabled={isChangingPassword}
-          >
+          <Button onClick={handleCancelEdit} startIcon={<Cancel />}>
             Cancel
           </Button>
-          <Button
-            onClick={handleChangePassword}
-            variant="contained"
-            disabled={
-              isChangingPassword ||
-              !passwordData.currentPassword ||
-              !passwordData.newPassword ||
-              !passwordData.confirmPassword ||
-              passwordData.newPassword !== passwordData.confirmPassword
-            }
+          <Button 
+            onClick={handleSaveProfile} 
+            variant="contained" 
+            startIcon={<Save />}
+            disabled={isLoading}
           >
-            Change Password
+            Save Changes
           </Button>
         </DialogActions>
       </Dialog>

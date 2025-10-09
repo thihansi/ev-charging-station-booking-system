@@ -1,4 +1,5 @@
 import apiClient from "./client";
+import { transformChargingStationForBackend, transformUpdateChargingStationForBackend } from "./utils";
 import type {
   ChargingStation,
   CreateChargingStationRequest,
@@ -34,7 +35,8 @@ export const chargingStationApi = {
   create: async (
     stationData: CreateChargingStationRequest
   ): Promise<{ message: string; id: string }> => {
-    const response = await apiClient.post("/api/chargingstations", stationData);
+    const backendData = transformChargingStationForBackend(stationData);
+    const response = await apiClient.post("/api/chargingstations", backendData);
     return response.data;
   },
 
@@ -43,9 +45,10 @@ export const chargingStationApi = {
     id: string,
     stationData: UpdateChargingStationRequest
   ): Promise<{ message: string }> => {
+    const backendData = transformUpdateChargingStationForBackend(stationData);
     const response = await apiClient.put(
       `/api/chargingstations/${id}`,
-      stationData
+      backendData
     );
     return response.data;
   },

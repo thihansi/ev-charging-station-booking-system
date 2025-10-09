@@ -13,6 +13,7 @@ import {
   ListItemText,
   ListItemSecondaryAction,
   Divider,
+  Alert,
 } from "@mui/material";
 import {
   BookOnline,
@@ -27,8 +28,12 @@ import { useAuth } from "../context/AuthContext";
 import { useNotificationContext } from "../context/NotificationContext";
 import { bookingApi } from "../api";
 import { ROUTES, BOOKING_STATUS } from "../utils/constants";
-import { formatDateTime } from "../utils/helpers";
+import {
+  formatDateTime,
+} from "../utils/helpers";
+import { getBookingStatusDisplay } from "../types";
 import type { Booking } from "../types";
+import { OperatorDebugInfo } from "../components/OperatorDebugInfo";
 
 const OperatorDashboard: React.FC = () => {
   const navigate = useNavigate();
@@ -39,9 +44,11 @@ const OperatorDashboard: React.FC = () => {
   const [recentBookings, setRecentBookings] = useState<Booking[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [processingIds, setProcessingIds] = useState<Set<string>>(new Set());
+  const [hasPermissionError, setHasPermissionError] = useState(false);
 
   const loadBookings = async () => {
     setIsLoading(true);
+    setHasPermissionError(false);
     try {
       const allBookings = await bookingApi.getAll();
 
@@ -59,9 +66,17 @@ const OperatorDashboard: React.FC = () => {
         )
         .slice(0, 10);
       setRecentBookings(recent);
-    } catch (error) {
-      showError("Failed to load bookings");
+    } catch (error: any) {
       console.error("Bookings loading error:", error);
+      
+      if (error.response?.status === 403) {
+        setHasPermissionError(true);
+        showError("Access denied: You don't have permission to view bookings. Please contact your administrator.");
+      } else if (error.response?.status === 401) {
+        showError("Session expired. Please log in again.");
+      } else {
+        showError("Failed to load bookings. Please try again later.");
+      }
     } finally {
       setIsLoading(false);
     }
@@ -144,6 +159,10 @@ const OperatorDashboard: React.FC = () => {
             Welcome back, {state.user?.username}! Manage your station bookings
           </Typography>
         </Box>
+        
+        {/* Temporary Debug Info - Remove after fixing */}
+        {import.meta.env.DEV && <OperatorDebugInfo />}
+        
         <Box sx={{ display: "flex", gap: 2 }}>
           <Button
             variant="outlined"
@@ -160,6 +179,21 @@ const OperatorDashboard: React.FC = () => {
 
       {/* Loading indicator */}
       {isLoading && <LinearProgress sx={{ mb: 4 }} />}
+
+      {/* Permission Error Display */}
+      {hasPermissionError && (
+        <Alert severity="error" sx={{ mb: 4 }}>
+          <Typography variant="h6" gutterBottom>
+            Permission Issue Detected
+          </Typography>
+          <Typography variant="body2" gutterBottom>
+            Your operator account doesn't have permission to access the bookings API. This is a backend configuration issue.
+          </Typography>
+          <Typography variant="body2">
+            <strong>Solution:</strong> The backend admin needs to configure the API permissions for the "StationOperator" role to access the /api/bookings endpoint.
+          </Typography>
+        </Alert>
+      )}
 
       {/* Quick Stats */}
       <Box sx={{ display: "flex", gap: 3, mb: 4 }}>
@@ -218,7 +252,7 @@ const OperatorDashboard: React.FC = () => {
                               {booking.evOwnerNic}
                             </Typography>
                             <Chip
-                              label={booking.status}
+                              label={getBookingStatusDisplay(booking.status)}
                               size="small"
                               color={
                                 getBookingStatusColor(booking.status) as any
@@ -283,7 +317,7 @@ const OperatorDashboard: React.FC = () => {
               </Typography>
               <Button
                 size="small"
-                onClick={() => navigate(ROUTES.OPERATOR.BOOKINGS)}
+                onClick={() => navigate(ROUTES.OPERATOR.BOOKINGS_PENDING)}
               >
                 View All
               </Button>
@@ -312,7 +346,7 @@ const OperatorDashboard: React.FC = () => {
                               {booking.evOwnerNic}
                             </Typography>
                             <Chip
-                              label={booking.status}
+                              label={getBookingStatusDisplay(booking.status)}
                               size="small"
                               color={
                                 getBookingStatusColor(booking.status) as any
@@ -348,16 +382,16 @@ const OperatorDashboard: React.FC = () => {
           <Button
             variant="outlined"
             startIcon={<BookOnline />}
-            onClick={() => navigate(ROUTES.OPERATOR.BOOKINGS)}
+            onClick={() => navigate(ROUTES.OPERATOR.BOOKINGS_PENDING)}
           >
             Manage Bookings
           </Button>
           <Button
             variant="outlined"
             startIcon={<EvStation />}
-            onClick={() => navigate(ROUTES.OPERATOR.STATIONS)}
+            onClick={() => navigate(ROUTES.OPERATOR.QR_SCANNER)}
           >
-            My Stations
+            QR Scanner
           </Button>
         </Box>
       </Box>

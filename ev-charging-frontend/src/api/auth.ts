@@ -65,25 +65,23 @@ export const authApi = {
     return Promise.resolve();
   },
 
-  // Update user profile
-  updateProfile: async (profileData: {
+  // Update user profile - NOT IMPLEMENTED IN BACKEND
+  // Backend User entity only has username, passwordHash, and role
+  // No fullName, email, or other profile fields are supported
+  updateProfile: async (_profileData: {
     username: string;
     fullName: string;
     email: string;
   }): Promise<{ message: string; user: User }> => {
-    const response = await apiClient.put("/api/auth/profile", profileData);
-    return response.data;
+    throw new Error("Profile updates are not supported for system users. Backend User entity only contains username and role.");
   },
 
-  // Change password
-  changePassword: async (passwordData: {
+  // Change password - NOT IMPLEMENTED IN BACKEND
+  // Backend does not have a change password endpoint for system users
+  changePassword: async (_passwordData: {
     currentPassword: string;
     newPassword: string;
   }): Promise<{ message: string }> => {
-    const response = await apiClient.put(
-      "/api/auth/change-password",
-      passwordData
-    );
-    return response.data;
+    throw new Error("Password changes are not supported for system users. Please contact your administrator.");
   },
 };

@@ -33,6 +33,7 @@ import { bookingApi } from "../api";
 import { ROUTES } from "../utils/constants";
 import { formatDateTime } from "../utils/helpers";
 import type { Booking } from "../types";
+import { getBookingStatusDisplay } from "../types";
 
 const QRScannerPage: React.FC = () => {
   const navigate = useNavigate();
@@ -101,18 +102,13 @@ const QRScannerPage: React.FC = () => {
   };
 
   // Handle booking actions
-  const handleBookingAction = async (action: "complete" | "noshow") => {
+  const handleBookingAction = async (action: "complete") => {
     if (!scannedBooking) return;
 
     setIsLoading(true);
     try {
-      if (action === "complete") {
-        await bookingApi.complete(scannedBooking.id);
-        showSuccess("Booking marked as completed!");
-      } else {
-        await bookingApi.markNoShow(scannedBooking.id);
-        showSuccess("Booking marked as no-show!");
-      }
+      await bookingApi.complete(scannedBooking.id);
+      showSuccess("Booking marked as completed!");
 
       setDialogOpen(false);
       setScannedBooking(null);
@@ -134,7 +130,6 @@ const QRScannerPage: React.FC = () => {
         return "info";
       case "Rejected":
       case "Cancelled":
-      case "NoShow":
         return "error";
       default:
         return "default";
@@ -308,7 +303,7 @@ const QRScannerPage: React.FC = () => {
                 sx={{ mb: 3 }}
               >
                 <Typography fontWeight="bold">
-                  Status: {scannedBooking.status}
+                  Status: {getBookingStatusDisplay(scannedBooking.status)}
                 </Typography>
                 {canProcessBooking(scannedBooking)
                   ? "This booking is ready to be processed"
@@ -337,7 +332,7 @@ const QRScannerPage: React.FC = () => {
                         sx={{ display: "flex", alignItems: "center", gap: 1 }}
                       >
                         <Chip
-                          label={scannedBooking.status}
+                          label={getBookingStatusDisplay(scannedBooking.status)}
                           color={getStatusColor(scannedBooking.status) as any}
                           size="small"
                         />
@@ -365,7 +360,7 @@ const QRScannerPage: React.FC = () => {
                     >
                       <Person fontSize="small" />
                       <Typography variant="body2">
-                        {scannedBooking.evOwner?.fullName ||
+                        {scannedBooking.evOwner?.name ||
                           scannedBooking.evOwnerNic}
                       </Typography>
                     </Box>
@@ -413,23 +408,14 @@ const QRScannerPage: React.FC = () => {
         <DialogActions>
           <Button onClick={() => setDialogOpen(false)}>Close</Button>
           {scannedBooking && canProcessBooking(scannedBooking) && (
-            <>
-              <Button
-                onClick={() => handleBookingAction("noshow")}
-                color="warning"
-                disabled={isLoading}
-              >
-                Mark No-Show
-              </Button>
-              <Button
-                onClick={() => handleBookingAction("complete")}
-                color="success"
-                variant="contained"
-                disabled={isLoading}
-              >
-                Complete Session
-              </Button>
-            </>
+            <Button
+              onClick={() => handleBookingAction("complete")}
+              color="success"
+              variant="contained"
+              disabled={isLoading}
+            >
+              Complete Session
+            </Button>
           )}
         </DialogActions>
       </Dialog>

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import {
   Box,
   Card,
@@ -38,7 +38,6 @@ import { useNavigate } from "react-router-dom";
 import { useNotificationContext } from "../context/NotificationContext";
 import { evOwnerApi } from "../api";
 import { ROUTES } from "../utils/constants";
-import { formatDateTime } from "../utils/helpers";
 import type { EVOwner } from "../types";
 
 const EVOwnerListPage: React.FC = () => {
@@ -47,7 +46,7 @@ const EVOwnerListPage: React.FC = () => {
 
   const [evOwners, setEvOwners] = useState<EVOwner[]>([]);
   const [filteredOwners, setFilteredOwners] = useState<EVOwner[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(false); // Changed from true to false
   const [searchTerm, setSearchTerm] = useState("");
   const [menuAnchorEl, setMenuAnchorEl] = useState<null | HTMLElement>(null);
   const [selectedOwner, setSelectedOwner] = useState<EVOwner | null>(null);
@@ -63,39 +62,42 @@ const EVOwnerListPage: React.FC = () => {
     action: () => {},
   });
 
-  const loadEvOwners = async () => {
+  // Remove auto-loading since the API endpoint may not be implemented
+  // useEffect(() => {
+  //   loadEvOwners();
+  // }, []);
+
+  // Since we're using search-based approach, we don't need filtering
+  // The search will directly set the evOwners and filteredOwners
+
+  const handleSearchOwner = async () => {
+    if (!searchTerm.trim()) {
+      showError("Please enter a NIC to search for");
+      return;
+    }
+
     setIsLoading(true);
     try {
-      const owners = await evOwnerApi.getAll();
-      setEvOwners(owners);
-      setFilteredOwners(owners);
-    } catch (error) {
-      showError("Failed to load EV owners");
-      console.error("Error loading EV owners:", error);
+      const owner = await evOwnerApi.getByNic(searchTerm.trim());
+      setEvOwners([owner]);
+      setFilteredOwners([owner]);
+      showSuccess(`Found EV owner: ${owner.name}`);
+    } catch (error: any) {
+      console.error("Error searching for EV owner:", error);
+      
+      if (error.response?.status === 404) {
+        showError(`No EV owner found with NIC: ${searchTerm}`);
+      } else if (error.response?.data?.message) {
+        showError(`Search error: ${error.response.data.message}`);
+      } else {
+        showError("Failed to search for EV owner. Please check the NIC format and try again.");
+      }
+      setEvOwners([]);
+      setFilteredOwners([]);
     } finally {
       setIsLoading(false);
     }
   };
-
-  useEffect(() => {
-    loadEvOwners();
-  }, []);
-
-  useEffect(() => {
-    // Filter owners based on search term
-    if (searchTerm.trim() === "") {
-      setFilteredOwners(evOwners);
-    } else {
-      const filtered = evOwners.filter(
-        (owner) =>
-          owner.nic.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          owner.fullName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          owner.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          owner.phoneNumber.includes(searchTerm)
-      );
-      setFilteredOwners(filtered);
-    }
-  }, [searchTerm, evOwners]);
 
   const handleMenuOpen = (
     event: React.MouseEvent<HTMLElement>,
@@ -113,7 +115,7 @@ const EVOwnerListPage: React.FC = () => {
   const handleEdit = () => {
     if (selectedOwner) {
       navigate(
-        ROUTES.BACKOFFICE.EV_OWNERS_EDIT.replace(":nic", selectedOwner.nic)
+        ROUTES.ADMIN.EV_OWNERS_EDIT.replace(":nic", selectedOwner.nic)
       );
     }
     handleMenuClose();
@@ -125,7 +127,15 @@ const EVOwnerListPage: React.FC = () => {
     try {
       await evOwnerApi.activate(selectedOwner.nic);
       showSuccess("EV Owner activated successfully");
-      await loadEvOwners();
+      
+      // Update the owner in the current list
+      const updatedOwners = evOwners.map(owner => 
+        owner.nic === selectedOwner.nic 
+          ? { ...owner, isActive: true }
+          : owner
+      );
+      setEvOwners(updatedOwners);
+      setFilteredOwners(updatedOwners);
     } catch (error) {
       showError("Failed to activate EV owner");
     }
@@ -138,12 +148,20 @@ const EVOwnerListPage: React.FC = () => {
     setConfirmDialog({
       open: true,
       title: "Deactivate EV Owner",
-      message: `Are you sure you want to deactivate ${selectedOwner.fullName}? They won't be able to make new bookings.`,
+      message: `Are you sure you want to deactivate ${selectedOwner.name}? They won't be able to make new bookings.`,
       action: async () => {
         try {
           await evOwnerApi.deactivate(selectedOwner.nic);
           showSuccess("EV Owner deactivated successfully");
-          await loadEvOwners();
+          
+          // Update the owner in the current list
+          const updatedOwners = evOwners.map(owner => 
+            owner.nic === selectedOwner.nic 
+              ? { ...owner, isActive: false }
+              : owner
+          );
+          setEvOwners(updatedOwners);
+          setFilteredOwners(updatedOwners);
         } catch (error) {
           showError("Failed to deactivate EV owner");
         }
@@ -158,12 +176,16 @@ const EVOwnerListPage: React.FC = () => {
     setConfirmDialog({
       open: true,
       title: "Delete EV Owner",
-      message: `Are you sure you want to permanently delete ${selectedOwner.fullName}? This action cannot be undone.`,
+      message: `Are you sure you want to permanently delete ${selectedOwner.name}? This action cannot be undone.`,
       action: async () => {
         try {
           await evOwnerApi.delete(selectedOwner.nic);
           showSuccess("EV Owner deleted successfully");
-          await loadEvOwners();
+          
+          // Remove the owner from the current list
+          const updatedOwners = evOwners.filter(owner => owner.nic !== selectedOwner.nic);
+          setEvOwners(updatedOwners);
+          setFilteredOwners(updatedOwners);
         } catch (error) {
           showError("Failed to delete EV owner");
         }
@@ -185,39 +207,54 @@ const EVOwnerListPage: React.FC = () => {
           EV Owner Management
         </Typography>
         <Typography variant="body1" color="text.secondary">
-          Manage electric vehicle owners and their accounts
+          Search for individual EV owners by NIC or manage EV owner accounts
         </Typography>
       </Box>
 
-      {/* Toolbar */}
+      {/* Search and Action Section */}
       <Card sx={{ mb: 3 }}>
         <Toolbar sx={{ justifyContent: "space-between" }}>
-          <TextField
-            placeholder="Search by NIC, name, email, or phone..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            sx={{ minWidth: 300 }}
-            InputProps={{
-              startAdornment: (
-                <InputAdornment position="start">
-                  <Search />
-                </InputAdornment>
-              ),
-            }}
-          />
+          <Box sx={{ display: "flex", gap: 2, alignItems: "center" }}>
+            <TextField
+              label="Search by NIC"
+              placeholder="Enter NIC (e.g., 123456789V or 200012345678)..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              sx={{ minWidth: 350 }}
+              InputProps={{
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <Search />
+                  </InputAdornment>
+                ),
+              }}
+            />
+            <Button
+              variant="outlined"
+              startIcon={<Search />}
+              onClick={handleSearchOwner}
+              disabled={!searchTerm.trim() || isLoading}
+            >
+              Search Owner
+            </Button>
+          </Box>
           <Box sx={{ display: "flex", gap: 2 }}>
             <Button
               variant="outlined"
               startIcon={<Refresh />}
-              onClick={loadEvOwners}
+              onClick={() => {
+                setEvOwners([]);
+                setFilteredOwners([]);
+                setSearchTerm("");
+              }}
               disabled={isLoading}
             >
-              Refresh
+              Clear
             </Button>
             <Button
               variant="contained"
               startIcon={<Add />}
-              onClick={() => navigate(ROUTES.BACKOFFICE.EV_OWNERS_CREATE)}
+              onClick={() => navigate(ROUTES.ADMIN.EV_OWNERS_CREATE)}
             >
               Add EV Owner
             </Button>
@@ -237,7 +274,7 @@ const EVOwnerListPage: React.FC = () => {
                     <strong>NIC</strong>
                   </TableCell>
                   <TableCell>
-                    <strong>Full Name</strong>
+                    <strong>Name</strong>
                   </TableCell>
                   <TableCell>
                     <strong>Email</strong>
@@ -248,9 +285,6 @@ const EVOwnerListPage: React.FC = () => {
                   <TableCell>
                     <strong>Status</strong>
                   </TableCell>
-                  <TableCell>
-                    <strong>Created</strong>
-                  </TableCell>
                   <TableCell align="center">
                     <strong>Actions</strong>
                   </TableCell>
@@ -259,13 +293,11 @@ const EVOwnerListPage: React.FC = () => {
               <TableBody>
                 {filteredOwners.length === 0 ? (
                   <TableRow>
-                    <TableCell colSpan={7} align="center" sx={{ py: 4 }}>
+                    <TableCell colSpan={6} align="center" sx={{ py: 4 }}>
                       <Typography color="text.secondary">
                         {isLoading
-                          ? "Loading..."
-                          : searchTerm
-                          ? "No EV owners found matching your search"
-                          : "No EV owners yet"}
+                          ? "Searching..."
+                          : "Use the search box above to find EV owners by NIC, or add a new EV owner."}
                       </Typography>
                     </TableCell>
                   </TableRow>
@@ -279,7 +311,7 @@ const EVOwnerListPage: React.FC = () => {
                       </TableCell>
                       <TableCell>
                         <Typography variant="body2">
-                          {owner.fullName}
+                          {owner.name}
                         </Typography>
                       </TableCell>
                       <TableCell>
@@ -287,29 +319,16 @@ const EVOwnerListPage: React.FC = () => {
                       </TableCell>
                       <TableCell>
                         <Typography variant="body2">
-                          {owner.phoneNumber}
+                          {owner.phone}
                         </Typography>
                       </TableCell>
                       <TableCell>
-                        <Box sx={{ display: "flex", gap: 1 }}>
-                          <Chip
-                            label={owner.isActive ? "Active" : "Inactive"}
-                            color={owner.isActive ? "success" : "default"}
-                            size="small"
-                            variant="outlined"
-                          />
-                          <Chip
-                            label={owner.isVerified ? "Verified" : "Unverified"}
-                            color={owner.isVerified ? "info" : "warning"}
-                            size="small"
-                            variant="outlined"
-                          />
-                        </Box>
-                      </TableCell>
-                      <TableCell>
-                        <Typography variant="body2" color="text.secondary">
-                          {formatDateTime(owner.createdAt)}
-                        </Typography>
+                        <Chip
+                          label={owner.isActive ? "Active" : "Inactive"}
+                          color={owner.isActive ? "success" : "default"}
+                          size="small"
+                          variant="outlined"
+                        />
                       </TableCell>
                       <TableCell align="center">
                         <IconButton
