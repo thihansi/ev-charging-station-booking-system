@@ -32,10 +32,18 @@ import retrofit2.Response;
 
 public class OperatorDashboardActivity extends AppCompatActivity {
 
+    // ---- Backend status map ----
+    private static final int STATUS_PENDING   = 0;
+    private static final int STATUS_APPROVED  = 1; // upcoming (future)
+    private static final int STATUS_REJECTED  = 2;
+    private static final int STATUS_COMPLETED = 3; // past
+    private static final int STATUS_CANCELLED = 4; // past
+    private static final int STATUS_ACTIVE    = 5; // active/charging
+
     private RecyclerView rvActive, rvUpcoming, rvPast;
     private BookingCardAdapter adActive, adUpcoming, adPast;
     private TextView btnViewAllActive, btnViewAllUpcoming, btnViewAllPast;
-    private Button btnScan, btnLogout; // btnGoReservations optional
+    private Button btnScan, btnLogout;
     private ApiService api;
     private DBHelper db;
 
@@ -59,9 +67,9 @@ public class OperatorDashboardActivity extends AppCompatActivity {
         rvUpcoming.setLayoutManager(new LinearLayoutManager(this));
         rvPast.setLayoutManager(new LinearLayoutManager(this));
 
-        adActive = new BookingCardAdapter(new ArrayList<>(), b -> openDetails(b));
-        adUpcoming = new BookingCardAdapter(new ArrayList<>(), b -> openDetails(b));
-        adPast = new BookingCardAdapter(new ArrayList<>(), b -> openDetails(b));
+        adActive = new BookingCardAdapter(new ArrayList<>(), this::openDetails);
+        adUpcoming = new BookingCardAdapter(new ArrayList<>(), this::openDetails);
+        adPast = new BookingCardAdapter(new ArrayList<>(), this::openDetails);
 
         rvActive.setAdapter(adActive);
         rvUpcoming.setAdapter(adUpcoming);
@@ -93,6 +101,7 @@ public class OperatorDashboardActivity extends AppCompatActivity {
     private void fetchAndCache() {
         String token = new SessionManager(this).getToken();
         if (token == null) return;
+
         api.getAllBookings("Bearer " + token).enqueue(new Callback<List<Booking>>() {
             @Override
             public void onResponse(Call<List<Booking>> call, Response<List<Booking>> resp) {
@@ -120,20 +129,24 @@ public class OperatorDashboardActivity extends AppCompatActivity {
         for (Booking b : all) {
             int s = b.getStatus();
             Date resv = parseIso(b.getReservationDateTime());
-            if (s == 3) { // Charging
+
+            if (s == STATUS_ACTIVE) { // 5
                 active.add(b);
-            } else if (s == 1 && resv != null && resv.after(now)) { // Approved + future
+            } else if (s == STATUS_APPROVED && resv != null && resv.after(now)) { // 1 + future
                 upcoming.add(b);
-            } else if (s == 4) { // Completed
+            } else if (s == STATUS_COMPLETED || s == STATUS_CANCELLED) { // 3 or 4
                 past.add(b);
             }
+            // Pending (0) and Rejected (2) are not shown on dashboard
         }
 
-        Comparator<Booking> byResvAsc = (x,y) -> safeDate(x).compareTo(safeDate(y));
-        Comparator<Booking> byResvDesc = (x,y) -> safeDate(y).compareTo(safeDate(x));
+        // Sort: upcoming soonest first, past newest first
+        Comparator<Booking> byResvAsc  = (x, y) -> safeDate(x).compareTo(safeDate(y));
+        Comparator<Booking> byResvDesc = (x, y) -> safeDate(y).compareTo(safeDate(x));
         Collections.sort(upcoming, byResvAsc);
         Collections.sort(past, byResvDesc);
 
+        // Limit preview counts on dashboard
         adActive.submit(limit(active, 1));
         adUpcoming.submit(limit(upcoming, 3));
         adPast.submit(limit(past, 3));

@@ -18,7 +18,7 @@ import java.util.Locale;
 import java.util.TimeZone;
 
 import lk.ead.mobileinterface.R;
-import lk.ead.mobileinterface.adapters.ReservationAdapter;
+import lk.ead.mobileinterface.adapters.BookingCardAdapter;
 import lk.ead.mobileinterface.api.ApiClient;
 import lk.ead.mobileinterface.api.ApiService;
 import lk.ead.mobileinterface.db.DBHelper;
@@ -34,7 +34,7 @@ public class ReservationListActivity extends AppCompatActivity {
     private TextView tvPendingCount, tvUpcomingCount, tvTitle,
             tvUpcomingHeader, tvCompletedHeader;
 
-    private ReservationAdapter adapterCurrent, adapterCompleted;
+    private BookingCardAdapter adapterCurrent, adapterCompleted;
     private DBHelper db;
     private ApiService api;
     private String filter; // "active" | "upcoming" | "past" | null
@@ -55,8 +55,10 @@ public class ReservationListActivity extends AppCompatActivity {
 
         recyclerCurrent.setLayoutManager(new LinearLayoutManager(this));
         recyclerCompleted.setLayoutManager(new LinearLayoutManager(this));
-        adapterCurrent = new ReservationAdapter(new ArrayList<>());
-        adapterCompleted = new ReservationAdapter(new ArrayList<>());
+
+        adapterCurrent = new BookingCardAdapter(new ArrayList<>(), this::openDetails);
+        adapterCompleted = new BookingCardAdapter(new ArrayList<>(), this::openDetails);
+
         recyclerCurrent.setAdapter(adapterCurrent);
         recyclerCompleted.setAdapter(adapterCompleted);
 
@@ -149,9 +151,13 @@ public class ReservationListActivity extends AppCompatActivity {
             if (s == 0) pendingCount++;
             if (s == 1 && resv != null && resv.after(now)) approvedFutureCount++;
 
-            if (s == 3) active.add(b);                                    // Charging
-            else if (s == 1 && resv != null && resv.after(now)) upcoming.add(b); // Approved future
-            else if (s == 4) past.add(b);                                 // Completed
+            if (s == 3) {
+                active.add(b);                    // Charging
+            } else if (s == 1 && resv != null && resv.after(now)) {
+                upcoming.add(b);                  // Approved future
+            } else if (s == 4) {
+                past.add(b);                      // Completed
+            }
         }
 
         if (filter == null) {
@@ -162,21 +168,21 @@ public class ReservationListActivity extends AppCompatActivity {
             List<Booking> current = new ArrayList<>();
             current.addAll(active);
             current.addAll(upcoming);
-            adapterCurrent.update(current);
-            adapterCompleted.update(past);
+            adapterCurrent.submit(current);
+            adapterCompleted.submit(past);
             return;
         }
 
         // Filtered “see all”
         switch (filter) {
             case "active":
-                adapterCurrent.update(active);
+                adapterCurrent.submit(active);
                 break;
             case "upcoming":
-                adapterCurrent.update(upcoming);
+                adapterCurrent.submit(upcoming);
                 break;
             case "past":
-                adapterCompleted.update(past);
+                adapterCompleted.submit(past);
                 break;
         }
     }
@@ -193,5 +199,10 @@ public class ReservationListActivity extends AppCompatActivity {
         } catch (Exception e) {
             return null;
         }
+    }
+
+    private void openDetails(Booking booking) {
+        // Later: open detail screen. For now, simple toast.
+        Toast.makeText(this, "Booking tapped: " + booking.getId(), Toast.LENGTH_SHORT).show();
     }
 }
