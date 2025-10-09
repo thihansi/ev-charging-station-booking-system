@@ -21,6 +21,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.MobileInterface">
         <activity
+            android:name=".activities.MyBookingsActivity"
+            android:exported="false" />
+        <activity
             android:name=".activities.BookingsListActivity"
             android:exported="false" />
         <activity

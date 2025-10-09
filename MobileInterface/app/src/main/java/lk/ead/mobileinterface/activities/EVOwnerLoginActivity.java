@@ -6,11 +6,15 @@ import android.text.TextUtils;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+
+import org.w3c.dom.Text;
 
 import lk.ead.mobileinterface.R;
 import lk.ead.mobileinterface.api.ApiClient;
@@ -26,8 +30,9 @@ import retrofit2.Response;
 public class EVOwnerLoginActivity extends AppCompatActivity {
 
     private EditText etNic, etPassword;
-    private Button btnLogin, btnGoRegister;
-    private ProgressBar progress;
+    private Button btnLogin;
+    private TextView btnGoRegister;
+    private ImageButton btnBack;
     private ApiService api;
 
     @Override
@@ -37,9 +42,13 @@ public class EVOwnerLoginActivity extends AppCompatActivity {
 
         etNic = findViewById(R.id.etNic);             // 👈 change layout to have NIC field
         etPassword = findViewById(R.id.etPassword);
-        btnLogin = findViewById(R.id.btnLogin);
-        btnGoRegister = findViewById(R.id.btnGoRegister);
-        progress = findViewById(R.id.progressBar);
+        btnLogin = findViewById(R.id.btnSignIn);
+        btnGoRegister = findViewById(R.id.tvRegister);
+        btnBack = findViewById(R.id.btnBack);
+
+        btnBack.setOnClickListener(v -> onBackPressed());
+        btnGoRegister.setOnClickListener(v ->
+                startActivity(new Intent(this, EVOwnerRegisterActivity.class)));
 
         api = ApiClient.getClient().create(ApiService.class);
 
@@ -112,7 +121,7 @@ public class EVOwnerLoginActivity extends AppCompatActivity {
     }
 
     private void setLoading(boolean loading) {
-        progress.setVisibility(loading ? View.VISIBLE : View.GONE);
+        //progress.setVisibility(loading ? View.VISIBLE : View.GONE);
         btnLogin.setEnabled(!loading);
         btnGoRegister.setEnabled(!loading);
     }

@@ -197,7 +197,7 @@ public class DBHelper extends SQLiteOpenHelper {
     // BOOKING OPERATIONS
     // -----------------------------------------------------
 
-    public void insertBookings(List<Booking> bookings) {
+    public void insertOrUpdateBookings(List<Booking> bookings) {
         SQLiteDatabase db = this.getWritableDatabase();
         db.beginTransaction();
         try {

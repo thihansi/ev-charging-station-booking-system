@@ -15,6 +15,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.Calendar;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import lk.ead.mobileinterface.R;
@@ -62,7 +63,7 @@ public class BookingsListActivity extends AppCompatActivity implements lk.ead.mo
         }
         bearer = "Bearer " + token;
 
-        adapter = new lk.ead.mobileinterface.adapters.BookingAdapter(data, this /*action handler*/);
+        adapter = new lk.ead.mobileinterface.adapters.BookingAdapter(data, this, true /*action handler*/);
         rv.setLayoutManager(new LinearLayoutManager(this));
         rv.setAdapter(adapter);
 
@@ -80,6 +81,15 @@ public class BookingsListActivity extends AppCompatActivity implements lk.ead.mo
                 }
                 data.clear();
                 for (Booking b : res.body()) {
+                    // Map statusCode → BookingStatus enum
+                    b.setStatusCode(b.getStatusCode());
+
+                    // Optional: clean the time string so it's ready for display
+                    // (your adapter will still reformat it visually)
+                    if (b.getReservationDateTime() != null) {
+                        b.setReservationDateTime(b.getReservationDateTime().trim());
+                    }
+
                     int code = b.getStatusCode();
                     if (filterStatusCode < 0 || code == filterStatusCode) {
                         data.add(b);
@@ -119,12 +129,29 @@ public class BookingsListActivity extends AppCompatActivity implements lk.ead.mo
 
     @Override
     public void onUpdateTime(Booking b) {
-        // 🚫 Prevent editing if approved
+
         if (b.getStatus() != null && b.getStatus() == BookingStatus.Approved) {
             Toast.makeText(this, "Approved reservations cannot be modified.", Toast.LENGTH_LONG).show();
             return;
         }
 
+        // 🕒 Parse existing reservation time
+        try {
+            java.text.SimpleDateFormat input =
+                    new java.text.SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSX", java.util.Locale.US);
+            Date reservation = input.parse(b.getReservationDateTime());
+            long now = System.currentTimeMillis();
+
+            // If reservation is within 12 hours → reject
+            if (reservation != null && (reservation.getTime() - now) < (12 * 60 * 60 * 1000)) {
+                Toast.makeText(this, "You can only update reservations at least 12 hours in advance.", Toast.LENGTH_LONG).show();
+                return;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        // ✅ Continue to date picker if allowed
         Calendar cal = Calendar.getInstance();
 
         DatePickerDialog dp = new DatePickerDialog(this, (view, y, m, d) -> {
@@ -135,7 +162,7 @@ public class BookingsListActivity extends AppCompatActivity implements lk.ead.mo
             TimePickerDialog tp = new TimePickerDialog(this, (v, h, mm) -> {
                 cal.set(Calendar.HOUR_OF_DAY, h);
                 cal.set(Calendar.MINUTE, mm);
-                String isoUtc = toUtcIsoMillis(cal);
+                String isoUtc = toColomboIsoMillis(cal);
 
                 b.setReservationDateTime(isoUtc);
 
@@ -166,14 +193,33 @@ public class BookingsListActivity extends AppCompatActivity implements lk.ead.mo
         dp.show();
     }
 
-    private String toUtcIsoMillis(Calendar cal) {
-        // Clone to avoid modifying original
-        Calendar adjusted = (Calendar) cal.clone();
+    private String toColomboIsoMillis(Calendar cal) {
+        if (cal == null) return null;
+
+        // Clone to avoid modifying the original
+        Calendar copy = (Calendar) cal.clone();
+
+        // ✅ Add +5 hours and 30 minutes manually
+        copy.add(Calendar.HOUR_OF_DAY, 5);
+        copy.add(Calendar.MINUTE, 30);
 
         java.text.SimpleDateFormat sdf =
-                new java.text.SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSXXX", java.util.Locale.UK);
-        sdf.setTimeZone(java.util.TimeZone.getTimeZone("Asia/Colombo"));
+                new java.text.SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSXXX", java.util.Locale.US);
+        sdf.setTimeZone(java.util.TimeZone.getTimeZone("Asia/Colombo")); // ensure offset is shown correctly
 
-        return sdf.format(adjusted.getTime());
+        return sdf.format(copy.getTime()); // e.g. 2025-10-12T14:30:00.000+05:30
+    }
+
+    @Override
+    public void onViewQr(Booking b) {
+        if (b.getQrCode() == null || b.getQrCode().trim().isEmpty()) {
+            Toast.makeText(this, "No QR available for this booking.", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        // Show QR dialog
+        lk.ead.mobileinterface.activities.QrDialogFragment
+                .newInstance(b.getQrCode())
+                .show(getSupportFragmentManager(), "qr");
     }
 }

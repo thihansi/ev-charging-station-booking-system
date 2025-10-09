@@ -7,6 +7,7 @@ import android.util.Patterns;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
@@ -26,7 +27,7 @@ public class EVOwnerRegisterActivity extends AppCompatActivity {
 
     private EditText etNic, etName, etEmail, etPhone, etPassword, etConfirmPassword;
     private Button btnCreateAccount;
-    private ProgressBar progressBar;
+    private ImageButton btnBack;
 
     private ApiService api;
 
@@ -42,8 +43,11 @@ public class EVOwnerRegisterActivity extends AppCompatActivity {
         etPhone = findViewById(R.id.etPhone);
         etPassword = findViewById(R.id.etPassword);
         etConfirmPassword = findViewById(R.id.etConfirmPassword);
-        btnCreateAccount = findViewById(R.id.btnCreateAccount);
-        progressBar = findViewById(R.id.progressBar);
+        btnCreateAccount = findViewById(R.id.btnRegister);
+        btnBack = findViewById(R.id.btnBack);
+
+        btnBack.setOnClickListener(v -> onBackPressed());
+
 
         // API
         api = ApiClient.getClient().create(ApiService.class);
@@ -134,7 +138,7 @@ public class EVOwnerRegisterActivity extends AppCompatActivity {
     }
 
     private void setLoading(boolean loading) {
-        progressBar.setVisibility(loading ? View.VISIBLE : View.GONE);
+        //progressBar.setVisibility(loading ? View.VISIBLE : View.GONE);
         btnCreateAccount.setEnabled(!loading);
     }
 

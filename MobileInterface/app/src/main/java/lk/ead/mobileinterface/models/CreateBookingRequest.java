@@ -41,14 +41,14 @@ public class CreateBookingRequest {
         this.evOwnerNIC = evOwnerNIC;
         this.chargingStationId = chargingStationId;
         this.reservationDateTime = reservationDateTime;
-        this.bookingDate = getNowUtc();
+        this.bookingDate = getNowLocal();
         this.id = java.util.UUID.randomUUID().toString(); // can be sent, server may ignore
     }
 
-    private String getNowUtc() {
+    private String getNowLocal() {
         java.text.SimpleDateFormat sdf =
-                new java.text.SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", java.util.Locale.US);
-        sdf.setTimeZone(java.util.TimeZone.getTimeZone("UTC"));
+                new java.text.SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSXXX", java.util.Locale.UK);
+        sdf.setTimeZone(java.util.TimeZone.getTimeZone("Asia/Colombo"));
         return sdf.format(new java.util.Date());
     }
 

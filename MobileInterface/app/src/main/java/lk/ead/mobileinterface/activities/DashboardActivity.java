@@ -123,7 +123,7 @@ public class DashboardActivity extends AppCompatActivity implements OnMapReadyCa
             if (id == R.id.nav_home) {
                 return true; // already here
             } else if (id == R.id.nav_bookings) {
-                startActivity(new Intent(this, BookingsActivity.class));
+                startActivity(new Intent(this, MyBookingsActivity.class));
                 overridePendingTransition(0, 0);
                 return true;
             } else if (id == R.id.nav_profile) {

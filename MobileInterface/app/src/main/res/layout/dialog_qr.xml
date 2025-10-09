@@ -1,0 +1,32 @@
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="20dp">
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <ImageView
+            android:id="@+id/imgQr"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:adjustViewBounds="true"
+            android:scaleType="centerInside"
+            android:visibility="gone" />
+
+        <WebView
+            android:id="@+id/webQr"
+            android:layout_width="match_parent"
+            android:layout_height="400dp"
+            android:visibility="gone" />
+
+        <Button
+            android:id="@+id/btnClose"
+            android:text="Close"
+            android:layout_marginTop="12dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+    </LinearLayout>
+</ScrollView>
