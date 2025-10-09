@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:background="@android:color/white">
 
-    <!-- ✅ 1. Static header toolbar -->
+    <!-- 1) Static header -->
     <com.google.android.material.appbar.MaterialToolbar
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
@@ -16,13 +16,13 @@
         app:title="Dashboard"
         app:titleTextColor="#2E7D32"
         app:navigationIcon="@drawable/ic_arrow_back"
-        app:navigationIconTint="#2E7D32"
-<!--        android:visibility="gone" /> &lt;!&ndash; hidden for main page &ndash;&gt;-->
+        app:navigationIconTint="#2E7D32" />
 
-    <!-- ✅ 2. Your existing scrollable content -->
+    <!-- 2) Scrollable content takes the remaining space -->
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
         android:fillViewport="true"
         android:background="@android:color/white">
 
@@ -49,7 +49,7 @@
                 android:text="Quick Start: Scan QR"
                 android:layout_marginBottom="12dp"/>
 
-            <!-- ===== Active ===== -->
+            <!-- Active -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -81,7 +81,7 @@
                 android:nestedScrollingEnabled="false"
                 android:layout_marginBottom="8dp"/>
 
-            <!-- ===== Upcoming ===== -->
+            <!-- Upcoming -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -113,7 +113,7 @@
                 android:nestedScrollingEnabled="false"
                 android:layout_marginBottom="8dp"/>
 
-            <!-- ===== Past ===== -->
+            <!-- Past -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -152,4 +152,7 @@
                 android:text="Logout"/>
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>
+
+    <!-- 3) Fixed bottom nav -->
+    <include layout="@layout/include_bottom_nav"/>
 </LinearLayout>

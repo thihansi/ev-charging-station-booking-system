@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.appbar.MaterialToolbar;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -37,13 +38,12 @@ public class OperatorDashboardActivity extends AppCompatActivity {
 
     // ---- Backend status map ----
     private static final int STATUS_PENDING   = 0;
-    private static final int STATUS_APPROVED  = 1; // upcoming (future)
+    private static final int STATUS_APPROVED  = 1;
     private static final int STATUS_REJECTED  = 2;
-    private static final int STATUS_COMPLETED = 3; // past
-    private static final int STATUS_CANCELLED = 4; // past
-    private static final int STATUS_ACTIVE    = 5; // active/charging
+    private static final int STATUS_COMPLETED = 3;
+    private static final int STATUS_CANCELLED = 4;
+    private static final int STATUS_ACTIVE    = 5;
 
-    // Expand/Collapse flags
     private boolean showAllActive = false;
     private boolean showAllUpcoming = false;
     private boolean showAllPast = false;
@@ -62,13 +62,12 @@ public class OperatorDashboardActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_operator_dashboard);
 
-        // ------- Toolbar (static header) -------
+        // ------- Toolbar -------
         MaterialToolbar toolbar = findViewById(R.id.toolbar);
         if (toolbar != null) {
             setSupportActionBar(toolbar);
             if (getSupportActionBar() != null) {
                 getSupportActionBar().setTitle("Dashboard");
-                // Dashboard is a top-level screen → no back arrow
                 getSupportActionBar().setDisplayHomeAsUpEnabled(false);
             }
         }
@@ -89,7 +88,6 @@ public class OperatorDashboardActivity extends AppCompatActivity {
         rvUpcoming.setLayoutManager(new LinearLayoutManager(this));
         rvPast.setLayoutManager(new LinearLayoutManager(this));
 
-        // Adapters WITHOUT click listeners
         adActive   = new BookingCardAdapter(new ArrayList<>(), null);
         adUpcoming = new BookingCardAdapter(new ArrayList<>(), null);
         adPast     = new BookingCardAdapter(new ArrayList<>(), null);
@@ -109,18 +107,9 @@ public class OperatorDashboardActivity extends AppCompatActivity {
         fetchAndCache();
 
         // Expand/Collapse toggles
-        btnViewAllActive.setOnClickListener(v -> {
-            showAllActive = !showAllActive;
-            renderSections(cachedAll);
-        });
-        btnViewAllUpcoming.setOnClickListener(v -> {
-            showAllUpcoming = !showAllUpcoming;
-            renderSections(cachedAll);
-        });
-        btnViewAllPast.setOnClickListener(v -> {
-            showAllPast = !showAllPast;
-            renderSections(cachedAll);
-        });
+        btnViewAllActive.setOnClickListener(v -> { showAllActive   = !showAllActive;   renderSections(cachedAll); });
+        btnViewAllUpcoming.setOnClickListener(v -> { showAllUpcoming = !showAllUpcoming; renderSections(cachedAll); });
+        btnViewAllPast.setOnClickListener(v -> { showAllPast     = !showAllPast;     renderSections(cachedAll); });
 
         btnLogout.setOnClickListener(v -> {
             new SessionManager(this).clearSession();
@@ -128,6 +117,25 @@ public class OperatorDashboardActivity extends AppCompatActivity {
             startActivity(new Intent(this, LoginActivity.class));
             finish();
         });
+
+        // ------- Bottom Nav  -------
+        BottomNavigationView bottom = findViewById(R.id.bottomNav);
+        if (bottom != null) {
+            bottom.setSelectedItemId(R.id.tab_bookings); // you are on Bookings
+            bottom.setOnItemSelectedListener(item -> {
+                int id = item.getItemId();
+                if (id == R.id.tab_bookings) {
+                    return true; // already here
+                } else if (id == R.id.tab_scan) {
+                    Toast.makeText(this, "Scan coming soon", Toast.LENGTH_SHORT).show();
+                    return true;
+                } else if (id == R.id.tab_profile) {
+                    Toast.makeText(this, "Profile coming soon", Toast.LENGTH_SHORT).show();
+                    return true;
+                }
+                return false;
+            });
+        }
     }
 
     private void fetchAndCache() {
@@ -136,7 +144,6 @@ public class OperatorDashboardActivity extends AppCompatActivity {
             Toast.makeText(this, "Missing token", Toast.LENGTH_SHORT).show();
             return;
         }
-
         api.getBookingsForMyStation("Bearer " + token)
                 .enqueue(new Callback<StationBookingsResponse>() {
                     @Override
@@ -211,9 +218,7 @@ public class OperatorDashboardActivity extends AppCompatActivity {
     private Date parseIso(String iso) {
         try {
             if (iso == null) return null;
-            String pat = iso.contains(".")
-                    ? "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"
-                    : "yyyy-MM-dd'T'HH:mm:ss'Z'";
+            String pat = iso.contains(".") ? "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'" : "yyyy-MM-dd'T'HH:mm:ss'Z'";
             SimpleDateFormat f = new SimpleDateFormat(pat, Locale.US);
             f.setTimeZone(TimeZone.getTimeZone("UTC"));
             return f.parse(iso);
