@@ -8,14 +8,14 @@ import type {
 export const evOwnerApi = {
   // Get all EV owners (Backoffice only)
   getAll: async (): Promise<EVOwner[]> => {
-    const response = await apiClient.get<EVOwner[]>("/api/evowners");
+    const response = await apiClient.get<EVOwner[]>("/api/EVOwners");
     return response.data;
   },
 
   // Get EV owner by NIC (Backoffice only)
   getByNic: async (nic: string): Promise<EVOwner> => {
     const response = await apiClient.get<EVOwner>(
-      `/api/evowners/${encodeURIComponent(nic)}`
+      `/api/EVOwners/${encodeURIComponent(nic)}`
     );
     return response.data;
   },
@@ -24,7 +24,7 @@ export const evOwnerApi = {
   create: async (
     evOwnerData: CreateEVOwnerRequest
   ): Promise<{ message: string; evOwner: EVOwner }> => {
-    const response = await apiClient.post("/api/evowners", evOwnerData);
+    const response = await apiClient.post("/api/EVOwners", evOwnerData);
     return response.data;
   },
 
@@ -32,7 +32,7 @@ export const evOwnerApi = {
   createWithPassword: async (
     evOwnerData: CreateEVOwnerRequest
   ): Promise<{ message: string; evOwner: EVOwner }> => {
-    const response = await apiClient.post("/api/evowners/create-with-password", evOwnerData);
+    const response = await apiClient.post("/api/EVOwners/create-with-password", evOwnerData);
     return response.data;
   },
 
@@ -42,7 +42,7 @@ export const evOwnerApi = {
     evOwnerData: UpdateEVOwnerRequest
   ): Promise<{ message: string; evOwner: EVOwner }> => {
     const response = await apiClient.put(
-      `/api/evowners/${encodeURIComponent(nic)}`,
+      `/api/EVOwners/${encodeURIComponent(nic)}`,
       evOwnerData
     );
     return response.data;
@@ -51,7 +51,7 @@ export const evOwnerApi = {
   // Delete EV owner (Backoffice only)
   delete: async (nic: string): Promise<{ message: string }> => {
     const response = await apiClient.delete(
-      `/api/evowners/${encodeURIComponent(nic)}`
+      `/api/EVOwners/${encodeURIComponent(nic)}`
     );
     return response.data;
   },
@@ -59,7 +59,7 @@ export const evOwnerApi = {
   // Activate EV owner (Backoffice only)
   activate: async (nic: string): Promise<{ message: string }> => {
     const response = await apiClient.post(
-      `/api/evowners/${encodeURIComponent(nic)}/activate`
+      `/api/EVOwners/${encodeURIComponent(nic)}/activate`
     );
     return response.data;
   },
@@ -67,7 +67,7 @@ export const evOwnerApi = {
   // Deactivate EV owner (Backoffice only)
   deactivate: async (nic: string): Promise<{ message: string }> => {
     const response = await apiClient.post(
-      `/api/evowners/${encodeURIComponent(nic)}/deactivate`
+      `/api/EVOwners/${encodeURIComponent(nic)}/deactivate`
     );
     return response.data;
   },
@@ -75,7 +75,7 @@ export const evOwnerApi = {
   // Reactivate EV owner (Backoffice only)
   reactivate: async (nic: string): Promise<{ message: string }> => {
     const response = await apiClient.post(
-      `/api/evowners/${encodeURIComponent(nic)}/reactivate`
+      `/api/EVOwners/${encodeURIComponent(nic)}/reactivate`
     );
     return response.data;
   },

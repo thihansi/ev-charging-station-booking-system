@@ -10,7 +10,7 @@ export const chargingStationApi = {
   // Get all charging stations
   getAll: async (): Promise<ChargingStation[]> => {
     const response = await apiClient.get<ChargingStation[]>(
-      "/api/chargingstations"
+      "/api/ChargingStations"
     );
     return response.data;
   },
@@ -18,7 +18,7 @@ export const chargingStationApi = {
   // Get active charging stations
   getActive: async (): Promise<ChargingStation[]> => {
     const response = await apiClient.get<ChargingStation[]>(
-      "/api/chargingstations/active"
+      "/api/ChargingStations/active"
     );
     return response.data;
   },
@@ -26,7 +26,7 @@ export const chargingStationApi = {
   // Get charging station by ID
   getById: async (id: string): Promise<ChargingStation> => {
     const response = await apiClient.get<ChargingStation>(
-      `/api/chargingstations/${id}`
+      `/api/ChargingStations/${id}`
     );
     return response.data;
   },
@@ -36,7 +36,7 @@ export const chargingStationApi = {
     stationData: CreateChargingStationRequest
   ): Promise<{ message: string; id: string }> => {
     const backendData = transformChargingStationForBackend(stationData);
-    const response = await apiClient.post("/api/chargingstations", backendData);
+    const response = await apiClient.post("/api/ChargingStations", backendData);
     return response.data;
   },
 
@@ -47,7 +47,7 @@ export const chargingStationApi = {
   ): Promise<{ message: string }> => {
     const backendData = transformUpdateChargingStationForBackend(stationData);
     const response = await apiClient.put(
-      `/api/chargingstations/${id}`,
+      `/api/ChargingStations/${id}`,
       backendData
     );
     return response.data;
@@ -55,21 +55,13 @@ export const chargingStationApi = {
 
   // Delete/Deactivate charging station
   delete: async (id: string): Promise<{ message: string }> => {
-    const response = await apiClient.delete(`/api/chargingstations/${id}`);
+    const response = await apiClient.delete(`/api/ChargingStations/${id}`);
     return response.data;
   },
 
   // Get charging station QR code
   getQRCode: async (id: string): Promise<{ qrCodeData: string }> => {
-    const response = await apiClient.get(`/api/chargingstations/${id}/qrcode`);
-    return response.data;
-  },
-
-  // Get stations by type
-  getByType: async (stationType: "AC" | "DC"): Promise<ChargingStation[]> => {
-    const response = await apiClient.get<ChargingStation[]>(
-      `/api/chargingstations/type/${stationType}`
-    );
+    const response = await apiClient.get(`/api/ChargingStations/${id}/qrcode`);
     return response.data;
   },
 };
