@@ -25,6 +25,7 @@ import lk.ead.mobileinterface.api.ApiClient;
 import lk.ead.mobileinterface.api.ApiService;
 import lk.ead.mobileinterface.db.DBHelper;
 import lk.ead.mobileinterface.models.Booking;
+import lk.ead.mobileinterface.models.StationBookingsResponse;
 import lk.ead.mobileinterface.utils.SessionManager;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -100,22 +101,32 @@ public class OperatorDashboardActivity extends AppCompatActivity {
 
     private void fetchAndCache() {
         String token = new SessionManager(this).getToken();
-        if (token == null) return;
+        if (token == null) {
+            Toast.makeText(this, "Missing token", Toast.LENGTH_SHORT).show();
+            return;
+        }
 
-        api.getAllBookings("Bearer " + token).enqueue(new Callback<List<Booking>>() {
-            @Override
-            public void onResponse(Call<List<Booking>> call, Response<List<Booking>> resp) {
-                if (!resp.isSuccessful() || resp.body() == null) {
-                    Toast.makeText(OperatorDashboardActivity.this, "Failed to fetch bookings", Toast.LENGTH_SHORT).show();
-                    return;
-                }
-                db.replaceAllBookings(resp.body());
-                renderSections(resp.body());
-            }
-            @Override public void onFailure(Call<List<Booking>> call, Throwable t) {
-                Toast.makeText(OperatorDashboardActivity.this, "Network error: " + t.getMessage(), Toast.LENGTH_SHORT).show();
-            }
-        });
+        api.getBookingsForMyStation("Bearer " + token)
+                .enqueue(new Callback<StationBookingsResponse>() {
+                    @Override
+                    public void onResponse(Call<StationBookingsResponse> call,
+                                           Response<StationBookingsResponse> resp) {
+                        if (!resp.isSuccessful() || resp.body() == null || resp.body().bookings == null) {
+                            Toast.makeText(OperatorDashboardActivity.this,
+                                    "Failed to fetch bookings", Toast.LENGTH_SHORT).show();
+                            return;
+                        }
+                        List<Booking> list = resp.body().bookings;
+                        db.replaceAllBookings(list);   // keep your local cache up to date
+                        renderSections(list);          // redraw cards
+                    }
+
+                    @Override
+                    public void onFailure(Call<StationBookingsResponse> call, Throwable t) {
+                        Toast.makeText(OperatorDashboardActivity.this,
+                                "Network error: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+                    }
+                });
     }
 
     private void renderSections(List<Booking> all) {

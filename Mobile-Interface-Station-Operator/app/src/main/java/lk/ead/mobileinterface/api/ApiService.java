@@ -2,6 +2,7 @@ package lk.ead.mobileinterface.api;
 
 
 import lk.ead.mobileinterface.models.Booking;
+import lk.ead.mobileinterface.models.StationBookingsResponse;
 import lk.ead.mobileinterface.models.StationOperatorLoginRequest;
 import lk.ead.mobileinterface.models.StationOperatorLoginResponse;
 import lk.ead.mobileinterface.models.Station;
@@ -28,15 +29,13 @@ public interface ApiService {
     Call<StationOperatorLoginResponse> operatorLogin(@Body StationOperatorLoginRequest request);
 
     // -------------------------------------------------------------
-    // CHARGING STATIONS
-    // -------------------------------------------------------------
-
-    // -------------------------------------------------------------
     // BOOKINGS
     // -------------------------------------------------------------
 
     @GET("api/Bookings")
     Call<List<Booking>> getAllBookings(@Header("Authorization") String bearerToken);
+
+    @GET("api/Bookings/station/6c4c5788-aef0-4433-8d69-16a974159615") Call<StationBookingsResponse> getBookingsForMyStation(@Header("Authorization") String bearerToken);
 
     @GET("api/Bookings/pending")
     Call<List<Booking>> getPendingBookings(@Header("Authorization") String bearerToken);
