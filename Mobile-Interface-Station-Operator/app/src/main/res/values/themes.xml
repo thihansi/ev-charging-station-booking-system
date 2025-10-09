@@ -1,9 +1,9 @@
-<resources xmlns:tools="http://schemas.android.com/tools">
-    <!-- Base application theme. -->
-    <style name="Base.Theme.MobileInterface" parent="Theme.Material3.DayNight.NoActionBar">
-        <!-- Customize your light theme here. -->
-        <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
+<resources>
+    <!-- App theme (Material3 + no built-in action bar) -->
+    <style name="Theme.EVStation" parent="Theme.Material3.DayNight.NoActionBar">
+        <item name="colorPrimary">#2E7D32</item>
+        <item name="colorSurface">#FFFFFF</item>
+        <!-- Status bar color (API 21+). If you get aapt warnings, move this to values-v21 -->
+        <item name="android:statusBarColor">?attr/colorSurface</item>
     </style>
-
-    <style name="Theme.MobileInterface" parent="Base.Theme.MobileInterface" />
 </resources>

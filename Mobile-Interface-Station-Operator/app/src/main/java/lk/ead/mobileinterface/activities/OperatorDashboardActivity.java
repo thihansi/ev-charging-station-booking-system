@@ -10,6 +10,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.material.appbar.MaterialToolbar;
+
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -60,6 +62,18 @@ public class OperatorDashboardActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_operator_dashboard);
 
+        // ------- Toolbar (static header) -------
+        MaterialToolbar toolbar = findViewById(R.id.toolbar);
+        if (toolbar != null) {
+            setSupportActionBar(toolbar);
+            if (getSupportActionBar() != null) {
+                getSupportActionBar().setTitle("Dashboard");
+                // Dashboard is a top-level screen → no back arrow
+                getSupportActionBar().setDisplayHomeAsUpEnabled(false);
+            }
+        }
+
+        // ------- Views -------
         rvActive = findViewById(R.id.rvActive);
         rvUpcoming = findViewById(R.id.rvUpcoming);
         rvPast = findViewById(R.id.rvPast);
@@ -75,9 +89,10 @@ public class OperatorDashboardActivity extends AppCompatActivity {
         rvUpcoming.setLayoutManager(new LinearLayoutManager(this));
         rvPast.setLayoutManager(new LinearLayoutManager(this));
 
-        adActive   = new BookingCardAdapter(new ArrayList<>(), this::openDetails);
-        adUpcoming = new BookingCardAdapter(new ArrayList<>(), this::openDetails);
-        adPast     = new BookingCardAdapter(new ArrayList<>(), this::openDetails);
+        // Adapters WITHOUT click listeners
+        adActive   = new BookingCardAdapter(new ArrayList<>(), null);
+        adUpcoming = new BookingCardAdapter(new ArrayList<>(), null);
+        adPast     = new BookingCardAdapter(new ArrayList<>(), null);
 
         rvActive.setAdapter(adActive);
         rvUpcoming.setAdapter(adUpcoming);
@@ -86,11 +101,11 @@ public class OperatorDashboardActivity extends AppCompatActivity {
         api = ApiClient.getClient().create(ApiService.class);
         db  = new DBHelper(this);
 
-        // 1) Render from local cache first
+        // Render from cache first
         cachedAll = db.getAllBookings();
         renderSections(cachedAll);
 
-        // 2) Refresh from API
+        // Refresh from API
         fetchAndCache();
 
         // Expand/Collapse toggles
@@ -166,7 +181,7 @@ public class OperatorDashboardActivity extends AppCompatActivity {
             }
         }
 
-        // Sort: upcoming soonest first, past newest first
+        // Sort: upcoming soonest → first, past newest → first
         Comparator<Booking> byResvAsc  = (x, y) -> safeDate(x).compareTo(safeDate(y));
         Comparator<Booking> byResvDesc = (x, y) -> safeDate(y).compareTo(safeDate(x));
         Collections.sort(upcoming, byResvAsc);
@@ -177,10 +192,10 @@ public class OperatorDashboardActivity extends AppCompatActivity {
         adUpcoming.submit(showAllUpcoming ? upcoming : limit(upcoming, 3));
         adPast.submit(showAllPast ? past : limit(past, 3));
 
-        // Update the button labels based on state and list sizes
-        btnViewAllActive.setText(showAllActive ? "View less" : (active.size() > 1 ? "View all" : "View all"));
-        btnViewAllUpcoming.setText(showAllUpcoming ? "View less" : (upcoming.size() > 3 ? "View all" : "View all"));
-        btnViewAllPast.setText(showAllPast ? "View less" : (past.size() > 3 ? "View all" : "View all"));
+        // Button labels
+        btnViewAllActive.setText(showAllActive ? "View less" : "View all");
+        btnViewAllUpcoming.setText(showAllUpcoming ? "View less" : "View all");
+        btnViewAllPast.setText(showAllPast ? "View less" : "View all");
     }
 
     private List<Booking> limit(List<Booking> src, int n) {
@@ -203,10 +218,5 @@ public class OperatorDashboardActivity extends AppCompatActivity {
             f.setTimeZone(TimeZone.getTimeZone("UTC"));
             return f.parse(iso);
         } catch (Exception e) { return null; }
-    }
-
-    private void openDetails(Booking b) {
-        Intent i = new Intent(this, ReservationListActivity.class);
-        startActivity(i);
     }
 }
