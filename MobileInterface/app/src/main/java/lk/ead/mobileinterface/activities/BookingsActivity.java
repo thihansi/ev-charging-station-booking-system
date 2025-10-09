@@ -10,13 +10,13 @@ import androidx.core.view.WindowInsetsCompat;
 
 import lk.ead.mobileinterface.R;
 
-public class FinalizeActivity extends AppCompatActivity {
+public class BookingsActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
-        setContentView(R.layout.activity_finalize);
+        setContentView(R.layout.activity_bookings);
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);

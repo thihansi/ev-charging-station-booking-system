@@ -1,6 +1,6 @@
 package lk.ead.mobileinterface.models;
 
-public class RegisterRequest {
+public class EVOwnerRegisterRequest {
 
     private String nic;        // National ID of the EV Owner
     private String name;       // Full name
@@ -9,10 +9,10 @@ public class RegisterRequest {
     private String password;   // Account password
 
     // Empty constructor (required for JSON serialization)
-    public RegisterRequest() {}
+    public EVOwnerRegisterRequest() {}
 
     // All-args constructor
-    public RegisterRequest(String nic, String name, String email, String phone, String password) {
+    public EVOwnerRegisterRequest(String nic, String name, String email, String phone, String password) {
         this.nic = nic;
         this.name = name;
         this.email = email;

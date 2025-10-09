@@ -44,7 +44,7 @@ public class EVOwnerLoginActivity extends AppCompatActivity {
         api = ApiClient.getClient().create(ApiService.class);
 
         btnLogin.setOnClickListener(v -> attemptLogin());
-        btnGoRegister.setOnClickListener(v -> startActivity(new Intent(this, RegisterActivity.class)));
+        btnGoRegister.setOnClickListener(v -> startActivity(new Intent(this, EVOwnerRegisterActivity.class)));
 
         if (EVOwnerSessionManager.getToken(this) != null) {
             goToDashboard();
@@ -114,7 +114,9 @@ public class EVOwnerLoginActivity extends AppCompatActivity {
     }
 
     private void goToDashboard() {
-        startActivity(new Intent(this, DashboardActivity.class));
-        finish();
+        Intent intent = new Intent(EVOwnerLoginActivity.this, DashboardActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(intent);
+        finish(); // ✅ Close login so back button won’t return here
     }
 }
