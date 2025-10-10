@@ -7,16 +7,16 @@
     android:background="@android:color/white">
 
     <!-- 1) Static header -->
-    <com.google.android.material.appbar.MaterialToolbar
-        android:id="@+id/toolbar"
-        android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"
-        android:background="?attr/colorSurface"
-        android:elevation="4dp"
-        app:title="Dashboard"
-        app:titleTextColor="#2E7D32"
-        app:navigationIcon="@drawable/ic_arrow_back"
-        app:navigationIconTint="#2E7D32" />
+<!--    <com.google.android.material.appbar.MaterialToolbar-->
+<!--        android:id="@+id/toolbar"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="?attr/actionBarSize"-->
+<!--        android:background="?attr/colorSurface"-->
+<!--        android:elevation="4dp"-->
+<!--        app:title="Dashboard"-->
+<!--        app:titleTextColor="#2E7D32"-->
+<!--        app:navigationIcon="@drawable/ic_arrow_back"-->
+<!--        app:navigationIconTint="#2E7D32" />-->
 
     <!-- 2) Scrollable content takes the remaining space -->
     <androidx.core.widget.NestedScrollView
@@ -37,18 +37,27 @@
                 android:id="@+id/tvGreeting"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Welcome back, Operator"
+                android:text="Monitor and manage bookings"
                 android:textStyle="bold"
+                android:textColor="@color/black"
                 android:textSize="20sp"
                 android:layout_marginBottom="12dp" />
 
-            <Button
-                android:id="@+id/btnScan"
+<!--            <Button-->
+<!--                android:id="@+id/btnScan"-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:text="Quick Start: Scan QR"-->
+<!--                android:layout_marginBottom="12dp"/>-->
+            <ImageView
+                android:id="@+id/imgScanQR"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Quick Start: Scan QR"
-                android:layout_marginBottom="12dp"/>
-
+                android:layout_height="100dp"
+                android:adjustViewBounds="true"
+                android:scaleType="centerCrop"
+                android:src="@drawable/ic_qr_code"
+                android:contentDescription="QR Code Scanner"
+ />
             <!-- Active -->
             <LinearLayout
                 android:layout_width="match_parent"

@@ -68,14 +68,14 @@ public class OperatorDashboardActivity extends AppCompatActivity {
         setContentView(R.layout.activity_operator_dashboard);
 
         // ------- Toolbar -------
-        MaterialToolbar toolbar = findViewById(R.id.toolbar);
-        if (toolbar != null) {
-            setSupportActionBar(toolbar);
-            if (getSupportActionBar() != null) {
-                getSupportActionBar().setTitle("Dashboard");
-                getSupportActionBar().setDisplayHomeAsUpEnabled(false);
-            }
-        }
+//        MaterialToolbar toolbar = findViewById(R.id.toolbar);
+//        if (toolbar != null) {
+//            setSupportActionBar(toolbar);
+//            if (getSupportActionBar() != null) {
+//                getSupportActionBar().setTitle("Dashboard");
+//                getSupportActionBar().setDisplayHomeAsUpEnabled(false);
+//            }
+//        }
 
         // ------- Views -------
         rvActive = findViewById(R.id.rvActive);
@@ -86,7 +86,7 @@ public class OperatorDashboardActivity extends AppCompatActivity {
         btnViewAllUpcoming = findViewById(R.id.btnViewAllUpcoming);
         btnViewAllPast = findViewById(R.id.btnViewAllPast);
 
-        btnScan = findViewById(R.id.btnScan);
+//        btnScan = findViewById(R.id.btnScan);
         btnLogout = findViewById(R.id.btnLogout);
 
         rvActive.setLayoutManager(new LinearLayoutManager(this));

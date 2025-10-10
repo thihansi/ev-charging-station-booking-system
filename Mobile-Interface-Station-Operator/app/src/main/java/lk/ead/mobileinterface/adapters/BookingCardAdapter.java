@@ -71,17 +71,18 @@ public class BookingCardAdapter extends RecyclerView.Adapter<BookingCardAdapter.
     @Override public int getItemCount() { return data == null ? 0 : data.size(); }
 
     static class VH extends RecyclerView.ViewHolder {
-        TextView tvOwnerName, tvBookingId, tvTime, tvDay;
+        TextView tvBookingIdTitle, tvOwnerNic, tvTime, tvDay;
+
         VH(@NonNull View v) {
             super(v);
-            tvOwnerName = v.findViewById(R.id.tvOwnerName);
-            tvBookingId = v.findViewById(R.id.tvBookingId);
+            tvBookingIdTitle = v.findViewById(R.id.tvBookingIdTitle);
+            tvOwnerNic = v.findViewById(R.id.tvOwnerNic);
             tvTime = v.findViewById(R.id.tvTime);
             tvDay = v.findViewById(R.id.tvDay);
         }
     }
 
-    // ---------- Helpers ----------
+            // ---------- Helpers ----------
 
     private Date parseIsoUtc(String iso) {
         if (iso == null) return null;
