@@ -1,8 +1,36 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+
     <style name="AppButton">
         <item name="android:backgroundTint">@color/primary_green</item>
         <item name="android:textColor">@android:color/white</item>
-<!--        <item name="android:cornerRadius">8dp</item>-->
     </style>
+
+    <!-- 20dp rounded look used across buttons/cards -->
+    <style name="EcoRounded">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">20dp</item>
+    </style>
+
+    <!-- Primary filled button -->
+    <style name="EcoButtonPrimary" parent="Widget.Material3.Button">
+        <item name="backgroundTint">@color/ev_primary</item>
+        <item name="android:textColor">@color/ev_on_primary</item>
+        <item name="shapeAppearance">@style/EcoRounded</item>
+    </style>
+
+    <!-- Ghost/secondary button on white surfaces -->
+    <style name="EcoButtonGhost" parent="Widget.Material3.Button.OutlinedButton">
+        <item name="strokeColor">@color/ev_outline</item>
+        <item name="android:textColor">@color/ev_text</item>
+        <item name="shapeAppearance">@style/EcoRounded</item>
+    </style>
+
+    <!-- Card style for list items -->
+    <style name="EcoCard" parent="Widget.Material3.CardView.Elevated">
+        <item name="cardBackgroundColor">@color/ev_surface</item>
+        <item name="shapeAppearance">@style/EcoRounded</item>
+        <item name="android:foreground">?attr/selectableItemBackground</item>
+    </style>
+
 </resources>
