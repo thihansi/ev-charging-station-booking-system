@@ -26,10 +26,9 @@ import BookingFormPage from "./pages/BookingFormPage";
 import LandingPage from "./pages/LandingPage";
 import ProfilePage from "./pages/ProfilePage";
 import SystemUsersPage from "./pages/SystemUsersPage";
-import ProfileTestPage from "./pages/ProfileTestPage";
-import { APITestPage } from "./pages/APITestPage";
+
 import { APIConnectionTest } from "./components/APIConnectionTest";
-import { LoginDebugPage } from "./pages/LoginDebugPage";
+
 import { ROUTES, USER_ROLES } from "./utils/constants";
 
 function App() {
@@ -51,18 +50,6 @@ function App() {
                 element={<UnauthorizedPage />}
               />
               <Route path={ROUTES.NOT_FOUND} element={<NotFoundPage />} />
-
-              {/* API Test Route - For backend connectivity testing */}
-              <Route path="/api-test" element={<APITestPage />} />
-
-              {/* Route Test Page - For debugging navigation issues */}
-              <Route path="/route-test" element={<ProfileTestPage />} />
-
-              {/* Simple API Connection Test */}
-              <Route path="/test-connection" element={<APIConnectionTest />} />
-
-              {/* Login Debug Tool */}
-              <Route path="/login-debug" element={<LoginDebugPage />} />
 
               {/* Admin Dashboard */}
               <Route

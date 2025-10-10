@@ -20,17 +20,27 @@ export const authApi = {
   // Get system user profile
   getProfile: async (): Promise<User> => {
     const response = await apiClient.get<ApiUser>("/api/auth/profile");
-    console.log("📋 Raw profile response:", response.data);
-    console.log("📋 Raw role value:", response.data.role, "Type:", typeof response.data.role);
     
-    // Map ApiUser to User with proper role conversion
-    const mappedRole = response.data.role === 0 ? "Backoffice" : "StationOperator";
-    console.log("📋 Role mapping:", {
-      rawRole: response.data.role,
-      mappedRole,
-      isBackoffice: response.data.role === 0,
-      isStationOperator: response.data.role !== 0
-    });
+    // Enhanced role mapping with multiple scenarios
+    let mappedRole: "Backoffice" | "StationOperator";
+    
+    // Handle different role mapping scenarios
+    // Role 1 = Backoffice (admin), Role 0 = StationOperator
+    if (response.data.role === 1) {
+      mappedRole = "Backoffice";
+    } else if (response.data.role === 0) {
+      mappedRole = "StationOperator";
+    } else if (response.data.role === 2) {
+      mappedRole = "StationOperator";
+    } else {
+      // For admin users, if role is not 0, 1, or 2, assume it's admin
+      // Check username to determine if this is an admin account
+      if (response.data.username?.toLowerCase().includes('admin')) {
+        mappedRole = "Backoffice";
+      } else {
+        mappedRole = "StationOperator";
+      }
+    }
     
     const mappedUser: User = {
       id: response.data.id,
@@ -40,8 +50,6 @@ export const authApi = {
       email: response.data.email || undefined,
     };
     
-    console.log("📋 Mapped user profile:", mappedUser);
-    console.log("📋 Final role string:", `"${mappedUser.role}"`);
     return mappedUser;
   },
 
