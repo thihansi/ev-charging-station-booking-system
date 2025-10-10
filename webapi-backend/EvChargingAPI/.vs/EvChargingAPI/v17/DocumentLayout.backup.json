@@ -3,24 +3,108 @@
   "WorkspaceRootPath": "C:\\Users\\MovinduLiyanageBISTE\\source\\repos\\EvChargingAPI\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{E87E67B9-243F-4FA0-B218-C2BE2F5E91A9}|EvChargingAPI\\EvChargingAPI.csproj|c:\\users\\movinduliyanagebiste\\source\\repos\\evchargingapi\\evchargingapi\\frontend_developer_api_guide.md||{EFC0BB08-EA7D-40C6-A696-C870411A895B}|",
-      "RelativeMoniker": "D:0:0:{E87E67B9-243F-4FA0-B218-C2BE2F5E91A9}|EvChargingAPI\\EvChargingAPI.csproj|solutionrelative:evchargingapi\\frontend_developer_api_guide.md||{EFC0BB08-EA7D-40C6-A696-C870411A895B}|"
+      "AbsoluteMoniker": "D:0:0:{E87E67B9-243F-4FA0-B218-C2BE2F5E91A9}|EvChargingAPI\\EvChargingAPI.csproj|c:\\users\\movinduliyanagebiste\\source\\repos\\evchargingapi\\evchargingapi\\entities\\booking.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{E87E67B9-243F-4FA0-B218-C2BE2F5E91A9}|EvChargingAPI\\EvChargingAPI.csproj|solutionrelative:evchargingapi\\entities\\booking.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{E87E67B9-243F-4FA0-B218-C2BE2F5E91A9}|EvChargingAPI\\EvChargingAPI.csproj|c:\\users\\movinduliyanagebiste\\source\\repos\\evchargingapi\\evchargingapi\\dtos\\userdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{E87E67B9-243F-4FA0-B218-C2BE2F5E91A9}|EvChargingAPI\\EvChargingAPI.csproj|solutionrelative:evchargingapi\\dtos\\userdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{E87E67B9-243F-4FA0-B218-C2BE2F5E91A9}|EvChargingAPI\\EvChargingAPI.csproj|c:\\users\\movinduliyanagebiste\\source\\repos\\evchargingapi\\evchargingapi\\dtos\\chargingstationdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{E87E67B9-243F-4FA0-B218-C2BE2F5E91A9}|EvChargingAPI\\EvChargingAPI.csproj|solutionrelative:evchargingapi\\dtos\\chargingstationdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{E87E67B9-243F-4FA0-B218-C2BE2F5E91A9}|EvChargingAPI\\EvChargingAPI.csproj|c:\\users\\movinduliyanagebiste\\source\\repos\\evchargingapi\\evchargingapi\\dtos\\bookingdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{E87E67B9-243F-4FA0-B218-C2BE2F5E91A9}|EvChargingAPI\\EvChargingAPI.csproj|solutionrelative:evchargingapi\\dtos\\bookingdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{E87E67B9-243F-4FA0-B218-C2BE2F5E91A9}|EvChargingAPI\\EvChargingAPI.csproj|c:\\users\\movinduliyanagebiste\\source\\repos\\evchargingapi\\evchargingapi\\entities\\chargingstation.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{E87E67B9-243F-4FA0-B218-C2BE2F5E91A9}|EvChargingAPI\\EvChargingAPI.csproj|solutionrelative:evchargingapi\\entities\\chargingstation.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{E87E67B9-243F-4FA0-B218-C2BE2F5E91A9}|EvChargingAPI\\EvChargingAPI.csproj|c:\\users\\movinduliyanagebiste\\source\\repos\\evchargingapi\\evchargingapi\\entities\\user.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{E87E67B9-243F-4FA0-B218-C2BE2F5E91A9}|EvChargingAPI\\EvChargingAPI.csproj|solutionrelative:evchargingapi\\entities\\user.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{E87E67B9-243F-4FA0-B218-C2BE2F5E91A9}|EvChargingAPI\\EvChargingAPI.csproj|c:\\users\\movinduliyanagebiste\\source\\repos\\evchargingapi\\evchargingapi\\entities\\stationtype.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{E87E67B9-243F-4FA0-B218-C2BE2F5E91A9}|EvChargingAPI\\EvChargingAPI.csproj|solutionrelative:evchargingapi\\entities\\stationtype.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{E87E67B9-243F-4FA0-B218-C2BE2F5E91A9}|EvChargingAPI\\EvChargingAPI.csproj|c:\\users\\movinduliyanagebiste\\source\\repos\\evchargingapi\\evchargingapi\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
+      "RelativeMoniker": "D:0:0:{E87E67B9-243F-4FA0-B218-C2BE2F5E91A9}|EvChargingAPI\\EvChargingAPI.csproj|solutionrelative:evchargingapi\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{E87E67B9-243F-4FA0-B218-C2BE2F5E91A9}|EvChargingAPI\\EvChargingAPI.csproj|c:\\users\\movinduliyanagebiste\\source\\repos\\evchargingapi\\evchargingapi\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{E87E67B9-243F-4FA0-B218-C2BE2F5E91A9}|EvChargingAPI\\EvChargingAPI.csproj|solutionrelative:evchargingapi\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{E87E67B9-243F-4FA0-B218-C2BE2F5E91A9}|EvChargingAPI\\EvChargingAPI.csproj|c:\\users\\movinduliyanagebiste\\source\\repos\\evchargingapi\\evchargingapi\\services\\igooglemapsservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{E87E67B9-243F-4FA0-B218-C2BE2F5E91A9}|EvChargingAPI\\EvChargingAPI.csproj|solutionrelative:evchargingapi\\services\\igooglemapsservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{E87E67B9-243F-4FA0-B218-C2BE2F5E91A9}|EvChargingAPI\\EvChargingAPI.csproj|c:\\users\\movinduliyanagebiste\\source\\repos\\evchargingapi\\evchargingapi\\services\\googlemapsservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{E87E67B9-243F-4FA0-B218-C2BE2F5E91A9}|EvChargingAPI\\EvChargingAPI.csproj|solutionrelative:evchargingapi\\services\\googlemapsservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{E87E67B9-243F-4FA0-B218-C2BE2F5E91A9}|EvChargingAPI\\EvChargingAPI.csproj|c:\\users\\movinduliyanagebiste\\source\\repos\\evchargingapi\\evchargingapi\\controllers\\testcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{E87E67B9-243F-4FA0-B218-C2BE2F5E91A9}|EvChargingAPI\\EvChargingAPI.csproj|solutionrelative:evchargingapi\\controllers\\testcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{E87E67B9-243F-4FA0-B218-C2BE2F5E91A9}|EvChargingAPI\\EvChargingAPI.csproj|c:\\users\\movinduliyanagebiste\\source\\repos\\evchargingapi\\evchargingapi\\controllers\\bookingscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{E87E67B9-243F-4FA0-B218-C2BE2F5E91A9}|EvChargingAPI\\EvChargingAPI.csproj|solutionrelative:evchargingapi\\controllers\\bookingscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{E87E67B9-243F-4FA0-B218-C2BE2F5E91A9}|EvChargingAPI\\EvChargingAPI.csproj|c:\\users\\movinduliyanagebiste\\source\\repos\\evchargingapi\\evchargingapi\\services\\ibookingservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{E87E67B9-243F-4FA0-B218-C2BE2F5E91A9}|EvChargingAPI\\EvChargingAPI.csproj|solutionrelative:evchargingapi\\services\\ibookingservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{E87E67B9-243F-4FA0-B218-C2BE2F5E91A9}|EvChargingAPI\\EvChargingAPI.csproj|c:\\users\\movinduliyanagebiste\\source\\repos\\evchargingapi\\evchargingapi\\services\\bookingservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{E87E67B9-243F-4FA0-B218-C2BE2F5E91A9}|EvChargingAPI\\EvChargingAPI.csproj|solutionrelative:evchargingapi\\services\\bookingservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{E87E67B9-243F-4FA0-B218-C2BE2F5E91A9}|EvChargingAPI\\EvChargingAPI.csproj|c:\\users\\movinduliyanagebiste\\source\\repos\\evchargingapi\\evchargingapi\\services\\iqrcodeservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{E87E67B9-243F-4FA0-B218-C2BE2F5E91A9}|EvChargingAPI\\EvChargingAPI.csproj|solutionrelative:evchargingapi\\services\\iqrcodeservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{E87E67B9-243F-4FA0-B218-C2BE2F5E91A9}|EvChargingAPI\\EvChargingAPI.csproj|c:\\users\\movinduliyanagebiste\\source\\repos\\evchargingapi\\evchargingapi\\services\\qrcodeservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{E87E67B9-243F-4FA0-B218-C2BE2F5E91A9}|EvChargingAPI\\EvChargingAPI.csproj|solutionrelative:evchargingapi\\services\\qrcodeservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{E87E67B9-243F-4FA0-B218-C2BE2F5E91A9}|EvChargingAPI\\EvChargingAPI.csproj|c:\\users\\movinduliyanagebiste\\source\\repos\\evchargingapi\\evchargingapi\\frontend_developer_api_guide.md||{EFC0BB08-EA7D-40C6-A696-C870411A895B}",
+      "RelativeMoniker": "D:0:0:{E87E67B9-243F-4FA0-B218-C2BE2F5E91A9}|EvChargingAPI\\EvChargingAPI.csproj|solutionrelative:evchargingapi\\frontend_developer_api_guide.md||{EFC0BB08-EA7D-40C6-A696-C870411A895B}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{E87E67B9-243F-4FA0-B218-C2BE2F5E91A9}|EvChargingAPI\\EvChargingAPI.csproj|c:\\users\\movinduliyanagebiste\\source\\repos\\evchargingapi\\evchargingapi\\testscenarios.md||{EFC0BB08-EA7D-40C6-A696-C870411A895B}",
       "RelativeMoniker": "D:0:0:{E87E67B9-243F-4FA0-B218-C2BE2F5E91A9}|EvChargingAPI\\EvChargingAPI.csproj|solutionrelative:evchargingapi\\testscenarios.md||{EFC0BB08-EA7D-40C6-A696-C870411A895B}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{E87E67B9-243F-4FA0-B218-C2BE2F5E91A9}|EvChargingAPI\\EvChargingAPI.csproj|c:\\users\\movinduliyanagebiste\\source\\repos\\evchargingapi\\evchargingapi\\controllers\\authcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{E87E67B9-243F-4FA0-B218-C2BE2F5E91A9}|EvChargingAPI\\EvChargingAPI.csproj|solutionrelative:evchargingapi\\controllers\\authcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{E87E67B9-243F-4FA0-B218-C2BE2F5E91A9}|EvChargingAPI\\EvChargingAPI.csproj|c:\\users\\movinduliyanagebiste\\source\\repos\\evchargingapi\\evchargingapi\\services\\ievownerservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{E87E67B9-243F-4FA0-B218-C2BE2F5E91A9}|EvChargingAPI\\EvChargingAPI.csproj|solutionrelative:evchargingapi\\services\\ievownerservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{E87E67B9-243F-4FA0-B218-C2BE2F5E91A9}|EvChargingAPI\\EvChargingAPI.csproj|c:\\users\\movinduliyanagebiste\\source\\repos\\evchargingapi\\evchargingapi\\services\\evownerservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{E87E67B9-243F-4FA0-B218-C2BE2F5E91A9}|EvChargingAPI\\EvChargingAPI.csproj|solutionrelative:evchargingapi\\services\\evownerservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{E87E67B9-243F-4FA0-B218-C2BE2F5E91A9}|EvChargingAPI\\EvChargingAPI.csproj|c:\\users\\movinduliyanagebiste\\source\\repos\\evchargingapi\\evchargingapi\\controllers\\evownerscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{E87E67B9-243F-4FA0-B218-C2BE2F5E91A9}|EvChargingAPI\\EvChargingAPI.csproj|solutionrelative:evchargingapi\\controllers\\evownerscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{E87E67B9-243F-4FA0-B218-C2BE2F5E91A9}|EvChargingAPI\\EvChargingAPI.csproj|c:\\users\\movinduliyanagebiste\\source\\repos\\evchargingapi\\evchargingapi\\dtos\\systemuserdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{E87E67B9-243F-4FA0-B218-C2BE2F5E91A9}|EvChargingAPI\\EvChargingAPI.csproj|solutionrelative:evchargingapi\\dtos\\systemuserdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{E87E67B9-243F-4FA0-B218-C2BE2F5E91A9}|EvChargingAPI\\EvChargingAPI.csproj|c:\\users\\movinduliyanagebiste\\source\\repos\\evchargingapi\\evchargingapi\\dtos\\changebookingstatusdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{E87E67B9-243F-4FA0-B218-C2BE2F5E91A9}|EvChargingAPI\\EvChargingAPI.csproj|solutionrelative:evchargingapi\\dtos\\changebookingstatusdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{E87E67B9-243F-4FA0-B218-C2BE2F5E91A9}|EvChargingAPI\\EvChargingAPI.csproj|c:\\users\\movinduliyanagebiste\\source\\repos\\evchargingapi\\evchargingapi\\services\\iuserservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{E87E67B9-243F-4FA0-B218-C2BE2F5E91A9}|EvChargingAPI\\EvChargingAPI.csproj|solutionrelative:evchargingapi\\services\\iuserservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{E87E67B9-243F-4FA0-B218-C2BE2F5E91A9}|EvChargingAPI\\EvChargingAPI.csproj|c:\\users\\movinduliyanagebiste\\source\\repos\\evchargingapi\\evchargingapi\\services\\userservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{E87E67B9-243F-4FA0-B218-C2BE2F5E91A9}|EvChargingAPI\\EvChargingAPI.csproj|solutionrelative:evchargingapi\\services\\userservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{E87E67B9-243F-4FA0-B218-C2BE2F5E91A9}|EvChargingAPI\\EvChargingAPI.csproj|c:\\users\\movinduliyanagebiste\\source\\repos\\evchargingapi\\evchargingapi\\controllers\\authcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{E87E67B9-243F-4FA0-B218-C2BE2F5E91A9}|EvChargingAPI\\EvChargingAPI.csproj|solutionrelative:evchargingapi\\controllers\\authcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     }
   ],
   "DocumentGroupContainers": [
@@ -30,72 +114,323 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 4,
+          "SelectedChildIndex": 3,
           "Children": [
             {
               "$type": "Document",
-              "DocumentIndex": 4,
-              "Title": "SystemUserDto.cs",
-              "DocumentMoniker": "C:\\Users\\MovinduLiyanageBISTE\\source\\repos\\EvChargingAPI\\EvChargingAPI\\DTOs\\SystemUserDto.cs",
-              "RelativeDocumentMoniker": "EvChargingAPI\\DTOs\\SystemUserDto.cs",
-              "ToolTip": "C:\\Users\\MovinduLiyanageBISTE\\source\\repos\\EvChargingAPI\\EvChargingAPI\\DTOs\\SystemUserDto.cs",
-              "RelativeToolTip": "EvChargingAPI\\DTOs\\SystemUserDto.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAABwAAAABAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-10-06T19:12:56.113Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 3,
-              "Title": "EVOwnersController.cs",
-              "DocumentMoniker": "C:\\Users\\MovinduLiyanageBISTE\\source\\repos\\EvChargingAPI\\EvChargingAPI\\Controllers\\EVOwnersController.cs",
-              "RelativeDocumentMoniker": "EvChargingAPI\\Controllers\\EVOwnersController.cs",
-              "ToolTip": "C:\\Users\\MovinduLiyanageBISTE\\source\\repos\\EvChargingAPI\\EvChargingAPI\\Controllers\\EVOwnersController.cs",
-              "RelativeToolTip": "EvChargingAPI\\Controllers\\EVOwnersController.cs",
-              "ViewState": "AgIAAKYAAAAAAAAAAEBVwAAAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-10-06T19:09:43.839Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 2,
+              "DocumentIndex": 25,
               "Title": "AuthController.cs",
               "DocumentMoniker": "C:\\Users\\MovinduLiyanageBISTE\\source\\repos\\EvChargingAPI\\EvChargingAPI\\Controllers\\AuthController.cs",
               "RelativeDocumentMoniker": "EvChargingAPI\\Controllers\\AuthController.cs",
               "ToolTip": "C:\\Users\\MovinduLiyanageBISTE\\source\\repos\\EvChargingAPI\\EvChargingAPI\\Controllers\\AuthController.cs",
               "RelativeToolTip": "EvChargingAPI\\Controllers\\AuthController.cs",
-              "ViewState": "AgIAAJEAAAAAAAAAAEBVwAAAAAAAAAAAAAAAAA==",
+              "ViewState": "AgIAANkAAAAAAAAAAEBVwAAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-10-06T19:09:20.311Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-10-09T21:29:57.783Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 1,
-              "Title": "TestScenarios.md",
-              "DocumentMoniker": "C:\\Users\\MovinduLiyanageBISTE\\source\\repos\\EvChargingAPI\\EvChargingAPI\\TestScenarios.md",
-              "RelativeDocumentMoniker": "EvChargingAPI\\TestScenarios.md",
-              "ToolTip": "C:\\Users\\MovinduLiyanageBISTE\\source\\repos\\EvChargingAPI\\EvChargingAPI\\TestScenarios.md",
-              "RelativeToolTip": "EvChargingAPI\\TestScenarios.md",
-              "ViewState": "AgIAAFQDAAAAAAAAAAAIwGgAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001818|",
-              "WhenOpened": "2025-10-06T17:54:05.838Z",
-              "EditorCaption": ""
+              "DocumentIndex": 24,
+              "Title": "UserService.cs",
+              "DocumentMoniker": "C:\\Users\\MovinduLiyanageBISTE\\source\\repos\\EvChargingAPI\\EvChargingAPI\\Services\\UserService.cs",
+              "RelativeDocumentMoniker": "EvChargingAPI\\Services\\UserService.cs",
+              "ToolTip": "C:\\Users\\MovinduLiyanageBISTE\\source\\repos\\EvChargingAPI\\EvChargingAPI\\Services\\UserService.cs",
+              "RelativeToolTip": "EvChargingAPI\\Services\\UserService.cs",
+              "ViewState": "AgIAAIkAAAAAAAAAAEBVwAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-10-09T21:29:28.949Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 23,
+              "Title": "IUserService.cs",
+              "DocumentMoniker": "C:\\Users\\MovinduLiyanageBISTE\\source\\repos\\EvChargingAPI\\EvChargingAPI\\Services\\IUserService.cs",
+              "RelativeDocumentMoniker": "EvChargingAPI\\Services\\IUserService.cs",
+              "ToolTip": "C:\\Users\\MovinduLiyanageBISTE\\source\\repos\\EvChargingAPI\\EvChargingAPI\\Services\\IUserService.cs",
+              "RelativeToolTip": "EvChargingAPI\\Services\\IUserService.cs",
+              "ViewState": "AgIAAAsAAAAAAAAAAIBYwAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-10-09T21:28:52.621Z"
             },
             {
               "$type": "Document",
               "DocumentIndex": 0,
+              "Title": "Booking.cs",
+              "DocumentMoniker": "C:\\Users\\MovinduLiyanageBISTE\\source\\repos\\EvChargingAPI\\EvChargingAPI\\Entities\\Booking.cs",
+              "RelativeDocumentMoniker": "EvChargingAPI\\Entities\\Booking.cs",
+              "ToolTip": "C:\\Users\\MovinduLiyanageBISTE\\source\\repos\\EvChargingAPI\\EvChargingAPI\\Entities\\Booking.cs",
+              "RelativeToolTip": "EvChargingAPI\\Entities\\Booking.cs",
+              "ViewState": "AgIAAAsAAAAAAAAAAAAAwAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-10-09T10:23:14.509Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 22,
+              "Title": "ChangeBookingStatusDto.cs",
+              "DocumentMoniker": "C:\\Users\\MovinduLiyanageBISTE\\source\\repos\\EvChargingAPI\\EvChargingAPI\\DTOs\\ChangeBookingStatusDto.cs",
+              "RelativeDocumentMoniker": "EvChargingAPI\\DTOs\\ChangeBookingStatusDto.cs",
+              "ToolTip": "C:\\Users\\MovinduLiyanageBISTE\\source\\repos\\EvChargingAPI\\EvChargingAPI\\DTOs\\ChangeBookingStatusDto.cs",
+              "RelativeToolTip": "EvChargingAPI\\DTOs\\ChangeBookingStatusDto.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAkAAAABAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-10-09T14:15:36.096Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "UserDto.cs",
+              "DocumentMoniker": "C:\\Users\\MovinduLiyanageBISTE\\source\\repos\\EvChargingAPI\\EvChargingAPI\\DTOs\\UserDto.cs",
+              "RelativeDocumentMoniker": "EvChargingAPI\\DTOs\\UserDto.cs",
+              "ToolTip": "C:\\Users\\MovinduLiyanageBISTE\\source\\repos\\EvChargingAPI\\EvChargingAPI\\DTOs\\UserDto.cs",
+              "RelativeToolTip": "EvChargingAPI\\DTOs\\UserDto.cs",
+              "ViewState": "AgIAAA4AAAAAAAAAAIBYwAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-10-09T10:23:08.302Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "ChargingStationDto.cs",
+              "DocumentMoniker": "C:\\Users\\MovinduLiyanageBISTE\\source\\repos\\EvChargingAPI\\EvChargingAPI\\DTOs\\ChargingStationDto.cs",
+              "RelativeDocumentMoniker": "EvChargingAPI\\DTOs\\ChargingStationDto.cs",
+              "ToolTip": "C:\\Users\\MovinduLiyanageBISTE\\source\\repos\\EvChargingAPI\\EvChargingAPI\\DTOs\\ChargingStationDto.cs",
+              "RelativeToolTip": "EvChargingAPI\\DTOs\\ChargingStationDto.cs",
+              "ViewState": "AgIAAAUAAAAAAAAAAAAAwAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-10-09T10:22:36.513Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "BookingDto.cs",
+              "DocumentMoniker": "C:\\Users\\MovinduLiyanageBISTE\\source\\repos\\EvChargingAPI\\EvChargingAPI\\DTOs\\BookingDto.cs",
+              "RelativeDocumentMoniker": "EvChargingAPI\\DTOs\\BookingDto.cs",
+              "ToolTip": "C:\\Users\\MovinduLiyanageBISTE\\source\\repos\\EvChargingAPI\\EvChargingAPI\\DTOs\\BookingDto.cs",
+              "RelativeToolTip": "EvChargingAPI\\DTOs\\BookingDto.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-10-09T10:22:35.436Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "ChargingStation.cs",
+              "DocumentMoniker": "C:\\Users\\MovinduLiyanageBISTE\\source\\repos\\EvChargingAPI\\EvChargingAPI\\Entities\\ChargingStation.cs",
+              "RelativeDocumentMoniker": "EvChargingAPI\\Entities\\ChargingStation.cs",
+              "ToolTip": "C:\\Users\\MovinduLiyanageBISTE\\source\\repos\\EvChargingAPI\\EvChargingAPI\\Entities\\ChargingStation.cs",
+              "RelativeToolTip": "EvChargingAPI\\Entities\\ChargingStation.cs",
+              "ViewState": "AgIAABMAAAAAAAAAAAA5wAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-10-09T10:22:10.242Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
+              "Title": "User.cs",
+              "DocumentMoniker": "C:\\Users\\MovinduLiyanageBISTE\\source\\repos\\EvChargingAPI\\EvChargingAPI\\Entities\\User.cs",
+              "RelativeDocumentMoniker": "EvChargingAPI\\Entities\\User.cs",
+              "ToolTip": "C:\\Users\\MovinduLiyanageBISTE\\source\\repos\\EvChargingAPI\\EvChargingAPI\\Entities\\User.cs",
+              "RelativeToolTip": "EvChargingAPI\\Entities\\User.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-10-09T10:22:04.401Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 6,
+              "Title": "StationType.cs",
+              "DocumentMoniker": "C:\\Users\\MovinduLiyanageBISTE\\source\\repos\\EvChargingAPI\\EvChargingAPI\\Entities\\StationType.cs",
+              "RelativeDocumentMoniker": "EvChargingAPI\\Entities\\StationType.cs",
+              "ToolTip": "C:\\Users\\MovinduLiyanageBISTE\\source\\repos\\EvChargingAPI\\EvChargingAPI\\Entities\\StationType.cs",
+              "RelativeToolTip": "EvChargingAPI\\Entities\\StationType.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAIAAAAQAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-10-09T10:22:01.07Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 17,
               "Title": "Frontend_Developer_API_Guide.md",
               "DocumentMoniker": "C:\\Users\\MovinduLiyanageBISTE\\source\\repos\\EvChargingAPI\\EvChargingAPI\\Frontend_Developer_API_Guide.md",
               "RelativeDocumentMoniker": "EvChargingAPI\\Frontend_Developer_API_Guide.md",
               "ToolTip": "C:\\Users\\MovinduLiyanageBISTE\\source\\repos\\EvChargingAPI\\EvChargingAPI\\Frontend_Developer_API_Guide.md",
               "RelativeToolTip": "EvChargingAPI\\Frontend_Developer_API_Guide.md",
-              "ViewState": "AgIAAIMFAAAAAAAAAAAuwHYAAAAAAAAAAAAAAA==",
+              "ViewState": "AgIAACoGAAAAAAAAAABBwAAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001818|",
-              "WhenOpened": "2025-10-06T18:44:51.045Z",
+              "WhenOpened": "2025-10-09T09:34:55.133Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 16,
+              "Title": "QRCodeService.cs",
+              "DocumentMoniker": "C:\\Users\\MovinduLiyanageBISTE\\source\\repos\\EvChargingAPI\\EvChargingAPI\\Services\\QRCodeService.cs",
+              "RelativeDocumentMoniker": "EvChargingAPI\\Services\\QRCodeService.cs",
+              "ToolTip": "C:\\Users\\MovinduLiyanageBISTE\\source\\repos\\EvChargingAPI\\EvChargingAPI\\Services\\QRCodeService.cs",
+              "RelativeToolTip": "EvChargingAPI\\Services\\QRCodeService.cs",
+              "ViewState": "AgIAAGMAAAAAAAAAAABRwAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-10-09T09:33:41.846Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 15,
+              "Title": "IQRCodeService.cs",
+              "DocumentMoniker": "C:\\Users\\MovinduLiyanageBISTE\\source\\repos\\EvChargingAPI\\EvChargingAPI\\Services\\IQRCodeService.cs",
+              "RelativeDocumentMoniker": "EvChargingAPI\\Services\\IQRCodeService.cs",
+              "ToolTip": "C:\\Users\\MovinduLiyanageBISTE\\source\\repos\\EvChargingAPI\\EvChargingAPI\\Services\\IQRCodeService.cs",
+              "RelativeToolTip": "EvChargingAPI\\Services\\IQRCodeService.cs",
+              "ViewState": "AgIAAA4AAAAAAAAAAEBgwAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-10-09T09:33:28.626Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 14,
+              "Title": "BookingService.cs",
+              "DocumentMoniker": "C:\\Users\\MovinduLiyanageBISTE\\source\\repos\\EvChargingAPI\\EvChargingAPI\\Services\\BookingService.cs",
+              "RelativeDocumentMoniker": "EvChargingAPI\\Services\\BookingService.cs",
+              "ToolTip": "C:\\Users\\MovinduLiyanageBISTE\\source\\repos\\EvChargingAPI\\EvChargingAPI\\Services\\BookingService.cs",
+              "RelativeToolTip": "EvChargingAPI\\Services\\BookingService.cs",
+              "ViewState": "AgIAANEBAAAAAAAAAEBVwAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-10-09T09:33:06.168Z",
               "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 13,
+              "Title": "IBookingService.cs",
+              "DocumentMoniker": "C:\\Users\\MovinduLiyanageBISTE\\source\\repos\\EvChargingAPI\\EvChargingAPI\\Services\\IBookingService.cs",
+              "RelativeDocumentMoniker": "EvChargingAPI\\Services\\IBookingService.cs",
+              "ToolTip": "C:\\Users\\MovinduLiyanageBISTE\\source\\repos\\EvChargingAPI\\EvChargingAPI\\Services\\IBookingService.cs",
+              "RelativeToolTip": "EvChargingAPI\\Services\\IBookingService.cs",
+              "ViewState": "AgIAACAAAAAAAAAAAIBYwAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-10-09T09:32:53.013Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 12,
+              "Title": "BookingsController.cs",
+              "DocumentMoniker": "C:\\Users\\MovinduLiyanageBISTE\\source\\repos\\EvChargingAPI\\EvChargingAPI\\Controllers\\BookingsController.cs",
+              "RelativeDocumentMoniker": "EvChargingAPI\\Controllers\\BookingsController.cs",
+              "ToolTip": "C:\\Users\\MovinduLiyanageBISTE\\source\\repos\\EvChargingAPI\\EvChargingAPI\\Controllers\\BookingsController.cs",
+              "RelativeToolTip": "EvChargingAPI\\Controllers\\BookingsController.cs",
+              "ViewState": "AgIAAKUBAAAAAAAAAABRwAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-10-09T09:32:26.421Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 7,
+              "Title": "appsettings.json",
+              "DocumentMoniker": "C:\\Users\\MovinduLiyanageBISTE\\source\\repos\\EvChargingAPI\\EvChargingAPI\\appsettings.json",
+              "RelativeDocumentMoniker": "EvChargingAPI\\appsettings.json",
+              "ToolTip": "C:\\Users\\MovinduLiyanageBISTE\\source\\repos\\EvChargingAPI\\EvChargingAPI\\appsettings.json",
+              "RelativeToolTip": "EvChargingAPI\\appsettings.json",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAsAAAA2AAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
+              "WhenOpened": "2025-10-09T00:35:07.972Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 21,
+              "Title": "EVOwnersController.cs",
+              "DocumentMoniker": "C:\\Users\\MovinduLiyanageBISTE\\source\\repos\\EvChargingAPI\\EvChargingAPI\\Controllers\\EVOwnersController.cs",
+              "RelativeDocumentMoniker": "EvChargingAPI\\Controllers\\EVOwnersController.cs",
+              "ToolTip": "C:\\Users\\MovinduLiyanageBISTE\\source\\repos\\EvChargingAPI\\EvChargingAPI\\Controllers\\EVOwnersController.cs",
+              "RelativeToolTip": "EvChargingAPI\\Controllers\\EVOwnersController.cs",
+              "ViewState": "AgIAAM0AAAAAAAAAAEBVwAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-10-09T09:49:13.244Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 20,
+              "Title": "EVOwnerService.cs",
+              "DocumentMoniker": "C:\\Users\\MovinduLiyanageBISTE\\source\\repos\\EvChargingAPI\\EvChargingAPI\\Services\\EVOwnerService.cs",
+              "RelativeDocumentMoniker": "EvChargingAPI\\Services\\EVOwnerService.cs",
+              "ToolTip": "C:\\Users\\MovinduLiyanageBISTE\\source\\repos\\EvChargingAPI\\EvChargingAPI\\Services\\EVOwnerService.cs",
+              "RelativeToolTip": "EvChargingAPI\\Services\\EVOwnerService.cs",
+              "ViewState": "AgIAADQBAAAAAAAAAIBZwAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-10-09T09:48:50.776Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 19,
+              "Title": "IEVOwnerService.cs",
+              "DocumentMoniker": "C:\\Users\\MovinduLiyanageBISTE\\source\\repos\\EvChargingAPI\\EvChargingAPI\\Services\\IEVOwnerService.cs",
+              "RelativeDocumentMoniker": "EvChargingAPI\\Services\\IEVOwnerService.cs",
+              "ToolTip": "C:\\Users\\MovinduLiyanageBISTE\\source\\repos\\EvChargingAPI\\EvChargingAPI\\Services\\IEVOwnerService.cs",
+              "RelativeToolTip": "EvChargingAPI\\Services\\IEVOwnerService.cs",
+              "ViewState": "AgIAABUAAAAAAAAAAIBYwAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-10-09T09:48:36.631Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 18,
+              "Title": "TestScenarios.md",
+              "DocumentMoniker": "C:\\Users\\MovinduLiyanageBISTE\\source\\repos\\EvChargingAPI\\EvChargingAPI\\TestScenarios.md",
+              "RelativeDocumentMoniker": "EvChargingAPI\\TestScenarios.md",
+              "ToolTip": "C:\\Users\\MovinduLiyanageBISTE\\source\\repos\\EvChargingAPI\\EvChargingAPI\\TestScenarios.md",
+              "RelativeToolTip": "EvChargingAPI\\TestScenarios.md",
+              "ViewState": "AgIAAP8DAAAAAAAAAIBJwAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001818|",
+              "WhenOpened": "2025-10-09T09:36:26.491Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 9,
+              "Title": "IGoogleMapsService.cs",
+              "DocumentMoniker": "C:\\Users\\MovinduLiyanageBISTE\\source\\repos\\EvChargingAPI\\EvChargingAPI\\Services\\IGoogleMapsService.cs",
+              "RelativeDocumentMoniker": "EvChargingAPI\\Services\\IGoogleMapsService.cs",
+              "ToolTip": "C:\\Users\\MovinduLiyanageBISTE\\source\\repos\\EvChargingAPI\\EvChargingAPI\\Services\\IGoogleMapsService.cs",
+              "RelativeToolTip": "EvChargingAPI\\Services\\IGoogleMapsService.cs",
+              "ViewState": "AgIAAAUAAAAAAAAAAIBYwAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-10-09T00:47:43.91Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 10,
+              "Title": "GoogleMapsService.cs",
+              "DocumentMoniker": "C:\\Users\\MovinduLiyanageBISTE\\source\\repos\\EvChargingAPI\\EvChargingAPI\\Services\\GoogleMapsService.cs",
+              "RelativeDocumentMoniker": "EvChargingAPI\\Services\\GoogleMapsService.cs",
+              "ToolTip": "C:\\Users\\MovinduLiyanageBISTE\\source\\repos\\EvChargingAPI\\EvChargingAPI\\Services\\GoogleMapsService.cs",
+              "RelativeToolTip": "EvChargingAPI\\Services\\GoogleMapsService.cs",
+              "ViewState": "AgIAAHUAAAAAAAAAAGBiwAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-10-09T00:48:03.7Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 11,
+              "Title": "TestController.cs",
+              "DocumentMoniker": "C:\\Users\\MovinduLiyanageBISTE\\source\\repos\\EvChargingAPI\\EvChargingAPI\\Controllers\\TestController.cs",
+              "RelativeDocumentMoniker": "EvChargingAPI\\Controllers\\TestController.cs",
+              "ToolTip": "C:\\Users\\MovinduLiyanageBISTE\\source\\repos\\EvChargingAPI\\EvChargingAPI\\Controllers\\TestController.cs",
+              "RelativeToolTip": "EvChargingAPI\\Controllers\\TestController.cs",
+              "ViewState": "AgIAAM0AAAAAAAAAAABRwNAAAAABAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-10-09T00:49:11.475Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 8,
+              "Title": "Program.cs",
+              "DocumentMoniker": "C:\\Users\\MovinduLiyanageBISTE\\source\\repos\\EvChargingAPI\\EvChargingAPI\\Program.cs",
+              "RelativeDocumentMoniker": "EvChargingAPI\\Program.cs",
+              "ToolTip": "C:\\Users\\MovinduLiyanageBISTE\\source\\repos\\EvChargingAPI\\EvChargingAPI\\Program.cs",
+              "RelativeToolTip": "EvChargingAPI\\Program.cs",
+              "ViewState": "AgIAAEoAAAAAAAAAAAD4v1kAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-10-06T20:06:04.026Z"
             }
           ]
         }

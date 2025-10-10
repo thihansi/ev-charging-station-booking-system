@@ -454,7 +454,119 @@ Content-Type: application/json
 
 ---
 
-### 3.3 Get Specific EV Owner ?
+### 3.3 Get All EV Owners ? ??
+
+**Endpoint:** `GET /api/evowners`  
+**Access:** Backoffice only  
+**Purpose:** Get all EV owners in the system
+
+**Request Headers:**
+```
+Authorization: Bearer {backoffice_jwt_token}
+```
+
+**Success Response (200):**
+```json
+{
+  "message": "EV owners retrieved successfully",
+  "count": 5,
+  "evOwners": [
+    {
+      "nic": "123456789V",
+      "name": "John Doe",
+      "email": "john.doe@example.com",
+      "phone": "+94771234567",
+      "isActive": true
+    },
+    {
+      "nic": "987654321V",
+      "name": "Jane Smith",
+      "email": "jane.smith@example.com",
+      "phone": "+94771234568",
+      "isActive": false
+    }
+  ]
+}
+```
+
+**Frontend Integration Notes:**
+- Use for admin dashboard displaying all users
+- Shows both active and inactive accounts
+- Sorted alphabetically by name
+
+---
+
+### 3.4 Get Active EV Owners ? ??
+
+**Endpoint:** `GET /api/evowners/active`  
+**Access:** Backoffice only  
+**Purpose:** Get only active EV owners
+
+**Request Headers:**
+```
+Authorization: Bearer {backoffice_jwt_token}
+```
+
+**Success Response (200):**
+```json
+{
+  "message": "Active EV owners retrieved successfully",
+  "count": 3,
+  "evOwners": [
+    {
+      "nic": "123456789V",
+      "name": "John Doe",
+      "email": "john.doe@example.com",
+      "phone": "+94771234567",
+      "isActive": true
+    }
+  ]
+}
+```
+
+**Frontend Integration Notes:**
+- Use for displaying only active users
+- Useful for operational reports
+- Can be used for user selection dropdowns
+
+---
+
+### 3.5 Get Inactive EV Owners ? ??
+
+**Endpoint:** `GET /api/evowners/inactive`  
+**Access:** Backoffice only  
+**Purpose:** Get only inactive/deactivated EV owners
+
+**Request Headers:**
+```
+Authorization: Bearer {backoffice_jwt_token}
+```
+
+**Success Response (200):**
+```json
+{
+  "message": "Inactive EV owners retrieved successfully",
+  "count": 2,
+  "evOwners": [
+    {
+      "nic": "987654321V",
+      "name": "Jane Smith",
+      "email": "jane.smith@example.com",
+      "phone": "+94771234568",
+      "isActive": false
+    }
+  ]
+}
+```
+
+**Frontend Integration Notes:**
+- Use for showing deactivated accounts
+- Useful for reactivation processes
+- Admin can review accounts that need attention
+
+---
+
+### 3.6 Get Specific EV Owner ?
 
 **Endpoint:** `GET /api/evowners/{nic}`  
 **Access:** Backoffice only  
@@ -485,7 +597,7 @@ Authorization: Bearer {backoffice_jwt_token}
 
 ---
 
-### 3.4 Update EV Owner (Admin) ?
+### 3.7 Update EV Owner (Admin) ?
 
 **Endpoint:** `PUT /api/evowners/{nic}`  
 **Access:** Backoffice only  
@@ -531,7 +643,7 @@ Content-Type: application/json
 
 ---
 
-### 3.5 Activate/Deactivate EV Owner ?
+### 3.8 Activate/Deactivate EV Owner ?
 
 **Endpoint:** `POST /api/evowners/{nic}/activate`  
 **Endpoint:** `POST /api/evowners/{nic}/deactivate`  
@@ -560,7 +672,7 @@ Authorization: Bearer {backoffice_jwt_token}
 
 ---
 
-### 3.6 Reactivate EV Owner Account ?
+### 3.9 Reactivate EV Owner Account ?
 
 **Endpoint:** `POST /api/evowners/{nic}/reactivate`  
 **Access:** Backoffice only  
@@ -591,7 +703,7 @@ Authorization: Bearer {backoffice_jwt_token}
 
 ---
 
-### 3.7 Delete EV Owner ?
+### 3.10 Delete EV Owner ?
 
 **Endpoint:** `DELETE /api/evowners/{nic}`  
 **Access:** Backoffice only  
@@ -891,7 +1003,7 @@ Content-Type: application/json
 ```
 
 **Status Values:**
-- 0 = Pending, 1 = Approved, 2 = Rejected, 3 = Completed, 4 = Cancelled
+- 0 = Pending, 1 = Approved, 2 = Rejected, 3 = Completed, 4 = Cancelled, 5 = Active
 
 **Frontend Integration Notes:**
 - Show pending status message
@@ -1214,11 +1326,11 @@ Content-Type: application/json
 
 ---
 
-### 6.4 Validate QR Code ?
+### 6.4 Validate QR Code (Full Data) ?
 
 **Endpoint:** `POST /api/bookings/validate-qr`  
 **Access:** Station Operator only  
-**Purpose:** Validate customer QR code
+**Purpose:** Validate customer QR code and get full booking information
 
 **Request Headers:**
 ```
@@ -1250,8 +1362,46 @@ Content-Type: application/json
 - **400 Bad Request**: Invalid or expired QR code
 
 **Frontend Integration Notes:**
+- Use when you need full booking information
 - Integrate with QR scanner library
 - Display customer details after validation
+
+---
+
+### 6.5 Scan QR Code (Booking ID Only) ? ??
+
+**Endpoint:** `POST /api/bookings/scan-qr`  
+**Access:** Station Operator only  
+**Purpose:** Scan QR code and get only the booking ID
+
+**Request Headers:**
+```
+Authorization: Bearer {operator_jwt_token}
+Content-Type: application/json
+```
+
+**Request:**
+```json
+"{\"bookingId\":\"7fa85f64-5717-4562-b3fc-2c963f66afa7\",\"evOwnerNIC\":\"123456789V\",\"chargingStationId\":\"3fa85f64-5717-4562-b3fc-2c963f66afa6\",\"reservationDateTime\":\"2024-12-15T10:00:00Z\",\"evOwnerName\":\"John Doe\",\"stationName\":\"Main Street Station\"}"
+```
+
+**Success Response (200):**
+```json
+{
+  "message": "QR code scanned successfully",
+  "bookingId": "7fa85f64-5717-4562-b3fc-2c963f66afa7",
+  "scanTimestamp": "2024-12-08T14:30:00Z"
+}
+```
+
+**Error Responses:**
+- **400 Bad Request**: Invalid or expired QR code
+
+**Frontend Integration Notes:**
+- **NEW ENDPOINT**: Returns only booking ID instead of customer details
+- Use for privacy-focused scanning
+- Lighter response payload
+- Use booking ID to fetch additional details if needed
 
 ---
 

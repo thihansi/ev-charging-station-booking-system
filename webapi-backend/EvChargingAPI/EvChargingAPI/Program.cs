@@ -12,6 +12,30 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+// Add HttpClient for Google Maps Service
+builder.Services.AddHttpClient<IGoogleMapsService, GoogleMapsService>();
+
+// CORS Configuration for Vite apps
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("ViteAppCorsPolicy", policy =>
+    {
+        policy.WithOrigins(
+                "http://localhost:3000",   // Common Vite React port
+                "http://localhost:5173",   // Default Vite port
+                "http://localhost:5174",   // Alternative Vite port
+                "http://localhost:4173",   // Vite preview port
+                "http://127.0.0.1:3000",
+                "http://127.0.0.1:5173",
+                "http://127.0.0.1:5174",
+                "http://127.0.0.1:4173"
+            )
+            .AllowAnyMethod()
+            .AllowAnyHeader()
+            .AllowCredentials();
+    });
+});
+
 // MongoDB - used by all services
 builder.Services.AddSingleton<MongoDbContext>();
 
@@ -26,10 +50,9 @@ builder.Services.AddSingleton(jwtConfig);
 // Services - Order matters for dependency injection
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IEVOwnerService, EVOwnerService>();
-builder.Services.AddScoped<IGoogleMapsService, GoogleMapsService>();
 builder.Services.AddScoped<IQRCodeService, QRCodeService>(); // Add QR code service
 builder.Services.AddScoped<IBookingService, BookingService>();
-builder.Services.AddScoped<IChargingStationService, ChargingStationService>(); // Moved after BookingService
+builder.Services.AddScoped<IChargingStationService, ChargingStationService>();
 
 // JWT Authentication
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
@@ -57,13 +80,17 @@ builder.Services.AddAuthorization(options =>
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
+if (true)//app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
 }
 
 app.UseHttpsRedirection();
+
+// Enable CORS - Must be before Authentication and Authorization
+app.UseCors("ViteAppCorsPolicy");
+
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();

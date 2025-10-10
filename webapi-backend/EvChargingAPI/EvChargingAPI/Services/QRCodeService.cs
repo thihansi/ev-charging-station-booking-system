@@ -76,5 +76,28 @@ namespace EVChargingSystem.Api.Services
                 return null;
             }
         }
+
+        public async Task<Guid?> GetBookingIdFromQRCode(string qrCodeData)
+        {
+            try
+            {
+                // Deserialize QR code data
+                var bookingData = JsonSerializer.Deserialize<BookingQRData>(qrCodeData);
+                if (bookingData == null)
+                    return null;
+
+                // Validate booking exists and is approved
+                var booking = await _context.Bookings.Find(b => b.Id == bookingData.BookingId).FirstOrDefaultAsync();
+                if (booking == null || booking.Status != Entities.BookingStatus.Approved || !booking.IsActive)
+                    return null;
+
+                // Return only the booking ID
+                return bookingData.BookingId;
+            }
+            catch
+            {
+                return null;
+            }
+        }
     }
 }

@@ -1,0 +1,885 @@
+﻿# Test Scenarios for EV Charging Station API - Complete Guide
+
+## Quick Testing Guide with QR Code & Enhanced Features
+
+### 1. Test EV Owner Registration and Login
+```bash
+# Register new EV owner
+POST /api/evownerauth/register
+{
+  "nic": "123456789V",
+  "name": "Test User",
+  "email": "test@example.com",
+  "phone": "+94771234567",
+  "password": "password123"
+}
+
+# Login EV owner
+POST /api/evownerauth/login
+{
+  "nic": "123456789V",
+  "password": "password123"
+}
+# Save the token from response for subsequent requests
+```
+
+### 2. Test Profile Management & Self-Service
+```bash
+# Get profile (requires EV owner token)
+GET /api/evownerauth/profile
+Authorization: Bearer {evowner_token}
+
+# Update profile
+PUT /api/evownerauth/profile
+Authorization: Bearer {evowner_token}
+{
+  "nic": "123456789V",
+  "name": "Updated Name",
+  "email": "updated@example.com",
+  "phone": "+94771234567",
+  "isActive": true
+}
+
+# Self-deactivate account
+POST /api/evownerauth/deactivate
+Authorization: Bearer {evowner_token}
+
+# Reactivate account (Backoffice only)
+POST /api/evownerauth/reactivate/123456789V
+Authorization: Bearer {backoffice_token}
+```
+
+### 3. Test System User Management 🆕
+
+#### 3.1 Create Initial System Users (Public Access) 🆕
+```bash
+# Create initial backoffice user (NO TOKEN REQUIRED)
+POST /api/auth/create-backoffice-user
+Content-Type: application/json
+{
+  "username": "admin",
+  "password": "admin123456",
+  "fullName": "System Administrator",
+  "email": "admin@evcharging.com"
+}
+
+# Create initial station operator (NO TOKEN REQUIRED)
+POST /api/auth/create-station-operator
+Content-Type: application/json
+{
+  "username": "operator1",
+  "password": "operator123456",
+  "fullName": "Station Operator 1",
+  "email": "operator1@evcharging.com",
+  "assignedStationId": "station-001"
+}
+
+# Expected Response for both:
+{
+  "id": "guid",
+  "username": "admin",
+  "role": 0,  // 0 = Backoffice, 1 = StationOperator
+  "message": "User created successfully"
+}
+```
+
+#### 3.2 System User Login and Management
+```bash
+# Login as backoffice
+POST /api/auth/login
+{
+  "username": "admin",
+  "password": "admin123456"
+}
+
+# Get profile information
+GET /api/auth/profile
+Authorization: Bearer {backoffice_token}
+
+# Legacy user creation (still requires backoffice token)
+POST /api/auth/register?username=operator2&password=operator123&role=1
+Authorization: Bearer {backoffice_token}
+
+# Login as station operator
+POST /api/auth/login
+{
+  "username": "operator1",
+  "password": "operator123456"
+}
+```
+
+### 4. Test EV Owner Management (Backoffice) 🆕
+
+#### 4.1 Create EV Owner (Without Password)
+```bash
+# Create EV owner profile only (Backoffice)
+POST /api/evowners
+Authorization: Bearer {backoffice_token}
+Content-Type: application/json
+{
+  "nic": "555666777V",
+  "name": "Backoffice Created User",
+  "email": "backoffice@example.com",
+  "phone": "+94771234000",
+  "isActive": true
+}
+
+# Expected Response:
+{
+  "message": "EV Owner created successfully",
+  "evOwner": {
+    "nic": "555666777V",
+    "name": "Backoffice Created User",
+    "email": "backoffice@example.com",
+    "phone": "+94771234000",
+    "isActive": true
+  }
+}
+```
+
+#### 4.2 Create EV Owner (With Login Credentials)
+```bash
+# Create EV owner with password (Backoffice)
+POST /api/evowners/create-with-password
+Authorization: Bearer {backoffice_token}
+Content-Type: application/json
+{
+  "nic": "777888999V",
+  "name": "EV Owner With Login",
+  "email": "evowner@example.com",
+  "phone": "+94771234111",
+  "password": "evowner123456"
+}
+
+# Expected Response:
+{
+  "message": "EV Owner created with login credentials successfully",
+  "evOwner": {
+    "nic": "777888999V",
+    "name": "EV Owner With Login",
+    "email": "evowner@example.com",
+    "phone": "+94771234111",
+    "isActive": true
+  }
+}
+```
+
+#### 4.3 EV Owner Management Operations
+```bash
+# Get specific EV owner
+GET /api/evowners/123456789V
+Authorization: Bearer {backoffice_token}
+
+# Get all EV owners (placeholder)
+GET /api/evowners
+Authorization: Bearer {backoffice_token}
+
+# Update EV owner
+PUT /api/evowners/123456789V
+Authorization: Bearer {backoffice_token}
+Content-Type: application/json
+{
+  "nic": "123456789V",
+  "name": "Updated Name",
+  "email": "updated@example.com",
+  "phone": "+94771234567",
+  "isActive": true
+}
+
+# Deactivate EV owner
+POST /api/evowners/123456789V/deactivate
+Authorization: Bearer {backoffice_token}
+
+# Activate EV owner
+POST /api/evowners/123456789V/activate
+Authorization: Bearer {backoffice_token}
+
+# Reactivate EV owner (for self-deactivated accounts)
+POST /api/evowners/123456789V/reactivate
+Authorization: Bearer {backoffice_token}
+
+# Delete EV owner
+DELETE /api/evowners/123456789V
+Authorization: Bearer {backoffice_token}
+```
+
+### 5. Test Charging Station Management
+```bash
+# Create charging station (backoffice only)
+POST /api/chargingstations
+Authorization: Bearer {backoffice_token}
+{
+  "name": "Test Station",
+  "address": "Colombo, Sri Lanka",
+  "type": 0,
+  "availableSlots": 5,
+  "schedule": "24/7",
+  "isActive": true
+}
+
+# Get all active stations (public)
+GET /api/chargingstations/active
+
+# Get specific station details (public)
+GET /api/chargingstations/{station_id}
+
+# Update station (backoffice or operator)
+PUT /api/chargingstations/{station_id}
+Authorization: Bearer {operator_or_backoffice_token}
+{
+  "name": "Updated Test Station",
+  "address": "Colombo, Sri Lanka",
+  "type": 1,
+  "availableSlots": 8,
+  "schedule": "06:00-22:00",
+  "isActive": true
+}
+```
+
+### 6. Test Enhanced Booking Management with Approval Workflow
+
+#### 6.1 EV Owner Booking Flow
+```bash
+# Get booking summary (preview before confirmation)
+POST /api/bookings/summary
+Authorization: Bearer {evowner_token}
+{
+  "chargingStationId": "{station_id}",
+  "reservationDateTime": "2024-12-15T10:00:00Z"
+}
+
+# Create booking (EV owner only) - Status will be "Pending"
+POST /api/bookings
+Authorization: Bearer {evowner_token}
+{
+  "chargingStationId": "{station_id}",
+  "reservationDateTime": "2024-12-15T10:00:00Z"
+}
+
+# Get own bookings (all)
+GET /api/bookings/my-bookings
+Authorization: Bearer {evowner_token}
+
+# Get upcoming bookings only
+GET /api/bookings/my-bookings/upcoming
+Authorization: Bearer {evowner_token}
+
+# Get booking history (past bookings)
+GET /api/bookings/my-bookings/history
+Authorization: Bearer {evowner_token}
+
+# Update booking (EV owner, >12 hours before, only pending bookings)
+PUT /api/bookings/{booking_id}
+Authorization: Bearer {evowner_token}
+{
+  "reservationDateTime": "2024-12-15T14:00:00Z"
+}
+
+# Cancel booking (EV owner, >12 hours before)
+DELETE /api/bookings/{booking_id}
+Authorization: Bearer {evowner_token}
+```
+
+#### 6.2 Station Operator Approval Flow
+```bash
+# Get pending bookings (Station Operator or Backoffice)
+GET /api/bookings/pending
+Authorization: Bearer {operator_token}
+
+# Approve booking (generates QR code automatically)
+POST /api/bookings/{booking_id}/approve
+Authorization: Bearer {operator_token}
+
+# Reject booking with reason
+POST /api/bookings/{booking_id}/reject
+Authorization: Bearer {operator_token}
+{
+  "bookingId": "{booking_id}",
+  "approve": false,
+  "rejectionReason": "Station maintenance scheduled"
+}
+
+# Get specific booking details
+GET /api/bookings/{booking_id}
+Authorization: Bearer {operator_token}
+
+# Get all bookings (Backoffice only)
+GET /api/bookings
+Authorization: Bearer {backoffice_token}
+```
+
+### 7. Test QR Code Functionality 🆕
+
+#### 7.1 EV Owner QR Code Access
+```bash
+# Get QR code for approved booking (EV Owner for own bookings only)
+GET /api/bookings/{approved_booking_id}/qrcode
+Authorization: Bearer {evowner_token}
+
+# Response will contain base64 encoded QR code image
+# Expected Response:
+{
+  "qrCode": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAA..."
+}
+```
+
+#### 7.2 Station Operator QR Code Validation
+```bash
+# Validate QR code (Station Operator only) - Full Data
+POST /api/bookings/validate-qr
+Authorization: Bearer {operator_token}
+Content-Type: application/json
+{
+  "bookingId": "7fa85f64-5717-4562-b3fc-2c963f66afa7",
+  "evOwnerNIC": "123456789V",
+  "chargingStationId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+  "reservationDateTime": "2024-12-15T10:00:00Z",
+  "evOwnerName": "Test User",
+  "stationName": "Test Station"
+}
+
+# Expected Success Response:
+{
+  "message": "QR code is valid",
+  "bookingData": {
+    "bookingId": "7fa85f64-5717-4562-b3fc-2c963f66afa7",
+    "evOwnerNIC": "123456789V",
+    "chargingStationId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+    "reservationDateTime": "2024-12-15T10:00:00Z",
+    "evOwnerName": "Test User",
+    "stationName": "Test Station"
+  }
+}
+
+# Scan QR code (Station Operator only) - Booking ID Only 🆕
+POST /api/bookings/scan-qr
+Authorization: Bearer {operator_token}
+Content-Type: application/json
+{
+  "bookingId": "7fa85f64-5717-4562-b3fc-2c963f66afa7",
+  "evOwnerNIC": "123456789V",
+  "chargingStationId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+  "reservationDateTime": "2024-12-15T10:00:00Z",
+  "evOwnerName": "Test User",
+  "stationName": "Test Station"
+}
+
+# Expected Success Response (Privacy-focused):
+{
+  "message": "QR code scanned successfully",
+  "bookingId": "7fa85f64-5717-4562-b3fc-2c963f66afa7",
+  "scanTimestamp": "2024-12-08T14:30:00Z"
+}
+```
+
+### 8. Test Business Rules & Validation
+
+#### 8.1 Test 7-day Rule (Should Fail)
+```bash
+POST /api/bookings
+Authorization: Bearer {evowner_token}
+{
+  "chargingStationId": "{station_id}",
+  "reservationDateTime": "2024-12-25T10:00:00Z"  // More than 7 days
+}
+# Expected: 400 Bad Request - "Reservation must be within 7 days from booking date"
+```
+
+#### 8.2 Test 12-hour Rule (Should Fail)
+```bash
+# Try to update/cancel booking with <12 hours remaining
+PUT /api/bookings/{booking_id}
+Authorization: Bearer {evowner_token}
+{
+  "reservationDateTime": "{time_within_12_hours}"
+}
+# Expected: 400 Bad Request - "Cannot update booking less than 12 hours before reservation"
+```
+
+#### 8.3 Test Station Deactivation with Active Bookings (Should Fail)
+```bash
+# Try to deactivate station with active bookings
+DELETE /api/chargingstations/{station_id}
+Authorization: Bearer {backoffice_token}
+# Expected: 400 Bad Request - "Cannot deactivate charging station with active bookings"
+```
+
+#### 8.4 Test Booking Status Restrictions
+```bash
+# Try to update approved booking (Should Fail)
+PUT /api/bookings/{approved_booking_id}
+Authorization: Bearer {evowner_token}
+{
+  "reservationDateTime": "2024-12-16T10:00:00Z"
+}
+# Expected: 400 Bad Request - "Only pending bookings can be updated"
+
+# Try to get QR code for pending booking (Should Fail)
+GET /api/bookings/{pending_booking_id}/qrcode
+Authorization: Bearer {evowner_token}
+# Expected: 400 Bad Request - "Booking not found or not approved"
+```
+
+#### 8.5 Test Account Deactivation Rules
+```bash
+# Try to deactivate account with active bookings (Should Fail)
+POST /api/evownerauth/deactivate
+Authorization: Bearer {evowner_with_active_bookings_token}
+# Expected: 400 Bad Request - "Cannot deactivate account with active bookings"
+
+# Try to login with deactivated account (Should Fail)
+POST /api/evownerauth/login
+{
+  "nic": "deactivated_user_nic",
+  "password": "password123"
+}
+# Expected: 401 Unauthorized - "Account is deactivated. Please contact support for reactivation."
+```
+
+### 9. Test Authorization & Access Control
+
+#### 9.1 EV Owner Access Restrictions
+```bash
+# Try to access another user's booking (Should Fail)
+PUT /api/bookings/{other_user_booking_id}
+Authorization: Bearer {evowner_token}
+# Expected: 403 Forbidden - "You can only update your own bookings"
+
+# Try to access another user's QR code (Should Fail)
+GET /api/bookings/{other_user_booking_id}/qrcode
+Authorization: Bearer {evowner_token}
+# Expected: 403 Forbidden - "You can only access your own booking QR codes"
+
+# Try to approve booking (Should Fail)
+POST /api/bookings/{booking_id}/approve
+Authorization: Bearer {evowner_token}
+# Expected: 403 Forbidden
+```
+
+#### 9.2 Station Operator Access Restrictions
+```bash
+# Try to create charging station (Should Fail)
+POST /api/chargingstations
+Authorization: Bearer {operator_token}
+# Expected: 403 Forbidden - Only backoffice can create stations
+
+# Try to create EV owner (Should Fail)
+POST /api/evowners
+Authorization: Bearer {operator_token}
+# Expected: 403 Forbidden - Only backoffice can manage EV owners
+
+# Try to reactivate EV owner account (Should Fail)
+POST /api/evownerauth/reactivate/123456789V
+Authorization: Bearer {operator_token}
+# Expected: 403 Forbidden - Only backoffice can reactivate accounts
+```
+
+#### 9.3 User Creation Validation Tests
+```bash
+# Try to create user with weak password (Should Fail)
+POST /api/auth/create-station-operator
+{
+  "username": "weak",
+  "password": "123",
+  "fullName": "Weak Password User",
+  "email": "weak@example.com"
+}
+# Expected: 400 Bad Request - "Password must be at least 6 characters long"
+
+# Try to create duplicate username (Should Fail)
+POST /api/auth/create-backoffice-user
+{
+  "username": "admin",  // Already exists
+  "password": "admin123456",
+  "fullName": "Duplicate User",
+  "email": "duplicate@example.com"
+}
+# Expected: 400 Bad Request - "Username already exists"
+```
+
+### 10. Complete User Journey Testing
+
+#### 10.1 Full System Setup Journey (New Installation)
+```bash
+# Step 1: Create initial backoffice user (NO TOKEN REQUIRED)
+POST /api/auth/create-backoffice-user
+{
+  "username": "admin",
+  "password": "admin123456",
+  "fullName": "System Administrator",
+  "email": "admin@evcharging.com"
+}
+
+# Step 2: Create initial station operator (NO TOKEN REQUIRED)
+POST /api/auth/create-station-operator
+{
+  "username": "operator1",
+  "password": "operator123456",
+  "fullName": "Station Operator 1",
+  "email": "operator1@evcharging.com",
+  "assignedStationId": "station-001"
+}
+
+# Step 3: Login as admin
+POST /api/auth/login
+{
+  "username": "admin",
+  "password": "admin123456"
+}
+
+# Step 4: Create charging station
+POST /api/chargingstations
+Authorization: Bearer {admin_token}
+{
+  "name": "Main Station",
+  "address": "Colombo, Sri Lanka",
+  "type": 1,
+  "availableSlots": 10,
+  "schedule": "24/7",
+  "isActive": true
+}
+
+# Step 5: Create EV owner with credentials
+POST /api/evowners/create-with-password
+Authorization: Bearer {admin_token}
+{
+  "nic": "100200300V",
+  "name": "Admin Created EV Owner",
+  "email": "admin-evowner@example.com",
+  "phone": "+94771234333",
+  "password": "evowner123456"
+}
+```
+
+#### 10.2 Full EV Owner Journey
+```bash
+# Step 1: Register (or use admin-created account)
+POST /api/evownerauth/register
+{
+  "nic": "987654321V",
+  "name": "Journey User",
+  "email": "journey@example.com",
+  "phone": "+94771234999",
+  "password": "journey123"
+}
+
+# Step 2: Login
+POST /api/evownerauth/login
+{
+  "nic": "987654321V",
+  "password": "journey123"
+}
+
+# Step 3: Browse stations
+GET /api/chargingstations/active
+
+# Step 4: Preview booking
+POST /api/bookings/summary
+Authorization: Bearer {journey_token}
+{
+  "chargingStationId": "{station_id}",
+  "reservationDateTime": "2024-12-16T09:00:00Z"
+}
+
+# Step 5: Create booking
+POST /api/bookings
+Authorization: Bearer {journey_token}
+{
+  "chargingStationId": "{station_id}",
+  "reservationDateTime": "2024-12-16T09:00:00Z"
+}
+
+# Step 6: Check booking status
+GET /api/bookings/my-bookings/upcoming
+Authorization: Bearer {journey_token}
+
+# Step 7: Wait for approval (done by operator)
+
+# Step 8: Get QR code after approval
+GET /api/bookings/{booking_id}/qrcode
+Authorization: Bearer {journey_token}
+```
+
+#### 10.3 Station Operator Workflow
+```bash
+# Step 1: Login
+POST /api/auth/login
+{
+  "username": "operator1",
+  "password": "operator123456"
+}
+
+# Step 2: Check profile
+GET /api/auth/profile
+Authorization: Bearer {operator_token}
+
+# Step 3: Check pending bookings
+GET /api/bookings/pending
+Authorization: Bearer {operator_token}
+
+# Step 4: Review booking details
+GET /api/bookings/{booking_id}
+Authorization: Bearer {operator_token}
+
+# Step 5: Approve booking
+POST /api/bookings/{booking_id}/approve
+Authorization: Bearer {operator_token}
+
+# Step 6: Customer arrives - validate QR code
+POST /api/bookings/validate-qr
+Authorization: Bearer {operator_token}
+{QR_CODE_DATA_FROM_SCAN}
+```
+
+## Expected Responses
+
+### System User Creation Responses (Public Access)
+```json
+// Backoffice User Creation (NO TOKEN REQUIRED)
+{
+  "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+  "username": "admin",
+  "role": 0,
+  "message": "Backoffice user created successfully"
+}
+
+// Station Operator Creation (NO TOKEN REQUIRED)
+{
+  "id": "4fa85f64-5717-4562-b3fc-2c963f66afa7",
+  "username": "operator1",
+  "role": 1,
+  "message": "Station Operator created successfully"
+}
+```
+
+### System User Profile Response
+```json
+{
+  "username": "admin",
+  "role": "Backoffice",
+  "message": "Profile retrieved successfully"
+}
+```
+
+### EV Owner Management Responses
+```json
+// EV Owner Creation (Profile Only)
+{
+  "message": "EV Owner created successfully",
+  "evOwner": {
+    "nic": "555666777V",
+    "name": "Backoffice Created User",
+    "email": "backoffice@example.com",
+    "phone": "+94771234000",
+    "isActive": true
+  }
+}
+
+// EV Owner Creation (With Password)
+{
+  "message": "EV Owner created with login credentials successfully",
+  "evOwner": {
+    "nic": "777888999V",
+    "name": "EV Owner With Login",
+    "email": "evowner@example.com",
+    "phone": "+94771234111",
+    "isActive": true
+  }
+}
+```
+
+### Successful EV Owner Login Response
+```json
+{
+  "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+  "evOwner": {
+    "nic": "123456789V",
+    "name": "Test User",
+    "email": "test@example.com",
+    "phone": "+94771234567",
+    "isActive": true
+  }
+}
+```
+
+### Booking Summary Response
+```json
+{
+  "bookingId": "00000000-0000-0000-0000-000000000000",
+  "evOwnerName": "Test User",
+  "evOwnerNIC": "123456789V",
+  "chargingStationName": "Test Station",
+  "chargingStationAddress": "Colombo, Sri Lanka",
+  "reservationDateTime": "2024-12-15T10:00:00Z",
+  "estimatedDuration": "2 hours",
+  "estimatedCost": 500.00
+}
+```
+
+### Successful Booking Creation Response
+```json
+{
+  "message": "Booking created successfully. Awaiting approval.",
+  "booking": {
+    "id": "7fa85f64-5717-4562-b3fc-2c963f66afa7",
+    "evOwnerNIC": "123456789V",
+    "chargingStationId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+    "bookingDate": "2024-12-08T10:30:00Z",
+    "reservationDateTime": "2024-12-15T10:00:00Z",
+    "status": 0,
+    "isActive": true,
+    "qrCode": null,
+    "approvedBy": null,
+    "approvedAt": null,
+    "rejectionReason": null
+  }
+}
+```
+
+### Approved Booking Response
+```json
+{
+  "message": "Booking approved successfully",
+  "booking": {
+    "id": "7fa85f64-5717-4562-b3fc-2c963f66afa7",
+    "evOwnerNIC": "123456789V",
+    "chargingStationId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+    "bookingDate": "2024-12-08T10:30:00Z",
+    "reservationDateTime": "2024-12-15T10:00:00Z",
+    "status": 1,
+    "isActive": true,
+    "qrCode": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAA...",
+    "approvedBy": "operator1",
+    "approvedAt": "2024-12-08T11:00:00Z",
+    "rejectionReason": null
+  }
+}
+```
+
+### QR Code Validation Response
+```json
+{
+  "message": "QR code is valid",
+  "bookingData": {
+    "bookingId": "7fa85f64-5717-4562-b3fc-2c963f66afa7",
+    "evOwnerNIC": "123456789V",
+    "chargingStationId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+    "reservationDateTime": "2024-12-15T10:00:00Z",
+    "evOwnerName": "Test User",
+    "stationName": "Test Station"
+  }
+}
+```
+
+## User Role Values
+```
+Role.Backoffice = 0
+Role.StationOperator = 1
+```
+
+## Booking Status Values
+```
+0 = Pending (awaiting approval)
+1 = Approved (QR code generated)
+2 = Rejected (with reason)
+3 = Completed (charging finished)
+4 = Cancelled (by user)
+```
+
+## Error Response Format
+```json
+{
+  "message": "Detailed error description"
+}
+```
+
+## Complete API Endpoints Summary
+
+### Authentication & User Management
+```
+POST /api/auth/login                           # System user login
+GET  /api/auth/profile                        # Get system user profile
+POST /api/auth/register                       # Legacy user creation (Backoffice token required)
+POST /api/auth/create-backoffice-user         # Create backoffice user (PUBLIC - NO TOKEN)
+POST /api/auth/create-station-operator        # Create station operator (PUBLIC - NO TOKEN)
+```
+
+### EV Owner Self-Service
+```
+POST /api/evownerauth/register                # EV owner self-registration
+POST /api/evownerauth/login                   # EV owner login
+GET  /api/evownerauth/profile                 # Get EV owner profile
+PUT  /api/evownerauth/profile                 # Update EV owner profile
+POST /api/evownerauth/deactivate              # Self-deactivate account
+POST /api/evownerauth/reactivate/{nic}        # Reactivate account (Backoffice only)
+```
+
+### EV Owner Management (Backoffice)
+```
+POST /api/evowners                            # Create EV owner (profile only)
+POST /api/evowners/create-with-password       # Create EV owner with login
+GET  /api/evowners                            # Get all EV owners
+GET  /api/evowners/{nic}                      # Get specific EV owner
+PUT  /api/evowners/{nic}                      # Update EV owner
+DELETE /api/evowners/{nic}                    # Delete EV owner
+POST /api/evowners/{nic}/activate             # Activate EV owner
+POST /api/evowners/{nic}/deactivate           # Deactivate EV owner
+POST /api/evowners/{nic}/reactivate           # Reactivate EV owner
+```
+
+### Charging Station Management
+```
+POST /api/chargingstations                    # Create station (Backoffice)
+GET  /api/chargingstations                    # Get all stations
+GET  /api/chargingstations/active             # Get active stations
+GET  /api/chargingstations/{id}               # Get station details
+PUT  /api/chargingstations/{id}               # Update station
+DELETE /api/chargingstations/{id}             # Deactivate station
+```
+
+### Booking Management
+```
+POST /api/bookings/summary                    # Preview booking
+POST /api/bookings                            # Create booking
+GET  /api/bookings/my-bookings                # Get own bookings
+GET  /api/bookings/my-bookings/upcoming       # Get upcoming bookings
+GET  /api/bookings/my-bookings/history        # Get booking history
+PUT  /api/bookings/{id}                       # Update booking
+DELETE /api/bookings/{id}                     # Cancel booking
+GET  /api/bookings/pending                    # Get pending approvals
+POST /api/bookings/{id}/approve               # Approve booking
+POST /api/bookings/{id}/reject                # Reject booking
+GET  /api/bookings/{id}                       # Get booking details
+GET  /api/bookings                            # Get all bookings (Backoffice)
+```
+
+### QR Code Management
+```
+GET  /api/bookings/{id}/qrcode                # Get QR code
+POST /api/bookings/validate-qr                # Validate QR code
+```
+
+## Notes for Testing
+
+1. **Initial Setup**: Start by creating backoffice and operator users (NO TOKEN REQUIRED)
+2. **JWT Tokens**: Save tokens from login responses and use in Authorization headers
+3. **GUIDs**: Replace `{station_id}`, `{booking_id}` with actual GUIDs from responses
+4. **Dates**: Use future dates within 7 days for reservations (UTC format)
+5. **User Creation**: Now you can create initial admin users without any existing tokens
+6. **Booking Workflow**: Create → Pending → Approve → QR Code → Validate
+7. **QR Code Data**: The QR code contains JSON data that needs to be scanned and validated
+8. **Account Management**: Test deactivation/reactivation flows
+9. **Time Zones**: API uses UTC timestamps
+10. **Swagger UI**: Available at `/swagger` in development mode for easier testing
+11. **Mobile Testing**: QR code scanning requires camera integration for station operators
+12. **Business Rules**: Always test the 7-day and 12-hour rules for proper validation
+13. **Password Requirements**: Minimum 6 characters for all user types
+
+## Testing Tools Recommendations
+
+- **Postman**: For API endpoint testing
+- **Swagger UI**: Built-in API documentation and testing
+- **QR Code Generators**: For testing QR code validation
+- **Mobile Apps**: For testing camera-based QR scanning
+- **JWT Debugger**: For inspecting token contents
+- **Fresh Installation Testing**: Start with user creation endpoints for initial setup

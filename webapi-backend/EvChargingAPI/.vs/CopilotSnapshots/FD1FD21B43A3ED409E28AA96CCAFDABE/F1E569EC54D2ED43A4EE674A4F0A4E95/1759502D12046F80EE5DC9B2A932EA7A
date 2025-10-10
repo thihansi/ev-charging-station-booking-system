@@ -1,0 +1,35 @@
+﻿using EVChargingSystem.Api.DTOs;
+using EVChargingSystem.Api.Entities;
+
+namespace EVChargingSystem.Api.Services
+{
+    public interface IBookingService
+    {
+        Task<BookingDto> CreateBooking(BookingDto dto);
+        Task<BookingSummaryDto> GetBookingSummary(BookingDto dto);
+        Task<BookingDto> UpdateBooking(Guid id, BookingDto dto);
+        Task CancelBooking(Guid id);
+        Task<IEnumerable<BookingDto>> GetBookingsByEVOwner(string evOwnerNIC);
+        Task<IEnumerable<BookingDto>> GetUpcomingBookingsByEVOwner(string evOwnerNIC);
+        Task<IEnumerable<BookingDto>> GetPastBookingsByEVOwner(string evOwnerNIC);
+        Task<BookingDto> GetBookingById(Guid id);
+        Task<bool> HasActiveBookingsForStation(Guid stationId);
+        
+        // Approval and QR Code functionality
+        Task<BookingDto> ApproveBooking(Guid bookingId, string approvedBy);
+        Task<BookingDto> RejectBooking(Guid bookingId, string rejectedBy, string reason);
+        Task<BookingDto> StartCharging(Guid bookingId, string startedBy);
+        Task<BookingDto> CompleteCharging(Guid bookingId, string completedBy);
+        Task<IEnumerable<BookingDto>> GetPendingBookings();
+        Task<IEnumerable<BookingDto>> GetActiveBookings();
+        Task<string> GenerateQRCodeForBooking(Guid bookingId);
+        Task<BookingQRData?> ValidateQRCode(string qrCodeData);
+        Task<Guid?> GetBookingIdFromQRCode(string qrCodeData);
+        
+        // Station-specific booking management
+        Task<IEnumerable<BookingDto>> GetBookingsByStation(Guid stationId);
+        Task<IEnumerable<BookingDto>> GetActiveBookingsByStation(Guid stationId);
+        Task<IEnumerable<BookingDto>> GetPendingBookingsByStation(Guid stationId);
+        Task<BookingDto> ChangeBookingStatus(Guid bookingId, BookingStatus newStatus, string changedBy, string? reason = null);
+    }
+}

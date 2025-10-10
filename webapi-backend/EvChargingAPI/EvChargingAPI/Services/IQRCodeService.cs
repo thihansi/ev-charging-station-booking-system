@@ -4,6 +4,7 @@ namespace EVChargingSystem.Api.Services
     {
         Task<string> GenerateQRCodeForBooking(Guid bookingId);
         Task<BookingQRData?> ValidateQRCode(string qrCode);
+        Task<Guid?> GetBookingIdFromQRCode(string qrCode);
     }
 
     public class BookingQRData
