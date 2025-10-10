@@ -1,0 +1,28 @@
+﻿using EVChargingSystem.Api.Entities;
+using Microsoft.EntityFrameworkCore;
+using System.Collections.Generic;
+using System.Reflection.Emit;
+
+namespace EVChargingSystem.Api.Repositories
+{
+    public class AppDbContext : DbContext
+    {
+        public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) { }
+
+        public DbSet<User> Users { get; set; }
+        public DbSet<EVOwner> EVOwners { get; set; }
+        public DbSet<ChargingStation> ChargingStations { get; set; }
+        public DbSet<Booking> Bookings { get; set; }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            base.OnModelCreating(modelBuilder);
+            // Additional configurations if needed
+        }
+
+        internal async Task SaveChangesAsync()
+        {
+            throw new NotImplementedException();
+        }
+    }
+}

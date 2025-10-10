@@ -1,0 +1,19 @@
+﻿namespace EVChargingSystem.Api.Services
+{
+    public interface IQRCodeService
+    {
+        Task<string> GenerateQRCodeForBooking(Guid bookingId);
+        Task<BookingQRData?> ValidateQRCode(string qrCode);
+        Task<Guid?> GetBookingIdFromQRCode(string qrCode);
+    }
+
+    public class BookingQRData
+    {
+        public Guid BookingId { get; set; }
+        public string EVOwnerNIC { get; set; }
+        public Guid ChargingStationId { get; set; }
+        public DateTime ReservationDateTime { get; set; }
+        public string EVOwnerName { get; set; }
+        public string StationName { get; set; }
+    }
+}

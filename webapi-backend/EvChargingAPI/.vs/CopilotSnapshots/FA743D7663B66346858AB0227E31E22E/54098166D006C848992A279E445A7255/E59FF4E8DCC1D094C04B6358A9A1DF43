@@ -1,0 +1,55 @@
+﻿using EVChargingSystem.Api.DTOs;
+using EVChargingSystem.Api.Services;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+
+namespace EvChargingAPI.Controllers
+{
+    [Route("api/[controller]")]
+    [ApiController]
+    [Authorize(Policy = "BackofficeOnly")]  // Backoffice manages EV Owners
+    public class EVOwnersController : ControllerBase
+    {
+        private readonly IEVOwnerService _service;
+
+        public EVOwnersController(IEVOwnerService service)
+        {
+            _service = service;
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Create([FromBody] EVOwnerDto dto)
+        {
+            var result = await _service.CreateEVOwner(dto);
+            return Ok(result);
+        }
+
+        [HttpPut("{nic}")]
+        public async Task<IActionResult> Update(string nic, [FromBody] EVOwnerDto dto)
+        {
+            var result = await _service.UpdateEVOwner(nic, dto);
+            return Ok(result);
+        }
+
+        [HttpDelete("{nic}")]
+        public async Task<IActionResult> Delete(string nic)
+        {
+            await _service.DeleteEVOwner(nic);
+            return NoContent();
+        }
+
+        [HttpPost("{nic}/activate")]
+        public async Task<IActionResult> Activate(string nic)
+        {
+            await _service.ActivateEVOwner(nic);
+            return Ok();
+        }
+
+        [HttpPost("{nic}/deactivate")]
+        public async Task<IActionResult> Deactivate(string nic)
+        {
+            await _service.DeactivateEVOwner(nic);
+            return Ok();
+        }
+    }
+}

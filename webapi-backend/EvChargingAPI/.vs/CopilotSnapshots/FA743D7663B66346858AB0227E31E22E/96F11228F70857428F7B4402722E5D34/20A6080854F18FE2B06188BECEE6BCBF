@@ -1,0 +1,128 @@
+﻿# EV Owner Authentication System
+
+This document explains how to use the new EV Owner login functionality that has been added to the EV Charging API.
+
+## Overview
+
+The system now supports EV owner registration and authentication using NIC (National Identity Card) and password. EV owners can register, login, and access protected endpoints using JWT tokens.
+
+## API Endpoints
+
+### 1. Register EV Owner
+**POST** `/api/evownerauth/register`
+
+**Request Body:**
+```json
+{
+  "nic": "123456789V",
+  "name": "John Doe",
+  "email": "john.doe@example.com",
+  "phone": "+94771234567",
+  "password": "password123"
+}
+```
+
+**Response:**
+```json
+{
+  "message": "Registration successful",
+  "evOwner": {
+    "nic": "123456789V",
+    "name": "John Doe",
+    "email": "john.doe@example.com",
+    "phone": "+94771234567",
+    "isActive": true
+  }
+}
+```
+
+### 2. Login EV Owner
+**POST** `/api/evownerauth/login`
+
+**Request Body:**
+```json
+{
+  "nic": "123456789V",
+  "password": "password123"
+}
+```
+
+**Response:**
+```json
+{
+  "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+  "evOwner": {
+    "nic": "123456789V",
+    "name": "John Doe",
+    "email": "john.doe@example.com",
+    "phone": "+94771234567",
+    "isActive": true
+  }
+}
+```
+
+### 3. Get Profile (Protected)
+**GET** `/api/evownerauth/profile`
+
+**Headers:**
+```
+Authorization: Bearer {token}
+```
+
+**Response:**
+```json
+{
+  "nic": "123456789V",
+  "name": "John Doe",
+  "email": "john.doe@example.com",
+  "phone": "+94771234567",
+  "isActive": true
+}
+```
+
+## Features
+
+- **Secure Password Storage**: Passwords are hashed using BCrypt
+- **JWT Authentication**: Tokens are generated for authenticated users
+- **Role-based Authorization**: EV owners get "EVOwner" role in JWT claims
+- **Account Status Checking**: Inactive accounts cannot login
+- **Login Tracking**: Last login time is tracked
+- **Email and NIC Uniqueness**: Prevents duplicate registrations
+
+## Security Features
+
+- Password minimum length requirement (6 characters)
+- BCrypt password hashing with salt
+- JWT token expiration (configurable in appsettings.json)
+- Role-based access control
+- Account activation/deactivation support
+
+## Database Changes
+
+The EVOwner entity now includes:
+- `passwordHash`: Encrypted password storage
+- `createdAt`: Registration timestamp
+- `lastLoginAt`: Last successful login timestamp
+
+## Integration with Existing System
+
+The new authentication system integrates seamlessly with:
+- Existing JWT configuration
+- MongoDB database
+- Authorization policies
+- Swagger documentation
+
+## Error Handling
+
+The API returns appropriate HTTP status codes:
+- **400 Bad Request**: Invalid input data
+- **401 Unauthorized**: Invalid credentials or inactive account
+- **409 Conflict**: NIC or email already exists (during registration)
+
+## Next Steps
+
+You can now:
+1. Test the endpoints using Swagger UI or Postman
+2. Integrate the authentication with a frontend application
+3. Add password reset functionality if needed
+4. Implement additional EV owner-specific endpoints with `[Authorize(Roles = "EVOwner")]`

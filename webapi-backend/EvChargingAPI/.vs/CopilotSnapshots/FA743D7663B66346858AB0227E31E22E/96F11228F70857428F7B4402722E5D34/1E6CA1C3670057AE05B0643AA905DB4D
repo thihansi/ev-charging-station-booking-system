@@ -1,0 +1,11 @@
+﻿using EVChargingSystem.Api.DTOs;
+
+namespace EVChargingSystem.Api.Services
+{
+    public interface IChargingStationService
+    {
+        Task<ChargingStationDto> CreateChargingStation(ChargingStationDto dto);
+        Task<ChargingStationDto> UpdateChargingStation(Guid id, ChargingStationDto dto);
+        Task DeactivateChargingStation(Guid id);
+    }
+}

@@ -1,0 +1,1484 @@
+﻿# EV Charging Station API - Complete Frontend Developer Testing Guide
+
+This guide provides step-by-step instructions for testing every API endpoint with expected responses. Follow this guide to ensure successful integration with the frontend application.
+
+## 🚀 Quick Setup
+
+### Base URL
+```
+Development: https://localhost:{port}
+Production: {your-production-url}
+```
+
+### Authentication
+All authenticated endpoints require JWT token in the Authorization header:
+```
+Authorization: Bearer {your_jwt_token}
+```
+
+### Content Type
+All POST/PUT requests require:
+```
+Content-Type: application/json
+```
+
+---
+
+## 📋 SECTION 1: SYSTEM USER MANAGEMENT (BACKOFFICE & OPERATORS)
+
+### 1.1 System User Login ✅
+
+**Endpoint:** `POST /api/auth/login`  
+**Access:** Public  
+**Purpose:** Authenticate system users (Backoffice/Station Operator)
+
+**Request:**
+```json
+{
+  "username": "admin",
+  "password": "admin123"
+}
+```
+
+**Success Response (200):**
+```json
+{
+  "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJhZG1pbiIsInJvbGUiOiJCYWNrb2ZmaWNlIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c"
+}
+```
+
+**Frontend Integration Notes:**
+- Store token for admin operations
+- Different login flow from EV owners
+- Handle role-based UI restrictions
+
+---
+
+### 1.2 Get System User Profile ✅
+
+**Endpoint:** `GET /api/auth/profile`  
+**Access:** Authenticated system users only  
+**Purpose:** Get authenticated system user's profile
+
+**Request Headers:**
+```
+Authorization: Bearer {system_user_jwt_token}
+```
+
+**Success Response (200):**
+```json
+{
+  "username": "admin",
+  "role": "Backoffice",
+  "message": "Profile retrieved successfully"
+}
+```
+
+**Frontend Integration Notes:**
+- Use for role-based UI rendering
+- Display user information in admin interface
+- Handle different roles (Backoffice vs StationOperator)
+
+---
+
+### 1.3 Create Backoffice User ✅
+
+**Endpoint:** `POST /api/auth/create-backoffice-user`  
+**Access:** Backoffice only  
+**Purpose:** Create new backoffice/admin user
+
+**Request Headers:**
+```
+Authorization: Bearer {backoffice_jwt_token}
+Content-Type: application/json
+```
+
+**Request:**
+```json
+{
+  "username": "admin2",
+  "password": "admin123456",
+  "fullName": "Admin User 2",
+  "email": "admin2@evcharging.com"
+}
+```
+
+**Success Response (200):**
+```json
+{
+  "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+  "username": "admin2",
+  "role": 0,
+  "message": "Backoffice user created successfully"
+}
+```
+
+**Error Responses:**
+- **400 Bad Request**: Password validation or duplicate username
+- **403 Forbidden**: Only backoffice can create users
+
+**Frontend Integration Notes:**
+- Validate password strength (min 6 chars) before sending
+- Handle duplicate username errors
+- Only show to Backoffice users
+- Role value: 0 = Backoffice
+
+---
+
+### 1.4 Create Station Operator ✅
+
+**Endpoint:** `POST /api/auth/create-station-operator`  
+**Access:** Backoffice only  
+**Purpose:** Create new station operator
+
+**Request Headers:**
+```
+Authorization: Bearer {backoffice_jwt_token}
+Content-Type: application/json
+```
+
+**Request:**
+```json
+{
+  "username": "operator1",
+  "password": "operator123456",
+  "fullName": "Station Operator 1",
+  "email": "operator1@evcharging.com",
+  "assignedStationId": "station-001"
+}
+```
+
+**Success Response (200):**
+```json
+{
+  "id": "4fa85f64-5717-4562-b3fc-2c963f66afa7",
+  "username": "operator1",
+  "role": 1,
+  "message": "Station Operator created successfully"
+}
+```
+
+**Frontend Integration Notes:**
+- Include station assignment in form
+- Role value: 1 = StationOperator
+- Validate all required fields before sending
+
+---
+
+### 1.5 Legacy User Creation (Query Parameters) ✅
+
+**Endpoint:** `POST /api/auth/register`  
+**Access:** Backoffice only  
+**Purpose:** Create system user using query parameters
+
+**Request Headers:**
+```
+Authorization: Bearer {backoffice_jwt_token}
+```
+
+**Query Parameters:**
+- `username`: User's login name
+- `password`: User's password  
+- `role`: 0 (Backoffice) or 1 (StationOperator)
+
+**Example URL:**
+```
+POST /api/auth/register?username=operator2&password=operator123&role=1
+```
+
+**Success Response (200):**
+```json
+{
+  "id": "5fa85f64-5717-4562-b3fc-2c963f66afa8",
+  "username": "operator2",
+  "role": 1,
+  "message": "User created successfully"
+}
+```
+
+**Frontend Integration Notes:**
+- Legacy endpoint - prefer the detailed endpoints above
+- Useful for simple user creation scenarios
+
+---
+
+## 📋 SECTION 2: EV OWNER REGISTRATION & AUTHENTICATION
+
+### 2.1 Register New EV Owner ✅
+
+**Endpoint:** `POST /api/evownerauth/register`  
+**Access:** Public  
+**Purpose:** EV owner self-registration
+
+**Request:**
+```json
+{
+  "nic": "123456789V",
+  "name": "John Doe",
+  "email": "john.doe@example.com",
+  "phone": "+94771234567",
+  "password": "password123"
+}
+```
+
+**Success Response (200):**
+```json
+{
+  "message": "Registration successful",
+  "evOwner": {
+    "nic": "123456789V",
+    "name": "John Doe",
+    "email": "john.doe@example.com",
+    "phone": "+94771234567",
+    "isActive": true
+  }
+}
+```
+
+**Frontend Integration Notes:**
+- Validate password (min 6 chars) before sending
+- Handle duplicate NIC/Email errors gracefully
+- Show success message and redirect to login
+
+---
+
+### 2.2 EV Owner Login ✅
+
+**Endpoint:** `POST /api/evownerauth/login`  
+**Access:** Public  
+**Purpose:** Authenticate EV owner
+
+**Request:**
+```json
+{
+  "nic": "123456789V",
+  "password": "password123"
+}
+```
+
+**Success Response (200):**
+```json
+{
+  "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODlWIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c",
+  "evOwner": {
+    "nic": "123456789V",
+    "name": "John Doe",
+    "email": "john.doe@example.com",
+    "phone": "+94771234567",
+    "isActive": true
+  }
+}
+```
+
+**Frontend Integration Notes:**
+- Store JWT token securely
+- Store user data for UI personalization
+- Handle deactivated account messages
+
+---
+
+### 2.3 Get EV Owner Profile ✅
+
+**Endpoint:** `GET /api/evownerauth/profile`  
+**Access:** EV Owner only  
+**Purpose:** Get authenticated user's profile
+
+**Request Headers:**
+```
+Authorization: Bearer {evowner_jwt_token}
+```
+
+**Success Response (200):**
+```json
+{
+  "nic": "123456789V",
+  "name": "John Doe",
+  "email": "john.doe@example.com",
+  "phone": "+94771234567",
+  "isActive": true
+}
+```
+
+**Frontend Integration Notes:**
+- Use for profile page data
+- Check isActive status for UI restrictions
+
+---
+
+### 2.4 Update EV Owner Profile ✅
+
+**Endpoint:** `PUT /api/evownerauth/profile`  
+**Access:** EV Owner only  
+**Purpose:** Update own profile
+
+**Request Headers:**
+```
+Authorization: Bearer {evowner_jwt_token}
+Content-Type: application/json
+```
+
+**Request:**
+```json
+{
+  "nic": "123456789V",
+  "name": "John Doe Updated",
+  "email": "john.updated@example.com",
+  "phone": "+94771234999",
+  "isActive": true
+}
+```
+
+**Success Response (200):**
+```json
+{
+  "message": "Profile updated successfully",
+  "evOwner": {
+    "nic": "123456789V",
+    "name": "John Doe Updated",
+    "email": "john.updated@example.com",
+    "phone": "+94771234999",
+    "isActive": true
+  }
+}
+```
+
+**Frontend Integration Notes:**
+- Pre-populate form with current data
+- Update local user data after success
+
+---
+
+### 2.5 Self-Deactivate Account ✅
+
+**Endpoint:** `POST /api/evownerauth/deactivate`  
+**Access:** EV Owner only  
+**Purpose:** Deactivate own account
+
+**Request Headers:**
+```
+Authorization: Bearer {evowner_jwt_token}
+```
+
+**Success Response (200):**
+```json
+{
+  "message": "Account deactivated successfully. Contact support for reactivation."
+}
+```
+
+**Error Responses:**
+- **400 Bad Request**: Account has active bookings
+
+**Frontend Integration Notes:**
+- Show confirmation dialog before deactivation
+- Clear local storage and redirect to login
+
+---
+
+## 📋 SECTION 3: EV OWNER MANAGEMENT (BACKOFFICE)
+
+### 3.1 Create EV Owner Profile Only ✅
+
+**Endpoint:** `POST /api/evowners`  
+**Access:** Backoffice only  
+**Purpose:** Create EV owner profile without login credentials
+
+**Request Headers:**
+```
+Authorization: Bearer {backoffice_jwt_token}
+Content-Type: application/json
+```
+
+**Request:**
+```json
+{
+  "nic": "555666777V",
+  "name": "Backoffice Created User",
+  "email": "backoffice@example.com",
+  "phone": "+94771234000",
+  "isActive": true
+}
+```
+
+**Success Response (200):**
+```json
+{
+  "message": "EV Owner created successfully",
+  "evOwner": {
+    "nic": "555666777V",
+    "name": "Backoffice Created User",
+    "email": "backoffice@example.com",
+    "phone": "+94771234000",
+    "isActive": true
+  }
+}
+```
+
+**Frontend Integration Notes:**
+- Use for creating profiles that don't need login access
+- Useful for importing existing customer data
+
+---
+
+### 3.2 Create EV Owner with Login Credentials ✅
+
+**Endpoint:** `POST /api/evowners/create-with-password`  
+**Access:** Backoffice only  
+**Purpose:** Create EV owner with login credentials
+
+**Request Headers:**
+```
+Authorization: Bearer {backoffice_jwt_token}
+Content-Type: application/json
+```
+
+**Request:**
+```json
+{
+  "nic": "777888999V",
+  "name": "EV Owner With Login",
+  "email": "evowner@example.com",
+  "phone": "+94771234111",
+  "password": "evowner123456"
+}
+```
+
+**Success Response (200):**
+```json
+{
+  "message": "EV Owner created with login credentials successfully",
+  "evOwner": {
+    "nic": "777888999V",
+    "name": "EV Owner With Login",
+    "email": "evowner@example.com",
+    "phone": "+94771234111",
+    "isActive": true
+  }
+}
+```
+
+**Frontend Integration Notes:**
+- Include password field in form
+- Validate password strength before sending
+- Useful for admin-created accounts
+
+---
+
+### 3.3 Get Specific EV Owner ✅
+
+**Endpoint:** `GET /api/evowners/{nic}`  
+**Access:** Backoffice only  
+**Purpose:** Get specific EV owner details
+
+**URL Parameters:**
+- `nic`: EV Owner's NIC
+
+**Request Headers:**
+```
+Authorization: Bearer {backoffice_jwt_token}
+```
+
+**Success Response (200):**
+```json
+{
+  "nic": "123456789V",
+  "name": "John Doe",
+  "email": "john.doe@example.com",
+  "phone": "+94771234567",
+  "isActive": true
+}
+```
+
+**Frontend Integration Notes:**
+- Use for EV owner detail pages
+- Display account status and activity
+
+---
+
+### 3.4 Update EV Owner (Admin) ✅
+
+**Endpoint:** `PUT /api/evowners/{nic}`  
+**Access:** Backoffice only  
+**Purpose:** Update EV owner profile (admin)
+
+**URL Parameters:**
+- `nic`: EV Owner's NIC
+
+**Request Headers:**
+```
+Authorization: Bearer {backoffice_jwt_token}
+Content-Type: application/json
+```
+
+**Request:**
+```json
+{
+  "nic": "123456789V",
+  "name": "Updated Name",
+  "email": "updated@example.com",
+  "phone": "+94771234567",
+  "isActive": true
+}
+```
+
+**Success Response (200):**
+```json
+{
+  "message": "EV Owner updated successfully",
+  "evOwner": {
+    "nic": "123456789V",
+    "name": "Updated Name",
+    "email": "updated@example.com",
+    "phone": "+94771234567",
+    "isActive": true
+  }
+}
+```
+
+**Frontend Integration Notes:**
+- Admin can modify any field including active status
+- Different from self-update capabilities
+
+---
+
+### 3.5 Activate/Deactivate EV Owner ✅
+
+**Endpoint:** `POST /api/evowners/{nic}/activate`  
+**Endpoint:** `POST /api/evowners/{nic}/deactivate`  
+**Access:** Backoffice only  
+**Purpose:** Change EV owner account status
+
+**URL Parameters:**
+- `nic`: EV Owner's NIC
+
+**Request Headers:**
+```
+Authorization: Bearer {backoffice_jwt_token}
+```
+
+**Success Response (200):**
+```json
+{
+  "message": "EV Owner activated/deactivated successfully"
+}
+```
+
+**Frontend Integration Notes:**
+- Show confirmation dialogs
+- Update UI to reflect status change
+- Provide reason for deactivation if needed
+
+---
+
+### 3.6 Reactivate EV Owner Account ✅
+
+**Endpoint:** `POST /api/evowners/{nic}/reactivate`  
+**Access:** Backoffice only  
+**Purpose:** Reactivate self-deactivated accounts
+
+**URL Parameters:**
+- `nic`: EV Owner's NIC
+
+**Request Headers:**
+```
+Authorization: Bearer {backoffice_jwt_token}
+```
+
+**Success Response (200):**
+```json
+{
+  "message": "EV Owner account reactivated successfully"
+}
+```
+
+**Error Responses:**
+- **400 Bad Request**: Account already active or cannot be reactivated
+
+**Frontend Integration Notes:**
+- Different from regular activation
+- Show reactivation audit trail
+- Only for self-deactivated accounts
+
+---
+
+### 3.7 Delete EV Owner ✅
+
+**Endpoint:** `DELETE /api/evowners/{nic}`  
+**Access:** Backoffice only  
+**Purpose:** Permanently delete EV owner
+
+**URL Parameters:**
+- `nic`: EV Owner's NIC
+
+**Request Headers:**
+```
+Authorization: Bearer {backoffice_jwt_token}
+```
+
+**Success Response (200):**
+```json
+{
+  "message": "EV Owner deleted successfully"
+}
+```
+
+**Frontend Integration Notes:**
+- Show strong confirmation dialog
+- Warn about data permanence
+- Check for active bookings first
+
+---
+
+## 📋 SECTION 4: CHARGING STATION MANAGEMENT
+
+### 4.1 Get All Active Charging Stations ✅
+
+**Endpoint:** `GET /api/chargingstations/active`  
+**Access:** Public  
+**Purpose:** List all active charging stations
+
+**Success Response (200):**
+```json
+[
+  {
+    "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+    "name": "Main Street Station",
+    "address": "123 Main St, Colombo, Sri Lanka",
+    "latitude": 6.9271,
+    "longitude": 79.8612,
+    "type": 0,
+    "availableSlots": 5,
+    "schedule": "24/7",
+    "isActive": true
+  }
+]
+```
+
+**Type Values:**
+- 0 = AC Charging
+- 1 = DC Fast Charging
+
+**Frontend Integration Notes:**
+- Use for station selection in booking flow
+- Display on map using latitude/longitude
+
+---
+
+### 4.2 Get Charging Station Details ✅
+
+**Endpoint:** `GET /api/chargingstations/{id}`  
+**Access:** Public  
+**Purpose:** Get specific station details
+
+**URL Parameters:**
+- `id`: Station GUID
+
+**Success Response (200):**
+```json
+{
+  "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+  "name": "Main Street Station",
+  "address": "123 Main St, Colombo, Sri Lanka",
+  "latitude": 6.9271,
+  "longitude": 79.8612,
+  "type": 0,
+  "availableSlots": 5,
+  "schedule": "24/7",
+  "isActive": true
+}
+```
+
+**Frontend Integration Notes:**
+- Use for detailed station view
+- Show full address and schedule
+
+---
+
+### 4.3 Create Charging Station ✅
+
+**Endpoint:** `POST /api/chargingstations`  
+**Access:** Backoffice only  
+**Purpose:** Create new charging station
+
+**Request Headers:**
+```
+Authorization: Bearer {backoffice_jwt_token}
+Content-Type: application/json
+```
+
+**Request:**
+```json
+{
+  "name": "Downtown Station",
+  "address": "456 Downtown Ave, Colombo, Sri Lanka",
+  "type": 1,
+  "availableSlots": 8,
+  "schedule": "06:00-22:00",
+  "isActive": true
+}
+```
+
+**Success Response (200):**
+```json
+{
+  "id": "4fa85f64-5717-4562-b3fc-2c963f66afa4",
+  "name": "Downtown Station",
+  "address": "456 Downtown Ave, Colombo, Sri Lanka",
+  "latitude": 6.9349,
+  "longitude": 79.8541,
+  "type": 1,
+  "availableSlots": 8,
+  "schedule": "06:00-22:00",
+  "isActive": true
+}
+```
+
+**Frontend Integration Notes:**
+- Address is automatically geocoded to lat/lng
+- Type selection (AC/DC)
+- Only accessible by Backoffice
+
+---
+
+### 4.4 Update Charging Station ✅
+
+**Endpoint:** `PUT /api/chargingstations/{id}`  
+**Access:** Backoffice or Station Operator  
+**Purpose:** Update charging station details
+
+**URL Parameters:**
+- `id`: Station GUID
+
+**Request Headers:**
+```
+Authorization: Bearer {backoffice_or_operator_jwt_token}
+Content-Type: application/json
+```
+
+**Request:**
+```json
+{
+  "name": "Updated Station Name",
+  "address": "Updated Address",
+  "type": 1,
+  "availableSlots": 10,
+  "schedule": "24/7",
+  "isActive": true
+}
+```
+
+**Success Response (200):**
+```json
+{
+  "id": "4fa85f64-5717-4562-b3fc-2c963f66afa4",
+  "name": "Updated Station Name",
+  "address": "Updated Address",
+  "latitude": 6.9349,
+  "longitude": 79.8541,
+  "type": 1,
+  "availableSlots": 10,
+  "schedule": "24/7",
+  "isActive": true
+}
+```
+
+**Frontend Integration Notes:**
+- Both Backoffice and Station Operators can update
+- Address changes trigger re-geocoding
+
+---
+
+### 4.5 Deactivate Charging Station ✅
+
+**Endpoint:** `DELETE /api/chargingstations/{id}`  
+**Access:** Backoffice only  
+**Purpose:** Deactivate charging station
+
+**URL Parameters:**
+- `id`: Station GUID
+
+**Request Headers:**
+```
+Authorization: Bearer {backoffice_jwt_token}
+```
+
+**Success Response (200):**
+```json
+{
+  "message": "Charging station deactivated successfully"
+}
+```
+
+**Error Responses:**
+- **400 Bad Request**: Cannot deactivate with active bookings
+
+**Frontend Integration Notes:**
+- Check for active bookings before allowing deactivation
+- Show confirmation dialog
+
+---
+
+## 📋 SECTION 5: BOOKING MANAGEMENT (EV OWNER)
+
+### 5.1 Get Booking Summary (Preview) ✅
+
+**Endpoint:** `POST /api/bookings/summary`  
+**Access:** EV Owner only  
+**Purpose:** Preview booking details before confirmation
+
+**Request Headers:**
+```
+Authorization: Bearer {evowner_jwt_token}
+Content-Type: application/json
+```
+
+**Request:**
+```json
+{
+  "chargingStationId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+  "reservationDateTime": "2024-12-15T10:00:00Z"
+}
+```
+
+**Success Response (200):**
+```json
+{
+  "bookingId": "00000000-0000-0000-0000-000000000000",
+  "evOwnerName": "John Doe",
+  "evOwnerNIC": "123456789V",
+  "chargingStationName": "Main Street Station",
+  "chargingStationAddress": "123 Main St, Colombo, Sri Lanka",
+  "reservationDateTime": "2024-12-15T10:00:00Z",
+  "estimatedDuration": "2 hours",
+  "estimatedCost": 500.00
+}
+```
+
+**Frontend Integration Notes:**
+- Show before booking confirmation
+- Display all details for user review
+
+---
+
+### 5.2 Create Booking ✅
+
+**Endpoint:** `POST /api/bookings`  
+**Access:** EV Owner only  
+**Purpose:** Create new booking reservation
+
+**Request Headers:**
+```
+Authorization: Bearer {evowner_jwt_token}
+Content-Type: application/json
+```
+
+**Request:**
+```json
+{
+  "chargingStationId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+  "reservationDateTime": "2024-12-15T10:00:00Z"
+}
+```
+
+**Success Response (200):**
+```json
+{
+  "message": "Booking created successfully. Awaiting approval.",
+  "booking": {
+    "id": "7fa85f64-5717-4562-b3fc-2c963f66afa7",
+    "evOwnerNIC": "123456789V",
+    "chargingStationId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+    "bookingDate": "2024-12-08T10:30:00Z",
+    "reservationDateTime": "2024-12-15T10:00:00Z",
+    "status": 0,
+    "isActive": true,
+    "qrCode": null,
+    "approvedBy": null,
+    "approvedAt": null,
+    "rejectionReason": null
+  }
+}
+```
+
+**Status Values:**
+- 0 = Pending, 1 = Approved, 2 = Rejected, 3 = Completed, 4 = Cancelled
+
+**Frontend Integration Notes:**
+- Show pending status message
+- Save booking ID for tracking
+
+---
+
+### 5.3 Get My Upcoming Bookings ✅
+
+**Endpoint:** `GET /api/bookings/my-bookings/upcoming`  
+**Access:** EV Owner only  
+**Purpose:** Get user's future bookings
+
+**Request Headers:**
+```
+Authorization: Bearer {evowner_jwt_token}
+```
+
+**Success Response (200):**
+```json
+[
+  {
+    "id": "7fa85f64-5717-4562-b3fc-2c963f66afa7",
+    "evOwnerNIC": "123456789V",
+    "chargingStationId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+    "bookingDate": "2024-12-08T10:30:00Z",
+    "reservationDateTime": "2024-12-15T10:00:00Z",
+    "status": 1,
+    "isActive": true,
+    "qrCode": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAA...",
+    "approvedBy": "operator1",
+    "approvedAt": "2024-12-08T11:00:00Z",
+    "rejectionReason": null
+  }
+]
+```
+
+**Frontend Integration Notes:**
+- Show countdown to reservation time
+- Display booking status with appropriate UI
+- Show QR code button for approved bookings
+
+---
+
+### 5.4 Get My Booking History ✅
+
+**Endpoint:** `GET /api/bookings/my-bookings/history`  
+**Access:** EV Owner only  
+**Purpose:** Get user's past bookings
+
+**Request Headers:**
+```
+Authorization: Bearer {evowner_jwt_token}
+```
+
+**Success Response (200):**
+```json
+[
+  {
+    "id": "8fa85f64-5717-4562-b3fc-2c963f66afa8",
+    "evOwnerNIC": "123456789V",
+    "chargingStationId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+    "bookingDate": "2024-12-01T10:30:00Z",
+    "reservationDateTime": "2024-12-05T14:00:00Z",
+    "status": 3,
+    "isActive": false,
+    "qrCode": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAA...",
+    "approvedBy": "operator1",
+    "approvedAt": "2024-12-01T11:00:00Z",
+    "rejectionReason": null
+  }
+]
+```
+
+**Frontend Integration Notes:**
+- Show completed/cancelled bookings
+- Group by date for better UX
+
+---
+
+### 5.5 Update Booking ✅
+
+**Endpoint:** `PUT /api/bookings/{id}`  
+**Access:** EV Owner only (own bookings)  
+**Purpose:** Update pending booking
+
+**URL Parameters:**
+- `id`: Booking GUID
+
+**Request Headers:**
+```
+Authorization: Bearer {evowner_jwt_token}
+Content-Type: application/json
+```
+
+**Request:**
+```json
+{
+  "reservationDateTime": "2024-12-15T14:00:00Z"
+}
+```
+
+**Success Response (200):**
+```json
+{
+  "message": "Booking updated successfully",
+  "booking": {
+    "id": "7fa85f64-5717-4562-b3fc-2c963f66afa7",
+    "evOwnerNIC": "123456789V",
+    "chargingStationId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+    "bookingDate": "2024-12-08T10:30:00Z",
+    "reservationDateTime": "2024-12-15T14:00:00Z",
+    "status": 0,
+    "isActive": true,
+    "qrCode": null,
+    "approvedBy": null,
+    "approvedAt": null,
+    "rejectionReason": null
+  }
+}
+```
+
+**Error Responses:**
+- **400 Bad Request**: 12-hour rule violation or not pending
+- **403 Forbidden**: Not your booking
+
+**Frontend Integration Notes:**
+- Only allow for pending bookings
+- Check 12-hour rule before showing update option
+
+---
+
+### 5.6 Cancel Booking ✅
+
+**Endpoint:** `DELETE /api/bookings/{id}`  
+**Access:** EV Owner only (own bookings)  
+**Purpose:** Cancel booking
+
+**URL Parameters:**
+- `id`: Booking GUID
+
+**Request Headers:**
+```
+Authorization: Bearer {evowner_jwt_token}
+```
+
+**Success Response (200):**
+```json
+{
+  "message": "Booking cancelled successfully"
+}
+```
+
+**Error Responses:**
+- **400 Bad Request**: 12-hour rule violation
+- **403 Forbidden**: Not your booking
+
+**Frontend Integration Notes:**
+- Show confirmation dialog
+- Check 12-hour rule before allowing cancellation
+
+---
+
+### 5.7 Get Booking QR Code ✅
+
+**Endpoint:** `GET /api/bookings/{id}/qrcode`  
+**Access:** EV Owner only (own bookings)  
+**Purpose:** Get QR code for approved booking
+
+**URL Parameters:**
+- `id`: Booking GUID
+
+**Request Headers:**
+```
+Authorization: Bearer {evowner_jwt_token}
+```
+
+**Success Response (200):**
+```json
+{
+  "qrCode": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8/5+hHgAHggJ/PchI7wAAAABJRU5ErkJggg=="
+}
+```
+
+**Error Responses:**
+- **400 Bad Request**: Booking not approved
+- **403 Forbidden**: Not your booking
+
+**Frontend Integration Notes:**
+- Display as image for scanning
+- Only show for approved bookings
+
+---
+
+## 📋 SECTION 6: BOOKING APPROVAL (STATION OPERATORS & BACKOFFICE)
+
+### 6.1 Get Pending Bookings ✅
+
+**Endpoint:** `GET /api/bookings/pending`  
+**Access:** Station Operator or Backoffice  
+**Purpose:** View bookings awaiting approval
+
+**Request Headers:**
+```
+Authorization: Bearer {operator_jwt_token}
+```
+
+**Success Response (200):**
+```json
+[
+  {
+    "id": "7fa85f64-5717-4562-b3fc-2c963f66afa7",
+    "evOwnerNIC": "123456789V",
+    "chargingStationId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+    "bookingDate": "2024-12-08T10:30:00Z",
+    "reservationDateTime": "2024-12-15T10:00:00Z",
+    "status": 0,
+    "isActive": true,
+    "qrCode": null,
+    "approvedBy": null,
+    "approvedAt": null,
+    "rejectionReason": null
+  }
+]
+```
+
+**Frontend Integration Notes:**
+- Show in approval queue interface
+- Display customer and station details
+
+---
+
+### 6.2 Approve Booking ✅
+
+**Endpoint:** `POST /api/bookings/{id}/approve`  
+**Access:** Station Operator or Backoffice  
+**Purpose:** Approve pending booking
+
+**URL Parameters:**
+- `id`: Booking GUID
+
+**Request Headers:**
+```
+Authorization: Bearer {operator_jwt_token}
+```
+
+**Success Response (200):**
+```json
+{
+  "message": "Booking approved successfully",
+  "booking": {
+    "id": "7fa85f64-5717-4562-b3fc-2c963f66afa7",
+    "evOwnerNIC": "123456789V",
+    "chargingStationId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+    "bookingDate": "2024-12-08T10:30:00Z",
+    "reservationDateTime": "2024-12-15T10:00:00Z",
+    "status": 1,
+    "isActive": true,
+    "qrCode": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAA...",
+    "approvedBy": "operator1",
+    "approvedAt": "2024-12-08T11:00:00Z",
+    "rejectionReason": null
+  }
+}
+```
+
+**Frontend Integration Notes:**
+- Remove from pending list after approval
+- QR code is automatically generated
+
+---
+
+### 6.3 Reject Booking ✅
+
+**Endpoint:** `POST /api/bookings/{id}/reject`  
+**Access:** Station Operator or Backoffice  
+**Purpose:** Reject pending booking
+
+**URL Parameters:**
+- `id`: Booking GUID
+
+**Request Headers:**
+```
+Authorization: Bearer {operator_jwt_token}
+Content-Type: application/json
+```
+
+**Request:**
+```json
+{
+  "bookingId": "7fa85f64-5717-4562-b3fc-2c963f66afa7",
+  "approve": false,
+  "rejectionReason": "Station maintenance scheduled"
+}
+```
+
+**Success Response (200):**
+```json
+{
+  "message": "Booking rejected successfully",
+  "booking": {
+    "id": "7fa85f64-5717-4562-b3fc-2c963f66afa7",
+    "evOwnerNIC": "123456789V",
+    "chargingStationId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+    "bookingDate": "2024-12-08T10:30:00Z",
+    "reservationDateTime": "2024-12-15T10:00:00Z",
+    "status": 2,
+    "isActive": true,
+    "qrCode": null,
+    "approvedBy": "operator1",
+    "approvedAt": "2024-12-08T11:00:00Z",
+    "rejectionReason": "Station maintenance scheduled"
+  }
+}
+```
+
+**Frontend Integration Notes:**
+- Require rejection reason
+- Remove from pending list
+
+---
+
+### 6.4 Validate QR Code ✅
+
+**Endpoint:** `POST /api/bookings/validate-qr`  
+**Access:** Station Operator only  
+**Purpose:** Validate customer QR code
+
+**Request Headers:**
+```
+Authorization: Bearer {operator_jwt_token}
+Content-Type: application/json
+```
+
+**Request:**
+```json
+"{\"bookingId\":\"7fa85f64-5717-4562-b3fc-2c963f66afa7\",\"evOwnerNIC\":\"123456789V\",\"chargingStationId\":\"3fa85f64-5717-4562-b3fc-2c963f66afa6\",\"reservationDateTime\":\"2024-12-15T10:00:00Z\",\"evOwnerName\":\"John Doe\",\"stationName\":\"Main Street Station\"}"
+```
+
+**Success Response (200):**
+```json
+{
+  "message": "QR code is valid",
+  "bookingData": {
+    "bookingId": "7fa85f64-5717-4562-b3fc-2c963f66afa7",
+    "evOwnerNIC": "123456789V",
+    "chargingStationId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+    "reservationDateTime": "2024-12-15T10:00:00Z",
+    "evOwnerName": "John Doe",
+    "stationName": "Main Street Station"
+  }
+}
+```
+
+**Error Responses:**
+- **400 Bad Request**: Invalid or expired QR code
+
+**Frontend Integration Notes:**
+- Integrate with QR scanner library
+- Display customer details after validation
+
+---
+
+## 📋 SECTION 7: ADMINISTRATIVE FUNCTIONS
+
+### 7.1 Get All Bookings (Backoffice) ✅
+
+**Endpoint:** `GET /api/bookings`  
+**Access:** Backoffice only  
+**Purpose:** View all system bookings
+
+**Request Headers:**
+```
+Authorization: Bearer {backoffice_jwt_token}
+```
+
+**Success Response (200):**
+```json
+[
+  {
+    "id": "7fa85f64-5717-4562-b3fc-2c963f66afa7",
+    "evOwnerNIC": "123456789V",
+    "chargingStationId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+    "bookingDate": "2024-12-08T10:30:00Z",
+    "reservationDateTime": "2024-12-15T10:00:00Z",
+    "status": 1,
+    "isActive": true,
+    "qrCode": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAA...",
+    "approvedBy": "operator1",
+    "approvedAt": "2024-12-08T11:00:00Z",
+    "rejectionReason": null
+  }
+]
+```
+
+**Frontend Integration Notes:**
+- Admin dashboard functionality
+- Filter and search capabilities
+- Export functionality
+
+---
+
+### 7.2 Reactivate EV Owner Account ✅
+
+**Endpoint:** `POST /api/evownerauth/reactivate/{nic}`  
+**Access:** Backoffice only  
+**Purpose:** Reactivate deactivated EV owner account
+
+**URL Parameters:**
+- `nic`: EV Owner's NIC
+
+**Request Headers:**
+```
+Authorization: Bearer {backoffice_jwt_token}
+```
+
+**Success Response (200):**
+```json
+{
+  "message": "Account reactivated successfully"
+}
+```
+
+**Error Responses:**
+- **400 Bad Request**: Account already active or cannot be reactivated
+
+**Frontend Integration Notes:**
+- Search for deactivated accounts
+- Show audit trail of deactivation/reactivation
+
+---
+
+## 🔧 COMMON ERROR HANDLING
+
+### Error Response Format
+All API errors return this format:
+```json
+{
+  "message": "Detailed error description"
+}
+```
+
+### HTTP Status Codes Guide
+
+| Code | Meaning | Action |
+|------|---------|--------|
+| 200 | Success | Process response data |
+| 400 | Bad Request | Show validation errors |
+| 401 | Unauthorized | Redirect to login |
+| 403 | Forbidden | Show access denied message |
+| 404 | Not Found | Show not found message |
+| 500 | Server Error | Show generic error message |
+
+### Business Rule Validations
+
+#### Password Requirements
+- **Validation**: Minimum 6 characters for all user types
+- **Frontend**: Validate before sending request
+
+#### 7-Day Booking Rule
+- **Error**: "Reservation must be within 7 days from booking date"
+- **Frontend**: Disable dates beyond 7 days in date picker
+
+#### 12-Hour Modification Rule
+- **Error**: "Cannot update/cancel booking less than 12 hours before reservation"
+- **Frontend**: Hide update/cancel buttons if within 12 hours
+
+#### Account Status
+- **Error**: "Account is deactivated. Please contact support for reactivation."
+- **Frontend**: Show reactivation contact information
+
+#### Slot Availability
+- **Error**: "No available slots for the selected date and time"
+- **Frontend**: Show alternative times or dates
+
+---
+
+## 🎯 COMPLETE USER FLOWS
+
+### Flow 1: Admin Setup Complete System
+1. **Login as Admin**: `POST /api/auth/login`
+2. **Create Backoffice User**: `POST /api/auth/create-backoffice-user`
+3. **Create Station Operator**: `POST /api/auth/create-station-operator`
+4. **Create Charging Station**: `POST /api/chargingstations`
+5. **Create EV Owner with Login**: `POST /api/evowners/create-with-password`
+
+### Flow 2: EV Owner Registration to First Booking
+1. **Register**: `POST /api/evownerauth/register`
+2. **Login**: `POST /api/evownerauth/login`
+3. **View Stations**: `GET /api/chargingstations/active`
+4. **Preview Booking**: `POST /api/bookings/summary`
+5. **Create Booking**: `POST /api/bookings`
+6. **Check Status**: `GET /api/bookings/my-bookings/upcoming`
+
+### Flow 3: Station Operator Approval Process
+1. **Login**: `POST /api/auth/login`
+2. **View Pending**: `GET /api/bookings/pending`
+3. **Approve Booking**: `POST /api/bookings/{id}/approve`
+4. **Customer Gets QR**: `GET /api/bookings/{id}/qrcode`
+5. **Validate QR**: `POST /api/bookings/validate-qr`
+
+### Flow 4: Backoffice User Management
+1. **Login**: `POST /api/auth/login`
+2. **Create Users**: Various creation endpoints
+3. **Manage EV Owners**: Full CRUD operations
+4. **Manage Stations**: Full CRUD operations
+5. **Monitor System**: View all bookings and activities
+
+---
+
+## 📱 MOBILE CONSIDERATIONS
+
+### JWT Token Management
+- Store securely in device keychain/keystore
+- Implement automatic refresh
+- Handle token expiration gracefully
+
+### QR Code Integration
+- Use camera for scanning (Station Operators)
+- Display QR codes clearly (EV Owners)
+- Handle camera permissions
+
+### Offline Handling
+- Cache station data for offline viewing
+- Queue booking requests when offline
+- Sync when connection restored
+
+---
+
+## 🔍 TESTING CHECKLIST
+
+### EV Owner App
+- [ ] Registration with validation
+- [ ] Login and profile management
+- [ ] Station browsing and selection
+- [ ] Booking creation and management
+- [ ] QR code access and display
+- [ ] Booking history and status
+
+### Station Operator App
+- [ ] System user login
+- [ ] Pending bookings view
+- [ ] Approval/rejection workflow
+- [ ] QR code scanning and validation
+- [ ] Customer detail verification
+
+### Backoffice Web App
+- [ ] Admin login and user creation
+- [ ] EV owner management (full CRUD)
+- [ ] Station management
+- [ ] Account reactivation
+- [ ] System monitoring and reporting
+
+### API Endpoints by User Type
+
+#### Public Endpoints (No Authentication)
+- Station browsing (`GET /api/chargingstations/*`)
+- User registration (`POST /api/evownerauth/register`)
+- All login endpoints (`POST /api/auth/login`, `POST /api/evownerauth/login`)
+
+#### EV Owner Endpoints
+- Profile management (`/api/evownerauth/profile`)
+- Booking management (`/api/bookings/my-*`, `/api/bookings/summary`)
+- QR code access (`GET /api/bookings/{id}/qrcode`)
+
+#### Station Operator Endpoints
+- System profile (`GET /api/auth/profile`)
+- Booking approval (`/api/bookings/pending`, `/api/bookings/{id}/approve|reject`)
+- QR validation (`POST /api/bookings/validate-qr`)
+- Station updates (`PUT /api/chargingstations/{id}`)
+
+#### Backoffice Endpoints
+- All Station Operator capabilities
+- User creation (`/api/auth/create-*`)
+- EV owner management (`/api/evowners/*`)
+- Station creation (`POST /api/chargingstations`)
+- System monitoring (`GET /api/bookings`)
+- Account reactivation (`/api/evownerauth/reactivate/*`)
+
+This comprehensive guide provides everything needed for successful frontend integration with all user types and workflows in the EV Charging Station system.

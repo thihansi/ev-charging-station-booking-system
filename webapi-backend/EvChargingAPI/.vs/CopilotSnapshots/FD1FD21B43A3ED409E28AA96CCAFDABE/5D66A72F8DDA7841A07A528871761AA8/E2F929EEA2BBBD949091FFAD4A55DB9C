@@ -1,0 +1,410 @@
+﻿using EVChargingSystem.Api.DTOs;
+using EVChargingSystem.Api.Services;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
+
+namespace EvChargingAPI.Controllers
+{
+    [Route("api/[controller]")]
+    [ApiController]
+    public class BookingsController : ControllerBase
+    {
+        private readonly IBookingService _service;
+
+        public BookingsController(IBookingService service)
+        {
+            _service = service;
+        }
+
+        [HttpPost("summary")]
+        [Authorize(Roles = "EVOwner")]
+        public async Task<IActionResult> GetBookingSummary([FromBody] BookingDto dto)
+        {
+            try
+            {
+                var nic = User.FindFirst("nic")?.Value;
+                if (string.IsNullOrEmpty(nic))
+                {
+                    return Unauthorized("Invalid token");
+                }
+
+                dto.EVOwnerNIC = nic;
+                var summary = await _service.GetBookingSummary(dto);
+                return Ok(summary);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { Message = ex.Message });
+            }
+        }
+
+        [HttpPost]
+        [Authorize(Roles = "EVOwner")]
+        public async Task<IActionResult> CreateBooking([FromBody] BookingDto dto)
+        {
+            try
+            {
+                // Get NIC from JWT token
+                var nic = User.FindFirst("nic")?.Value;
+                if (string.IsNullOrEmpty(nic))
+                {
+                    return Unauthorized("Invalid token");
+                }
+
+                // Ensure the booking is for the authenticated user
+                dto.EVOwnerNIC = nic;
+
+                var result = await _service.CreateBooking(dto);
+                return Ok(new { Message = "Booking created successfully. Awaiting approval.", Booking = result });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { Message = ex.Message });
+            }
+        }
+
+        [HttpPut("{id}")]
+        [Authorize(Roles = "EVOwner")]
+        public async Task<IActionResult> UpdateBooking(Guid id, [FromBody] BookingDto dto)
+        {
+            try
+            {
+                // Get NIC from JWT token
+                var nic = User.FindFirst("nic")?.Value;
+                if (string.IsNullOrEmpty(nic))
+                {
+                    return Unauthorized("Invalid token");
+                }
+
+                // Verify the booking belongs to the authenticated user
+                var existingBooking = await _service.GetBookingById(id);
+                if (existingBooking.EVOwnerNIC != nic)
+                {
+                    return Forbid("You can only update your own bookings");
+                }
+
+                dto.EVOwnerNIC = nic;
+                var result = await _service.UpdateBooking(id, dto);
+                return Ok(new { Message = "Booking updated successfully", Booking = result });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { Message = ex.Message });
+            }
+        }
+
+        [HttpDelete("{id}")]
+        [Authorize(Roles = "EVOwner")]
+        public async Task<IActionResult> CancelBooking(Guid id)
+        {
+            try
+            {
+                // Get NIC from JWT token
+                var nic = User.FindFirst("nic")?.Value;
+                if (string.IsNullOrEmpty(nic))
+                {
+                    return Unauthorized("Invalid token");
+                }
+
+                // Verify the booking belongs to the authenticated user
+                var existingBooking = await _service.GetBookingById(id);
+                if (existingBooking.EVOwnerNIC != nic)
+                {
+                    return Forbid("You can only cancel your own bookings");
+                }
+
+                await _service.CancelBooking(id);
+                return Ok(new { Message = "Booking cancelled successfully" });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { Message = ex.Message });
+            }
+        }
+
+        [HttpGet("my-bookings")]
+        [Authorize(Roles = "EVOwner")]
+        public async Task<IActionResult> GetMyBookings()
+        {
+            try
+            {
+                // Get NIC from JWT token
+                var nic = User.FindFirst("nic")?.Value;
+                if (string.IsNullOrEmpty(nic))
+                {
+                    return Unauthorized("Invalid token");
+                }
+
+                var bookings = await _service.GetBookingsByEVOwner(nic);
+                return Ok(bookings);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { Message = ex.Message });
+            }
+        }
+
+        [HttpGet("my-bookings/upcoming")]
+        [Authorize(Roles = "EVOwner")]
+        public async Task<IActionResult> GetMyUpcomingBookings()
+        {
+            try
+            {
+                var nic = User.FindFirst("nic")?.Value;
+                if (string.IsNullOrEmpty(nic))
+                {
+                    return Unauthorized("Invalid token");
+                }
+
+                var bookings = await _service.GetUpcomingBookingsByEVOwner(nic);
+                return Ok(bookings);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { Message = ex.Message });
+            }
+        }
+
+        [HttpGet("my-bookings/history")]
+        [Authorize(Roles = "EVOwner")]
+        public async Task<IActionResult> GetMyBookingHistory()
+        {
+            try
+            {
+                var nic = User.FindFirst("nic")?.Value;
+                if (string.IsNullOrEmpty(nic))
+                {
+                    return Unauthorized("Invalid token");
+                }
+
+                var bookings = await _service.GetPastBookingsByEVOwner(nic);
+                return Ok(bookings);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { Message = ex.Message });
+            }
+        }
+
+        [HttpGet("pending")]
+        [Authorize(Roles = "Backoffice,StationOperator")]
+        public async Task<IActionResult> GetPendingBookings()
+        {
+            try
+            {
+                var bookings = await _service.GetPendingBookings();
+                return Ok(bookings);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { Message = ex.Message });
+            }
+        }
+
+        [HttpGet]
+        [Authorize(Roles = "Backoffice,StationOperator,EVOwner")]
+        public async Task<IActionResult> GetAllBookings()
+        {
+            try
+            {
+                var bookings = await _service.GetAllBookings();
+                return Ok(new { 
+                    Message = "All bookings retrieved successfully", 
+                    Count = bookings.Count(),
+                    Bookings = bookings 
+                });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { Message = ex.Message });
+            }
+        }
+
+        [HttpPost("{id}/approve")]
+        [Authorize(Roles = "Backoffice,StationOperator")]
+        public async Task<IActionResult> ApproveBooking(Guid id)
+        {
+            try
+            {
+                var approvedBy = User.FindFirst(ClaimTypes.Name)?.Value ?? "system";
+                var result = await _service.ApproveBooking(id, approvedBy);
+                return Ok(new { Message = "Booking approved successfully", Booking = result });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { Message = ex.Message });
+            }
+        }
+
+        [HttpPost("{id}/reject")]
+        [Authorize(Roles = "Backoffice,StationOperator")]
+        public async Task<IActionResult> RejectBooking(Guid id, [FromBody] BookingApprovalDto dto)
+        {
+            try
+            {
+                var rejectedBy = User.FindFirst(ClaimTypes.Name)?.Value ?? "system";
+                var result = await _service.RejectBooking(id, rejectedBy, dto.RejectionReason ?? "No reason provided");
+                return Ok(new { Message = "Booking rejected successfully", Booking = result });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { Message = ex.Message });
+            }
+        }
+
+        [HttpPost("{id}/start")]
+        [Authorize(Roles = "StationOperator")]
+        public async Task<IActionResult> StartCharging(Guid id)
+        {
+            try
+            {
+                var startedBy = User.FindFirst(ClaimTypes.Name)?.Value ?? "operator";
+                var result = await _service.StartCharging(id, startedBy);
+                return Ok(new { Message = "Charging started successfully", Booking = result });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { Message = ex.Message });
+            }
+        }
+
+        [HttpPost("{id}/complete")]
+        [Authorize(Roles = "StationOperator")]
+        public async Task<IActionResult> CompleteCharging(Guid id)
+        {
+            try
+            {
+                var completedBy = User.FindFirst(ClaimTypes.Name)?.Value ?? "operator";
+                var result = await _service.CompleteCharging(id, completedBy);
+                return Ok(new { Message = "Charging completed successfully", Booking = result });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { Message = ex.Message });
+            }
+        }
+
+        [HttpGet("active")]
+        [Authorize(Roles = "Backoffice,StationOperator")]
+        public async Task<IActionResult> GetActiveBookings()
+        {
+            try
+            {
+                var bookings = await _service.GetActiveBookings();
+                return Ok(new { 
+                    Message = "Active bookings retrieved successfully", 
+                    Count = bookings.Count(),
+                    Bookings = bookings 
+                });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { Message = ex.Message });
+            }
+        }
+
+        [HttpGet("station/{stationId}")]
+        [Authorize(Roles = "Backoffice,StationOperator")]
+        public async Task<IActionResult> GetStationBookings(Guid stationId)
+        {
+            try
+            {
+                var bookings = await _service.GetBookingsByStation(stationId);
+                return Ok(new { 
+                    Message = "Station bookings retrieved successfully", 
+                    Count = bookings.Count(),
+                    Bookings = bookings 
+                });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { Message = ex.Message });
+            }
+        }
+
+        [HttpGet("station/{stationId}/active")]
+        [Authorize(Roles = "Backoffice,StationOperator")]
+        public async Task<IActionResult> GetActiveStationBookings(Guid stationId)
+        {
+            try
+            {
+                var bookings = await _service.GetActiveBookingsByStation(stationId);
+                return Ok(new { 
+                    Message = "Active station bookings retrieved successfully", 
+                    Count = bookings.Count(),
+                    Bookings = bookings 
+                });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { Message = ex.Message });
+            }
+        }
+
+        [HttpGet("station/{stationId}/pending")]
+        [Authorize(Roles = "Backoffice,StationOperator")]
+        public async Task<IActionResult> GetPendingStationBookings(Guid stationId)
+        {
+            try
+            {
+                var bookings = await _service.GetPendingBookingsByStation(stationId);
+                return Ok(new { 
+                    Message = "Pending station bookings retrieved successfully", 
+                    Count = bookings.Count(),
+                    Bookings = bookings 
+                });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { Message = ex.Message });
+            }
+        }
+
+        [HttpPost("{id}/change-status")]
+        [Authorize(Roles = "StationOperator,Backoffice")]
+        public async Task<IActionResult> ChangeBookingStatus(Guid id, [FromBody] ChangeBookingStatusDto dto)
+        {
+            try
+            {
+                var changedBy = User.FindFirst(ClaimTypes.Name)?.Value ?? "operator";
+                var result = await _service.ChangeBookingStatus(id, dto.NewStatus, changedBy, dto.Reason);
+                return Ok(new { 
+                    Message = $"Booking status changed to {dto.NewStatus} successfully", 
+                    Booking = result 
+                });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { Message = ex.Message });
+            }
+        }
+
+        [HttpGet("my-bookings/{id}")]
+        [Authorize(Roles = "EVOwner")]
+        public async Task<IActionResult> GetMyBookingById(Guid id)
+        {
+            try
+            {
+                var nic = User.FindFirst("nic")?.Value;
+                if (string.IsNullOrEmpty(nic))
+                {
+                    return Unauthorized("Invalid token");
+                }
+
+                // Verify the booking belongs to the authenticated user
+                var booking = await _service.GetBookingById(id);
+                if (booking.EVOwnerNIC != nic)
+                {
+                    return Forbid("You can only access your own bookings");
+                }
+
+                return Ok(booking);
+            }
+            catch (Exception ex)
+            {
+                return NotFound(new { Message = ex.Message });
+            }
+        }
+    }
+}

@@ -1,0 +1,155 @@
+using EVChargingSystem.Api.DTOs;
+using EVChargingSystem.Api.Services;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
+
+namespace EvChargingAPI.Controllers
+{
+    [ApiController]
+    [Route("api/[controller]")]
+    public class EVOwnerAuthController : ControllerBase
+    {
+        private readonly IEVOwnerService _evOwnerService;
+
+        public EVOwnerAuthController(IEVOwnerService evOwnerService)
+        {
+            _evOwnerService = evOwnerService;
+        }
+
+        [HttpPost("register")]
+        public async Task<IActionResult> Register([FromBody] EVOwnerRegistrationDto dto)
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(dto.NIC) || string.IsNullOrEmpty(dto.Password))
+                {
+                    return BadRequest("NIC and Password are required");
+                }
+
+                if (dto.Password.Length < 6)
+                {
+                    return BadRequest("Password must be at least 6 characters long");
+                }
+
+                var result = await _evOwnerService.RegisterEVOwner(dto);
+                return Ok(new { Message = "Registration successful", EVOwner = result });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { Message = ex.Message });
+            }
+        }
+
+        [HttpPost("login")]
+        public async Task<IActionResult> Login([FromBody] EVOwnerLoginDto dto)
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(dto.NIC) || string.IsNullOrEmpty(dto.Password))
+                {
+                    return BadRequest("NIC and Password are required");
+                }
+
+                var result = await _evOwnerService.AuthenticateEVOwner(dto);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return Unauthorized(new { Message = ex.Message });
+            }
+        }
+
+        [HttpGet("profile")]
+        [Authorize(Roles = "EVOwner")]
+        public async Task<IActionResult> GetProfile()
+        {
+            try
+            {
+                var nic = User.FindFirst("nic")?.Value;
+                if (string.IsNullOrEmpty(nic))
+                {
+                    return Unauthorized("Invalid token");
+                }
+
+                var evOwner = await _evOwnerService.GetEVOwnerByNIC(nic);
+                return Ok(evOwner);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { Message = ex.Message });
+            }
+        }
+
+        [HttpPut("profile")]
+        [Authorize(Roles = "EVOwner")]
+        public async Task<IActionResult> UpdateProfile([FromBody] EVOwnerDto dto)
+        {
+            try
+            {
+                var nic = User.FindFirst("nic")?.Value;
+                if (string.IsNullOrEmpty(nic))
+                {
+                    return Unauthorized("Invalid token");
+                }
+
+                // Ensure user can only update their own profile
+                if (dto.NIC != nic)
+                {
+                    return Forbid("You can only update your own profile");
+                }
+
+                var result = await _evOwnerService.SelfUpdateProfile(nic, dto);
+                return Ok(new { Message = "Profile updated successfully", EVOwner = result });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { Message = ex.Message });
+            }
+        }
+
+        [HttpPost("deactivate")]
+        [Authorize(Roles = "EVOwner")]
+        public async Task<IActionResult> DeactivateAccount()
+        {
+            try
+            {
+                var nic = User.FindFirst("nic")?.Value;
+                if (string.IsNullOrEmpty(nic))
+                {
+                    return Unauthorized("Invalid token");
+                }
+
+                await _evOwnerService.SelfDeactivateAccount(nic);
+                return Ok(new { Message = "Account deactivated successfully. Contact support for reactivation." });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { Message = ex.Message });
+            }
+        }
+
+        [HttpPost("reactivate/{nic}")]
+        [Authorize(Policy = "BackofficeOnly")]
+        public async Task<IActionResult> ReactivateAccount(string nic)
+        {
+            try
+            {
+                var backofficeUser = User.FindFirst(ClaimTypes.Name)?.Value ?? "backoffice";
+                
+                var canReactivate = await _evOwnerService.CanReactivateAccount(nic);
+                if (!canReactivate)
+                {
+                    return BadRequest("Account cannot be reactivated or is already active");
+                }
+
+                await _evOwnerService.ReactivateAccount(nic, backofficeUser);
+                return Ok(new { Message = "Account reactivated successfully" });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { Message = ex.Message });
+            }
+        }
+    }
+}

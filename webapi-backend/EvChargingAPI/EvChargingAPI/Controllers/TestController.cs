@@ -1,0 +1,209 @@
+using EVChargingSystem.Api.Services;
+using Microsoft.AspNetCore.Mvc;
+
+namespace EvChargingAPI.Controllers
+{
+    [Route("api/[controller]")]
+    [ApiController]
+    public class TestController : ControllerBase
+    {
+        private readonly IGoogleMapsService _googleMapsService;
+        private readonly IQRCodeService _qrCodeService;
+        private readonly IEVOwnerService _evOwnerService;
+
+        public TestController(IGoogleMapsService googleMapsService, IQRCodeService qrCodeService, IEVOwnerService evOwnerService)
+        {
+            _googleMapsService = googleMapsService;
+            _qrCodeService = qrCodeService;
+            _evOwnerService = evOwnerService;
+        }
+
+        [HttpGet("geocode")]
+        public async Task<IActionResult> TestGeocode([FromQuery] string address)
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(address))
+                {
+                    return BadRequest("Address parameter is required");
+                }
+
+                var (latitude, longitude) = await _googleMapsService.GeocodeAddress(address);
+                
+                return Ok(new
+                {
+                    Address = address,
+                    Latitude = latitude,
+                    Longitude = longitude,
+                    Message = "Geocoding successful"
+                });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { Message = ex.Message });
+            }
+        }
+
+        [HttpGet("reverse-geocode")]
+        public async Task<IActionResult> TestReverseGeocode([FromQuery] double latitude, [FromQuery] double longitude)
+        {
+            try
+            {
+                var address = await _googleMapsService.ReverseGeocode(latitude, longitude);
+                
+                return Ok(new
+                {
+                    Latitude = latitude,
+                    Longitude = longitude,
+                    Address = address,
+                    Message = "Reverse geocoding successful"
+                });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { Message = ex.Message });
+            }
+        }
+
+        [HttpGet("validate-coordinates")]
+        public async Task<IActionResult> TestValidateCoordinates([FromQuery] double latitude, [FromQuery] double longitude)
+        {
+            try
+            {
+                var isValid = await _googleMapsService.ValidateCoordinates(latitude, longitude);
+                
+                return Ok(new
+                {
+                    Latitude = latitude,
+                    Longitude = longitude,
+                    IsValid = isValid,
+                    Message = isValid ? "Coordinates are valid" : "Coordinates are invalid"
+                });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { Message = ex.Message });
+            }
+        }
+
+        [HttpGet("api-test")]
+        public async Task<IActionResult> TestApiKey()
+        {
+            try
+            {
+                // Test with Colombo, Sri Lanka coordinates
+                var isValid = await _googleMapsService.ValidateCoordinates(6.9271, 79.8612);
+                
+                return Ok(new
+                {
+                    TestCoordinates = "Colombo, Sri Lanka (6.9271, 79.8612)",
+                    ApiKeyWorking = isValid,
+                    Message = isValid ? "Google Maps API key is working" : "Google Maps API key may have issues"
+                });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { 
+                    Message = "Google Maps API test failed", 
+                    Error = ex.Message 
+                });
+            }
+        }
+
+        [HttpPost("test-qr-scan")]
+        public async Task<IActionResult> TestQRScan([FromBody] string qrCodeData)
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(qrCodeData))
+                {
+                    return BadRequest("QR code data is required");
+                }
+
+                // Test the new booking ID extraction
+                var bookingId = await _qrCodeService.GetBookingIdFromQRCode(qrCodeData);
+                
+                if (bookingId == null)
+                {
+                    return BadRequest("Invalid QR code or booking not found");
+                }
+
+                // Also test the full validation for comparison
+                var fullData = await _qrCodeService.ValidateQRCode(qrCodeData);
+
+                return Ok(new
+                {
+                    Message = "QR code scanned successfully",
+                    BookingId = bookingId,
+                    FullQRData = fullData,
+                    ScanTimestamp = DateTime.UtcNow,
+                    Note = "BookingId is what you get from scanning. FullQRData shows all available information."
+                });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { Message = ex.Message });
+            }
+        }
+
+        [HttpGet("test-evowners")]
+        public async Task<IActionResult> TestGetAllEVOwners()
+        {
+            try
+            {
+                var allOwners = await _evOwnerService.GetAllEVOwners();
+                var activeOwners = await _evOwnerService.GetActiveEVOwners();
+                var inactiveOwners = await _evOwnerService.GetInactiveEVOwners();
+
+                return Ok(new
+                {
+                    Message = "EV Owners data retrieved successfully",
+                    TestTimestamp = DateTime.UtcNow,
+                    Summary = new
+                    {
+                        TotalEVOwners = allOwners.Count(),
+                        ActiveEVOwners = activeOwners.Count(),
+                        InactiveEVOwners = inactiveOwners.Count()
+                    },
+                    Data = new
+                    {
+                        AllOwners = allOwners,
+                        ActiveOwners = activeOwners,
+                        InactiveOwners = inactiveOwners
+                    },
+                    Note = "This endpoint demonstrates all EV owner retrieval functionality."
+                });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { Message = ex.Message });
+            }
+        }
+
+        [HttpGet("test-evowner-by-nic")]
+        public async Task<IActionResult> TestGetEVOwnerByNIC([FromQuery] string nic)
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(nic))
+                {
+                    return BadRequest("NIC parameter is required");
+                }
+
+                var owner = await _evOwnerService.GetEVOwnerByNIC(nic);
+                
+                return Ok(new
+                {
+                    Message = "EV Owner retrieved successfully",
+                    NIC = nic,
+                    EVOwner = owner,
+                    TestTimestamp = DateTime.UtcNow
+                });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { Message = ex.Message });
+            }
+        }
+    }
+}

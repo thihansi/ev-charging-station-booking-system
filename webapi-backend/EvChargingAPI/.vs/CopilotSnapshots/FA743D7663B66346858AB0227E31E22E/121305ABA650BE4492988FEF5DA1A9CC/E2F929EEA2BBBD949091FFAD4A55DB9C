@@ -1,0 +1,339 @@
+﻿using EVChargingSystem.Api.DTOs;
+using EVChargingSystem.Api.Services;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
+
+namespace EvChargingAPI.Controllers
+{
+    [Route("api/[controller]")]
+    [ApiController]
+    public class BookingsController : ControllerBase
+    {
+        private readonly IBookingService _service;
+
+        public BookingsController(IBookingService service)
+        {
+            _service = service;
+        }
+
+        [HttpPost("summary")]
+        [Authorize(Roles = "EVOwner")]
+        public async Task<IActionResult> GetBookingSummary([FromBody] BookingDto dto)
+        {
+            try
+            {
+                var nic = User.FindFirst("nic")?.Value;
+                if (string.IsNullOrEmpty(nic))
+                {
+                    return Unauthorized("Invalid token");
+                }
+
+                dto.EVOwnerNIC = nic;
+                var summary = await _service.GetBookingSummary(dto);
+                return Ok(summary);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { Message = ex.Message });
+            }
+        }
+
+        [HttpPost]
+        [Authorize(Roles = "EVOwner")]
+        public async Task<IActionResult> CreateBooking([FromBody] BookingDto dto)
+        {
+            try
+            {
+                // Get NIC from JWT token
+                var nic = User.FindFirst("nic")?.Value;
+                if (string.IsNullOrEmpty(nic))
+                {
+                    return Unauthorized("Invalid token");
+                }
+
+                // Ensure the booking is for the authenticated user
+                dto.EVOwnerNIC = nic;
+
+                var result = await _service.CreateBooking(dto);
+                return Ok(new { Message = "Booking created successfully. Awaiting approval.", Booking = result });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { Message = ex.Message });
+            }
+        }
+
+        [HttpPut("{id}")]
+        [Authorize(Roles = "EVOwner")]
+        public async Task<IActionResult> UpdateBooking(Guid id, [FromBody] BookingDto dto)
+        {
+            try
+            {
+                // Get NIC from JWT token
+                var nic = User.FindFirst("nic")?.Value;
+                if (string.IsNullOrEmpty(nic))
+                {
+                    return Unauthorized("Invalid token");
+                }
+
+                // Verify the booking belongs to the authenticated user
+                var existingBooking = await _service.GetBookingById(id);
+                if (existingBooking.EVOwnerNIC != nic)
+                {
+                    return Forbid("You can only update your own bookings");
+                }
+
+                dto.EVOwnerNIC = nic;
+                var result = await _service.UpdateBooking(id, dto);
+                return Ok(new { Message = "Booking updated successfully", Booking = result });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { Message = ex.Message });
+            }
+        }
+
+        [HttpDelete("{id}")]
+        [Authorize(Roles = "EVOwner")]
+        public async Task<IActionResult> CancelBooking(Guid id)
+        {
+            try
+            {
+                // Get NIC from JWT token
+                var nic = User.FindFirst("nic")?.Value;
+                if (string.IsNullOrEmpty(nic))
+                {
+                    return Unauthorized("Invalid token");
+                }
+
+                // Verify the booking belongs to the authenticated user
+                var existingBooking = await _service.GetBookingById(id);
+                if (existingBooking.EVOwnerNIC != nic)
+                {
+                    return Forbid("You can only cancel your own bookings");
+                }
+
+                await _service.CancelBooking(id);
+                return Ok(new { Message = "Booking cancelled successfully" });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { Message = ex.Message });
+            }
+        }
+
+        [HttpGet("my-bookings")]
+        [Authorize(Roles = "EVOwner")]
+        public async Task<IActionResult> GetMyBookings()
+        {
+            try
+            {
+                // Get NIC from JWT token
+                var nic = User.FindFirst("nic")?.Value;
+                if (string.IsNullOrEmpty(nic))
+                {
+                    return Unauthorized("Invalid token");
+                }
+
+                var bookings = await _service.GetBookingsByEVOwner(nic);
+                return Ok(bookings);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { Message = ex.Message });
+            }
+        }
+
+        [HttpGet("my-bookings/upcoming")]
+        [Authorize(Roles = "EVOwner")]
+        public async Task<IActionResult> GetMyUpcomingBookings()
+        {
+            try
+            {
+                var nic = User.FindFirst("nic")?.Value;
+                if (string.IsNullOrEmpty(nic))
+                {
+                    return Unauthorized("Invalid token");
+                }
+
+                var bookings = await _service.GetUpcomingBookingsByEVOwner(nic);
+                return Ok(bookings);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { Message = ex.Message });
+            }
+        }
+
+        [HttpGet("my-bookings/history")]
+        [Authorize(Roles = "EVOwner")]
+        public async Task<IActionResult> GetMyBookingHistory()
+        {
+            try
+            {
+                var nic = User.FindFirst("nic")?.Value;
+                if (string.IsNullOrEmpty(nic))
+                {
+                    return Unauthorized("Invalid token");
+                }
+
+                var bookings = await _service.GetPastBookingsByEVOwner(nic);
+                return Ok(bookings);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { Message = ex.Message });
+            }
+        }
+
+        [HttpGet("pending")]
+        [Authorize(Roles = "Backoffice,StationOperator")]
+        public async Task<IActionResult> GetPendingBookings()
+        {
+            try
+            {
+                var bookings = await _service.GetPendingBookings();
+                return Ok(bookings);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { Message = ex.Message });
+            }
+        }
+
+        [HttpPost("{id}/approve")]
+        [Authorize(Roles = "Backoffice,StationOperator")]
+        public async Task<IActionResult> ApproveBooking(Guid id)
+        {
+            try
+            {
+                var approvedBy = User.FindFirst(ClaimTypes.Name)?.Value ?? "system";
+                var result = await _service.ApproveBooking(id, approvedBy);
+                return Ok(new { Message = "Booking approved successfully", Booking = result });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { Message = ex.Message });
+            }
+        }
+
+        [HttpPost("{id}/reject")]
+        [Authorize(Roles = "Backoffice,StationOperator")]
+        public async Task<IActionResult> RejectBooking(Guid id, [FromBody] BookingApprovalDto dto)
+        {
+            try
+            {
+                var rejectedBy = User.FindFirst(ClaimTypes.Name)?.Value ?? "system";
+                var result = await _service.RejectBooking(id, rejectedBy, dto.RejectionReason ?? "No reason provided");
+                return Ok(new { Message = "Booking rejected successfully", Booking = result });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { Message = ex.Message });
+            }
+        }
+
+        [HttpGet("{id}/qrcode")]
+        [Authorize(Roles = "EVOwner")]
+        public async Task<IActionResult> GetQRCode(Guid id)
+        {
+            try
+            {
+                var nic = User.FindFirst("nic")?.Value;
+                if (string.IsNullOrEmpty(nic))
+                {
+                    return Unauthorized("Invalid token");
+                }
+
+                // Verify the booking belongs to the authenticated user
+                var booking = await _service.GetBookingById(id);
+                if (booking.EVOwnerNIC != nic)
+                {
+                    return Forbid("You can only access your own booking QR codes");
+                }
+
+                var qrCode = await _service.GenerateQRCodeForBooking(id);
+                return Ok(new { QRCode = qrCode });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { Message = ex.Message });
+            }
+        }
+
+        [HttpPost("validate-qr")]
+        [Authorize(Roles = "StationOperator")]
+        public async Task<IActionResult> ValidateQRCode([FromBody] string qrCodeData)
+        {
+            try
+            {
+                var bookingData = await _service.ValidateQRCode(qrCodeData);
+                if (bookingData == null)
+                {
+                    return BadRequest(new { Message = "Invalid or expired QR code" });
+                }
+
+                return Ok(new { Message = "QR code is valid", BookingData = bookingData });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { Message = ex.Message });
+            }
+        }
+
+        [HttpPost("scan-qr")]
+        [Authorize(Roles = "StationOperator")]
+        public async Task<IActionResult> ScanQRCode([FromBody] string qrCodeData)
+        {
+            try
+            {
+                var bookingId = await _service.GetBookingIdFromQRCode(qrCodeData);
+                if (bookingId == null)
+                {
+                    return BadRequest(new { Message = "Invalid or expired QR code" });
+                }
+
+                return Ok(new { 
+                    Message = "QR code scanned successfully", 
+                    BookingId = bookingId,
+                    ScanTimestamp = DateTime.UtcNow
+                });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { Message = ex.Message });
+            }
+        }
+
+        [HttpGet]
+        [Authorize(Policy = "BackofficeOnly")]
+        public async Task<IActionResult> GetAllBookings()
+        {
+            try
+            {
+                var bookings = await _service.GetAllBookings();
+                return Ok(bookings);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { Message = ex.Message });
+            }
+        }
+
+        [HttpGet("{id}")]
+        [Authorize(Roles = "Backoffice,StationOperator")]
+        public async Task<IActionResult> GetBookingById(Guid id)
+        {
+            try
+            {
+                var booking = await _service.GetBookingById(id);
+                return Ok(booking);
+            }
+            catch (Exception ex)
+            {
+                return NotFound(new { Message = ex.Message });
+            }
+        }
+    }
+}

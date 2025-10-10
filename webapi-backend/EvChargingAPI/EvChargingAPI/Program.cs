@@ -1,0 +1,98 @@
+using EVChargingSystem.Api.Configurations;
+using EVChargingSystem.Api.Repositories;
+using EVChargingSystem.Api.Services;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
+
+var builder = WebApplication.CreateBuilder(args);
+
+// Add services to the container.
+builder.Services.AddControllers();
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
+
+// Add HttpClient for Google Maps Service
+builder.Services.AddHttpClient<IGoogleMapsService, GoogleMapsService>();
+
+// CORS Configuration for Vite apps
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("ViteAppCorsPolicy", policy =>
+    {
+        policy.WithOrigins(
+                "http://localhost:3000",   // Common Vite React port
+                "http://localhost:5173",   // Default Vite port
+                "http://localhost:5174",   // Alternative Vite port
+                "http://localhost:4173",   // Vite preview port
+                "http://127.0.0.1:3000",
+                "http://127.0.0.1:5173",
+                "http://127.0.0.1:5174",
+                "http://127.0.0.1:4173"
+            )
+            .AllowAnyMethod()
+            .AllowAnyHeader()
+            .AllowCredentials();
+    });
+});
+
+// MongoDB - used by all services
+builder.Services.AddSingleton<MongoDbContext>();
+
+// JWT Configuration - needs to be before services that depend on it
+var jwtConfig = builder.Configuration.GetSection("Jwt").Get<JwtConfig>();
+if (jwtConfig == null)
+{
+    throw new InvalidOperationException("JWT configuration is missing from appsettings.json");
+}
+builder.Services.AddSingleton(jwtConfig);
+
+// Services - Order matters for dependency injection
+builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<IEVOwnerService, EVOwnerService>();
+builder.Services.AddScoped<IQRCodeService, QRCodeService>(); // Add QR code service
+builder.Services.AddScoped<IBookingService, BookingService>();
+builder.Services.AddScoped<IChargingStationService, ChargingStationService>();
+
+// JWT Authentication
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer(options =>
+    {
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuer = true,
+            ValidateAudience = true,
+            ValidateLifetime = true,
+            ValidateIssuerSigningKey = true,
+            ValidIssuer = jwtConfig.Issuer,
+            ValidAudience = jwtConfig.Audience,
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtConfig.Key))
+        };
+    });
+
+builder.Services.AddAuthorization(options =>
+{
+    options.AddPolicy("BackofficeOnly", policy => policy.RequireRole("Backoffice"));
+    options.AddPolicy("StationOperatorOnly", policy => policy.RequireRole("StationOperator"));
+    options.AddPolicy("EVOwnerOnly", policy => policy.RequireRole("EVOwner"));
+});
+
+var app = builder.Build();
+
+// Configure the HTTP request pipeline.
+if (true)//app.Environment.IsDevelopment())
+{
+    app.UseSwagger();
+    app.UseSwaggerUI();
+}
+
+app.UseHttpsRedirection();
+
+// Enable CORS - Must be before Authentication and Authorization
+app.UseCors("ViteAppCorsPolicy");
+
+app.UseAuthentication();
+app.UseAuthorization();
+app.MapControllers();
+
+app.Run();

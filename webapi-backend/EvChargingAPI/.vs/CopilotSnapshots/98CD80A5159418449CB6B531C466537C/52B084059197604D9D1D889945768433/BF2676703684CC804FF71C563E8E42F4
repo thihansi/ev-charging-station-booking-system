@@ -1,0 +1,20 @@
+﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+
+namespace EVChargingSystem.Api.Entities
+{
+    public class Booking
+    {
+        [Key]
+        public Guid Id { get; set; }
+        public string EVOwnerNIC { get; set; }
+        [ForeignKey("EVOwnerNIC")]
+        public EVOwner EVOwner { get; set; }
+        public Guid ChargingStationId { get; set; }
+        [ForeignKey("ChargingStationId")]
+        public ChargingStation ChargingStation { get; set; }
+        public DateTime BookingDate { get; set; } = DateTime.UtcNow;
+        public DateTime ReservationDateTime { get; set; }
+        public bool IsActive { get; set; } = true;
+    }
+}
