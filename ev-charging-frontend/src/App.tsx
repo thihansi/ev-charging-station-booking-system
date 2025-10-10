@@ -55,16 +55,16 @@ function App() {
                 element={<UnauthorizedPage />}
               />
               <Route path={ROUTES.NOT_FOUND} element={<NotFoundPage />} />
-              
+
               {/* API Test Route - For backend connectivity testing */}
               <Route path="/api-test" element={<APITestPage />} />
-              
+
               {/* Route Test Page - For debugging navigation issues */}
               <Route path="/route-test" element={<ProfileTestPage />} />
-              
+
               {/* Simple API Connection Test */}
               <Route path="/test-connection" element={<APIConnectionTest />} />
-              
+
               {/* Login Debug Tool */}
               <Route path="/login-debug" element={<LoginDebugPage />} />
 
@@ -104,7 +104,7 @@ function App() {
                 }
               />
               {/* Charging Station Management Routes */}
-                            {/* Charging Stations Management */}
+              {/* Charging Stations Management */}
               <Route
                 path={ROUTES.BACKOFFICE.CHARGING_STATIONS}
                 element={
@@ -139,7 +139,7 @@ function App() {
                 }
               />
               */}
-                            <Route
+              <Route
                 path={ROUTES.BACKOFFICE.BOOKINGS_CREATE}
                 element={
                   <ProtectedRoute requiredRole={USER_ROLES.BACKOFFICE}>

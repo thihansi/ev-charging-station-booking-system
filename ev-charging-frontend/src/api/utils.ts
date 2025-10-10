@@ -15,18 +15,28 @@ export interface ApiError {
  * Data transformation utilities for API compatibility
  */
 
-import type { CreateChargingStationRequest, UpdateChargingStationRequest, CreateBookingRequest, CreateEVOwnerBookingRequest, ChargingStation } from "../types";
+import type {
+  CreateChargingStationRequest,
+  UpdateChargingStationRequest,
+  CreateBookingRequest,
+  CreateEVOwnerBookingRequest,
+  ChargingStation,
+} from "../types";
 
 // Transform backend charging station response to frontend format
-export const transformChargingStationFromBackend = (backendData: any): ChargingStation => {
+export const transformChargingStationFromBackend = (
+  backendData: any
+): ChargingStation => {
   // Parse schedule string (e.g., "08:00-18:00") into operational hours
   let operationalHours = undefined;
-  if (backendData.schedule && typeof backendData.schedule === 'string') {
-    const scheduleMatch = backendData.schedule.match(/^(\d{2}:\d{2})-(\d{2}:\d{2})$/);
+  if (backendData.schedule && typeof backendData.schedule === "string") {
+    const scheduleMatch = backendData.schedule.match(
+      /^(\d{2}:\d{2})-(\d{2}:\d{2})$/
+    );
     if (scheduleMatch) {
       operationalHours = {
         openTime: scheduleMatch[1],
-        closeTime: scheduleMatch[2]
+        closeTime: scheduleMatch[2],
       };
     }
   }
@@ -44,12 +54,14 @@ export const transformChargingStationFromBackend = (backendData: any): ChargingS
     isActive: backendData.isActive,
     qrCodeData: backendData.qrCodeData,
     createdAt: backendData.createdAt || new Date().toISOString(),
-    updatedAt: backendData.updatedAt || new Date().toISOString()
+    updatedAt: backendData.updatedAt || new Date().toISOString(),
   };
 };
 
 // Transform frontend charging station data to backend format
-export const transformChargingStationForBackend = (frontendData: CreateChargingStationRequest) => {
+export const transformChargingStationForBackend = (
+  frontendData: CreateChargingStationRequest
+) => {
   return {
     name: frontendData.name,
     address: frontendData.address,
@@ -58,18 +70,23 @@ export const transformChargingStationForBackend = (frontendData: CreateChargingS
     type: frontendData.stationType === "DC" ? 1 : 0, // Convert string to number
     availableSlots: frontendData.totalSlots,
     schedule: `${frontendData.operationalHours.openTime}-${frontendData.operationalHours.closeTime}`,
-    isActive: true
+    isActive: true,
   };
 };
 
 // Transform frontend update data to backend format
-export const transformUpdateChargingStationForBackend = (frontendData: UpdateChargingStationRequest) => {
+export const transformUpdateChargingStationForBackend = (
+  frontendData: UpdateChargingStationRequest
+) => {
   const backendData: any = {};
-  
+
   if (frontendData.name !== undefined) backendData.name = frontendData.name;
-  if (frontendData.address !== undefined) backendData.address = frontendData.address;
-  if (frontendData.latitude !== undefined) backendData.latitude = frontendData.latitude;
-  if (frontendData.longitude !== undefined) backendData.longitude = frontendData.longitude;
+  if (frontendData.address !== undefined)
+    backendData.address = frontendData.address;
+  if (frontendData.latitude !== undefined)
+    backendData.latitude = frontendData.latitude;
+  if (frontendData.longitude !== undefined)
+    backendData.longitude = frontendData.longitude;
   if (frontendData.stationType !== undefined) {
     backendData.type = frontendData.stationType === "DC" ? 1 : 0;
   }
@@ -79,7 +96,7 @@ export const transformUpdateChargingStationForBackend = (frontendData: UpdateCha
   if (frontendData.operationalHours !== undefined) {
     backendData.schedule = `${frontendData.operationalHours.openTime}-${frontendData.operationalHours.closeTime}`;
   }
-  
+
   return backendData;
 };
 
@@ -89,7 +106,8 @@ export const transformUpdateChargingStationForBackend = (frontendData: UpdateCha
 export const getErrorMessage = (error: unknown): string => {
   if (error instanceof AxiosError) {
     // Check for specific error messages from the backend
-    const backendMessage = error.response?.data?.message || error.response?.data?.Message;
+    const backendMessage =
+      error.response?.data?.message || error.response?.data?.Message;
     if (backendMessage) {
       return backendMessage;
     }
@@ -172,10 +190,13 @@ export const apiWrapper = async <T>(
     return await apiCall();
   } catch (error) {
     const apiError = createApiError(error);
-    
+
     // Log error in development
     if (import.meta.env.DEV) {
-      console.error(`[API Error${errorContext ? ` - ${errorContext}` : ""}]`, apiError);
+      console.error(
+        `[API Error${errorContext ? ` - ${errorContext}` : ""}]`,
+        apiError
+      );
     }
 
     // Re-throw with enhanced error information
@@ -192,12 +213,15 @@ export const checkApiHealth = async (): Promise<boolean> => {
   try {
     // You can implement a health check endpoint or use any lightweight endpoint
     // For now, we'll use a simple request to the auth endpoint
-    const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/auth/health`, {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    });
+    const response = await fetch(
+      `${import.meta.env.VITE_API_BASE_URL}/api/auth/health`,
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
     return response.ok;
   } catch (error) {
     console.warn("[API Health Check] Failed:", error);
@@ -210,7 +234,7 @@ export const checkApiHealth = async (): Promise<boolean> => {
  */
 export const validateApiConfig = (): boolean => {
   const baseUrl = import.meta.env.VITE_API_BASE_URL;
-  
+
   if (!baseUrl) {
     console.error("[API Config] VITE_API_BASE_URL is not configured");
     return false;
@@ -241,18 +265,22 @@ export const retryRequest = async <T>(
       return await request();
     } catch (error) {
       lastError = error;
-      
+
       if (attempt === maxRetries) {
         break;
       }
 
       // Don't retry on 4xx errors (client errors)
-      if (error instanceof AxiosError && error.response?.status && error.response.status < 500) {
+      if (
+        error instanceof AxiosError &&
+        error.response?.status &&
+        error.response.status < 500
+      ) {
         break;
       }
 
       // Wait before retrying
-      await new Promise(resolve => setTimeout(resolve, delay * attempt));
+      await new Promise((resolve) => setTimeout(resolve, delay * attempt));
     }
   }
 
@@ -260,18 +288,22 @@ export const retryRequest = async <T>(
 };
 
 // Transform frontend booking data to backend format (Admin/Backoffice)
-export const transformBookingForBackend = (frontendData: CreateBookingRequest) => {
+export const transformBookingForBackend = (
+  frontendData: CreateBookingRequest
+) => {
   return {
     evOwnerNIC: frontendData.evOwnerNic, // Convert camelCase to backend format
     chargingStationId: frontendData.chargingStationId,
-    reservationDateTime: frontendData.reservationDateTime
+    reservationDateTime: frontendData.reservationDateTime,
   };
 };
 
 // Transform frontend EV Owner booking data to backend format
-export const transformEVOwnerBookingForBackend = (frontendData: CreateEVOwnerBookingRequest) => {
+export const transformEVOwnerBookingForBackend = (
+  frontendData: CreateEVOwnerBookingRequest
+) => {
   return {
     chargingStationId: frontendData.chargingStationId,
-    reservationDateTime: frontendData.reservationDateTime
+    reservationDateTime: frontendData.reservationDateTime,
   };
 };

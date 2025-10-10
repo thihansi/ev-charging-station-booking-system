@@ -1,5 +1,9 @@
 import apiClient from "./client";
-import { transformChargingStationForBackend, transformUpdateChargingStationForBackend, transformChargingStationFromBackend } from "./utils";
+import {
+  transformChargingStationForBackend,
+  transformUpdateChargingStationForBackend,
+  transformChargingStationFromBackend,
+} from "./utils";
 import type {
   ChargingStation,
   CreateChargingStationRequest,
@@ -9,25 +13,19 @@ import type {
 export const chargingStationApi = {
   // Get all charging stations
   getAll: async (): Promise<ChargingStation[]> => {
-    const response = await apiClient.get<any[]>(
-      "/api/ChargingStations"
-    );
+    const response = await apiClient.get<any[]>("/api/ChargingStations");
     return response.data.map(transformChargingStationFromBackend);
   },
 
   // Get active charging stations
   getActive: async (): Promise<ChargingStation[]> => {
-    const response = await apiClient.get<any[]>(
-      "/api/ChargingStations/active"
-    );
+    const response = await apiClient.get<any[]>("/api/ChargingStations/active");
     return response.data.map(transformChargingStationFromBackend);
   },
 
   // Get charging station by ID
   getById: async (id: string): Promise<ChargingStation> => {
-    const response = await apiClient.get<any>(
-      `/api/ChargingStations/${id}`
-    );
+    const response = await apiClient.get<any>(`/api/ChargingStations/${id}`);
     return transformChargingStationFromBackend(response.data);
   },
 
@@ -61,13 +59,17 @@ export const chargingStationApi = {
 
   // Activate charging station
   activate: async (id: string): Promise<{ message: string }> => {
-    const response = await apiClient.post(`/api/ChargingStations/${id}/activate`);
+    const response = await apiClient.post(
+      `/api/ChargingStations/${id}/activate`
+    );
     return response.data;
   },
 
   // Deactivate charging station
   deactivate: async (id: string): Promise<{ message: string }> => {
-    const response = await apiClient.post(`/api/ChargingStations/${id}/deactivate`);
+    const response = await apiClient.post(
+      `/api/ChargingStations/${id}/deactivate`
+    );
     return response.data;
   },
 

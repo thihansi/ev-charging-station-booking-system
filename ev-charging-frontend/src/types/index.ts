@@ -126,10 +126,10 @@ export interface Booking {
 }
 
 export type BookingStatus =
-  | "Pending"    // 0
-  | "Approved"   // 1
-  | "Rejected"   // 2
-  | "Completed"  // 3
+  | "Pending" // 0
+  | "Approved" // 1
+  | "Rejected" // 2
+  | "Completed" // 3
   | "Cancelled"; // 4
 
 // Enum mapping for backend compatibility
@@ -138,51 +138,62 @@ export const BookingStatusEnum = {
   Approved: 1,
   Rejected: 2,
   Completed: 3,
-  Cancelled: 4
+  Cancelled: 4,
 } as const;
 
 // Reverse mapping from numeric values to string
 export const BookingStatusFromEnum: Record<number, BookingStatus> = {
   0: "Pending",
-  1: "Approved", 
+  1: "Approved",
   2: "Rejected",
   3: "Completed",
-  4: "Cancelled"
+  4: "Cancelled",
 };
 
 // User-friendly status display names
 export const BookingStatusDisplay: Record<BookingStatus, string> = {
   Pending: "Pending",
-  Approved: "Approved", 
+  Approved: "Approved",
   Rejected: "Rejected",
   Completed: "Completed",
-  Cancelled: "Cancelled"
+  Cancelled: "Cancelled",
 };
 
 // Function to get display name for status
-export const getBookingStatusDisplay = (status: BookingStatus | number): string => {
-  if (typeof status === 'number') {
+export const getBookingStatusDisplay = (
+  status: BookingStatus | number
+): string => {
+  if (typeof status === "number") {
     const statusString = BookingStatusFromEnum[status];
-    return statusString ? BookingStatusDisplay[statusString] : 'Unknown';
+    return statusString ? BookingStatusDisplay[statusString] : "Unknown";
   }
-  return BookingStatusDisplay[status] || 'Unknown';
+  return BookingStatusDisplay[status] || "Unknown";
 };
 
 // Function to get status color for UI components
-export const getBookingStatusColor = (status: BookingStatus): "default" | "primary" | "secondary" | "error" | "info" | "success" | "warning" => {
+export const getBookingStatusColor = (
+  status: BookingStatus
+):
+  | "default"
+  | "primary"
+  | "secondary"
+  | "error"
+  | "info"
+  | "success"
+  | "warning" => {
   switch (status) {
-    case 'Pending':
-      return 'warning';
-    case 'Approved':
-      return 'success';
-    case 'Rejected':
-      return 'error';
-    case 'Completed':
-      return 'primary';
-    case 'Cancelled':
-      return 'error';
+    case "Pending":
+      return "warning";
+    case "Approved":
+      return "success";
+    case "Rejected":
+      return "error";
+    case "Completed":
+      return "primary";
+    case "Cancelled":
+      return "error";
     default:
-      return 'default';
+      return "default";
   }
 };
 
