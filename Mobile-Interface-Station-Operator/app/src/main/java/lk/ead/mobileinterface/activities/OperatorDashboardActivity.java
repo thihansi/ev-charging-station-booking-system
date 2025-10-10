@@ -127,7 +127,8 @@ public class OperatorDashboardActivity extends AppCompatActivity {
                 if (id == R.id.tab_bookings) {
                     return true; // already here
                 } else if (id == R.id.tab_scan) {
-                    Toast.makeText(this, "Scan coming soon", Toast.LENGTH_SHORT).show();
+                    startActivity(new Intent(this, ScanQRActivity.class));
+                    overridePendingTransition(0, 0);
                     return true;
                 } else if (id == R.id.tab_profile) {
                     Toast.makeText(this, "Profile coming soon", Toast.LENGTH_SHORT).show();

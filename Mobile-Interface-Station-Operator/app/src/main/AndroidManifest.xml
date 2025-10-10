@@ -21,6 +21,12 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.EVStation">
         <activity
+            android:name=".activities.ScanQRActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activities.BookingDetailsActivity"
+            android:exported="false" />
+        <activity
             android:name=".activities.LoginActivity"
             android:exported="false" />
         <activity
