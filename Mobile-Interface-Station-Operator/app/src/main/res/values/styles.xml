@@ -1,8 +1,67 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+
     <style name="AppButton">
         <item name="android:backgroundTint">@color/primary_green</item>
         <item name="android:textColor">@android:color/white</item>
-<!--        <item name="android:cornerRadius">8dp</item>-->
+    </style>
+
+    <!-- 20dp rounded look used across buttons/cards -->
+    <style name="EcoRounded">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">20dp</item>
+    </style>
+
+    <!-- Primary filled button -->
+    <style name="EcoButtonPrimary" parent="Widget.Material3.Button">
+        <item name="backgroundTint">@color/ev_primary</item>
+        <item name="android:textColor">@color/ev_on_primary</item>
+        <item name="shapeAppearance">@style/EcoRounded</item>
+    </style>
+
+    <!-- Ghost/secondary button on white surfaces -->
+    <style name="EcoButtonGhost" parent="Widget.Material3.Button.OutlinedButton">
+        <item name="strokeColor">@color/ev_outline</item>
+        <item name="android:textColor">@color/ev_text</item>
+        <item name="shapeAppearance">@style/EcoRounded</item>
+    </style>
+
+    <!-- Card style for list items -->
+    <style name="EcoCard" parent="Widget.Material3.CardView.Elevated">
+        <item name="cardBackgroundColor">@color/ev_surface</item>
+        <item name="shapeAppearance">@style/EcoRounded</item>
+        <item name="android:foreground">?attr/selectableItemBackground</item>
+    </style>
+
+    <!-- Outlined text fields: small radius, transparent fill, thin stroke -->
+    <style name="EcoTextInput" parent="Widget.Material3.TextInputLayout.OutlinedBox">
+        <item name="boxBackgroundColor">@android:color/transparent</item>
+        <item name="boxStrokeColor">@color/ev_outline</item>
+        <item name="boxStrokeWidth">1dp</item>
+        <item name="boxStrokeWidthFocused">2dp</item>
+        <item name="boxCornerRadiusTopStart">10dp</item>
+        <item name="boxCornerRadiusTopEnd">10dp</item>
+        <item name="boxCornerRadiusBottomStart">10dp</item>
+        <item name="boxCornerRadiusBottomEnd">10dp</item>
+        <item name="android:textColor">@color/ev_text</item>
+        <item name="android:textColorHint">@color/ev_text_muted</item>
+        <item name="hintTextColor">@color/ev_text_muted</item>
+    </style>
+
+    <!-- Squarer primary button like inspo -->
+    <style name="EcoLoginButton" parent="Widget.Material3.Button">
+        <item name="android:textAllCaps">false</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textColor">@color/ev_on_primary</item>
+        <item name="backgroundTint">@color/ev_primary</item>
+        <item name="cornerRadius">12dp</item>
+        <item name="rippleColor">@color/ev_primary_ripple</item>
+        <item name="android:elevation">2dp</item>
+    </style>
+
+    <style name="BottomNav_NoActiveIndicator">
+        <item name="android:width">0dp</item>
+        <item name="android:height">0dp</item>
+        <item name="backgroundColor">@android:color/transparent</item>
     </style>
 </resources>

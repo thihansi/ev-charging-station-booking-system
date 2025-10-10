@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:gravity="center">
+
+        <!-- Logo -->
+        <ImageView
+            android:layout_width="140dp"
+            android:layout_height="140dp"
+            android:src="@drawable/green_go_logo"
+            android:contentDescription="@string/app_name"
+            android:layout_marginBottom="16dp" />
+
+        <!-- App name -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="GreenGo"
+            android:textStyle="bold"
+            android:textSize="32sp"
+            android:textColor="#1B5E20"
+            android:layout_marginTop="18dp" />
+
+        <!-- Subtitle -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Station Operator"
+            android:textSize="16sp"
+            android:textColor="#616771"
+            android:layout_marginTop="6dp" />
+
+        <!-- tiny progress bar -->
+        <ProgressBar
+            style="?android:attr/progressBarStyleHorizontal"
+            android:layout_width="120dp"
+            android:layout_height="6dp"
+            android:layout_marginTop="28dp"
+            android:indeterminate="true" />
+    </LinearLayout>
+</FrameLayout>

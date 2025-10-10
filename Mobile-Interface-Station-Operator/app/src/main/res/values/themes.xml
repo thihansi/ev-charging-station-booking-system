@@ -1,9 +1,32 @@
-<resources xmlns:tools="http://schemas.android.com/tools">
-    <!-- Base application theme. -->
-    <style name="Base.Theme.MobileInterface" parent="Theme.Material3.DayNight.NoActionBar">
-        <!-- Customize your light theme here. -->
-        <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="Theme.EcoCharge" parent="Theme.Material3.Light.NoActionBar">
+        <!-- Core brand -->
+        <item name="colorPrimary">@color/ev_primary</item>
+        <item name="colorPrimaryContainer">@color/ev_primary_container</item>
+        <item name="colorOnPrimary">@color/ev_on_primary</item>
+
+        <!-- Surfaces / backgrounds -->
+        <item name="android:windowBackground">@color/ev_bg</item>
+        <item name="colorSurface">@color/ev_surface</item>
+        <item name="colorOnSurface">@color/ev_text</item>
+
+        <!-- System bars -->
+        <item name="android:statusBarColor">@color/ev_surface</item>
+        <item name="android:navigationBarColor">@color/ev_surface</item>
+
+        <!-- Text defaults -->
+        <item name="android:textColor">@color/ev_text_muted</item>
+
+        <!-- Rounded components -->
+        <item name="shapeAppearanceSmallComponent">@style/EcoRounded</item>
+        <item name="shapeAppearanceMediumComponent">@style/EcoRounded</item>
+        <item name="shapeAppearanceLargeComponent">@style/EcoRounded</item>
     </style>
 
-    <style name="Theme.MobileInterface" parent="Base.Theme.MobileInterface" />
+    <style name="Theme.EcoCharge.Splash" parent="Theme.EcoCharge">
+        <item name="android:windowBackground">@color/ev_surface</item>
+    </style>
+
 </resources>

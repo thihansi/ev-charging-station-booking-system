@@ -8,4 +8,27 @@
     <color name="text_gray">#616161</color>
     <color name="background_light">#F9F9F9</color>
 <!--    <color name="text_gray">#666666</color>-->
+
+    <color name="ev_primary">#27AE60</color>          <!-- Emerald -->
+    <color name="ev_primary_container">#D9F4E7</color><!-- Mint background for pills/cards -->
+    <color name="ev_on_primary">#FFFFFF</color>
+    <color name="ev_primary_700">#1FA45A</color>   <!-- darker shade -->
+    <color name="ev_luminous_green">#1ACF55</color>   <!-- darker shade -->
+    <color name="ev_primary_ripple">#3327AE60</color> <!-- translucent ripple -->
+
+    <!-- Accents / semantic -->
+    <color name="ev_success">#22C55E</color>
+    <color name="ev_warning">#F59E0B</color>
+    <color name="ev_error">#EF4444</color>
+
+    <!-- Neutrals -->
+    <color name="ev_bg">#F6F7F9</color>               <!-- App background -->
+    <color name="ev_surface">#FFFFFF</color>          <!-- Cards / sheets -->
+    <color name="ev_outline">#E5E7EB</color>          <!-- Dividers/borders -->
+    <color name="ev_text">#111827</color>             <!-- Headings -->
+    <color name="ev_text_muted">#6B7280</color>       <!-- Body/subtext -->
+
+
+
+
 </resources>

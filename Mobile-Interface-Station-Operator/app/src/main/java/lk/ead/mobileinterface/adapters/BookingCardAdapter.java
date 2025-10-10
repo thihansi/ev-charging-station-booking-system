@@ -46,20 +46,20 @@ public class BookingCardAdapter extends RecyclerView.Adapter<BookingCardAdapter.
     public void onBindViewHolder(@NonNull VH h, int position) {
         Booking b = data.get(position);
 
-        // Owner name: you may only have NIC here; show NIC or placeholder name
-        String owner = b.getEvOwnerNic() != null ? b.getEvOwnerNic() : "EV Owner";
-        h.tvOwnerName.setText(owner);
-
-        // Short booking id
-        String shortId = b.getId() != null && b.getId().length() >= 6
+        // Booking ID (short & bold)
+        String shortId = (b.getId() != null && b.getId().length() >= 6)
                 ? b.getId().substring(0, 6) : "-";
-        h.tvBookingId.setText("ID: #" + shortId);
+        h.tvBookingIdTitle.setText("ID: #" + shortId);
 
-        // Format time & day in Asia/Colombo
+        // EV Owner NIC
+        String nic = b.getEvOwnerNic() != null ? b.getEvOwnerNic() : "-";
+        h.tvOwnerNic.setText("NIC: " + nic);
+
+        // Time & Day (as before)
         Date resv = parseIsoUtc(b.getReservationDateTime());
         if (resv != null) {
-            h.tvTime.setText(formatTimeInColombo(resv));  // 11:15 AM
-            h.tvDay.setText(relativeDayInColombo(resv));  // Today / Tomorrow / Fri, Oct 11
+            h.tvTime.setText(formatTimeInColombo(resv));
+            h.tvDay.setText(relativeDayInColombo(resv));
         } else {
             h.tvTime.setText("-");
             h.tvDay.setText("-");
@@ -71,17 +71,18 @@ public class BookingCardAdapter extends RecyclerView.Adapter<BookingCardAdapter.
     @Override public int getItemCount() { return data == null ? 0 : data.size(); }
 
     static class VH extends RecyclerView.ViewHolder {
-        TextView tvOwnerName, tvBookingId, tvTime, tvDay;
+        TextView tvBookingIdTitle, tvOwnerNic, tvTime, tvDay;
+
         VH(@NonNull View v) {
             super(v);
-            tvOwnerName = v.findViewById(R.id.tvOwnerName);
-            tvBookingId = v.findViewById(R.id.tvBookingId);
+            tvBookingIdTitle = v.findViewById(R.id.tvBookingIdTitle);
+            tvOwnerNic = v.findViewById(R.id.tvOwnerNic);
             tvTime = v.findViewById(R.id.tvTime);
             tvDay = v.findViewById(R.id.tvDay);
         }
     }
 
-    // ---------- Helpers ----------
+            // ---------- Helpers ----------
 
     private Date parseIsoUtc(String iso) {
         if (iso == null) return null;

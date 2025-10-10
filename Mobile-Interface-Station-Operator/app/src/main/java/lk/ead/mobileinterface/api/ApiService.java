@@ -8,7 +8,9 @@ import lk.ead.mobileinterface.models.StationOperatorLoginResponse;
 import lk.ead.mobileinterface.models.Station;
 
 import java.util.List;
+import java.util.Map;
 
+import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.GET;
@@ -55,4 +57,8 @@ public interface ApiService {
     @POST("api/Bookings/validate-qr")
     Call<Booking> validateQR(@Header("Authorization") String bearerToken, @Body String qrCode); // API expects raw string
 
+    @POST("api/Bookings/{id}/change-status")
+    Call<Map<String, Object>> changeBookingStatus(@Header("Authorization") String bearerToken,
+                                                  @Path("id") String id,
+                                                  @Body Map<String, Object> body);
 }

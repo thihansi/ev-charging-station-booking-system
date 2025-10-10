@@ -1,13 +1,16 @@
 package lk.ead.mobileinterface.models;
 
+import com.google.gson.annotations.SerializedName;
+
 public class Booking {
 
-    private String id;                  // UUID from API
+    private String id;
+    @SerializedName("evOwnerNIC")
     private String evOwnerNic;
-    private String chargingStationId;   // UUID from API
+    private String chargingStationId;
     private String bookingDate;
     private String reservationDateTime;
-    private int status;                 // 0..4 from API
+    private int status;
     private boolean isActive;
     private String qrCode;
     private String approvedBy;

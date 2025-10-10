@@ -2,13 +2,21 @@ package lk.ead.mobileinterface.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.graphics.Insets;
+import androidx.core.view.OnApplyWindowInsetsListener;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.google.android.material.appbar.MaterialToolbar;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -35,13 +43,12 @@ public class OperatorDashboardActivity extends AppCompatActivity {
 
     // ---- Backend status map ----
     private static final int STATUS_PENDING   = 0;
-    private static final int STATUS_APPROVED  = 1; // upcoming (future)
+    private static final int STATUS_APPROVED  = 1;
     private static final int STATUS_REJECTED  = 2;
-    private static final int STATUS_COMPLETED = 3; // past
-    private static final int STATUS_CANCELLED = 4; // past
-    private static final int STATUS_ACTIVE    = 5; // active/charging
+    private static final int STATUS_COMPLETED = 3;
+    private static final int STATUS_CANCELLED = 4;
+    private static final int STATUS_ACTIVE    = 5;
 
-    // Expand/Collapse flags
     private boolean showAllActive = false;
     private boolean showAllUpcoming = false;
     private boolean showAllPast = false;
@@ -60,6 +67,17 @@ public class OperatorDashboardActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_operator_dashboard);
 
+        // ------- Toolbar -------
+//        MaterialToolbar toolbar = findViewById(R.id.toolbar);
+//        if (toolbar != null) {
+//            setSupportActionBar(toolbar);
+//            if (getSupportActionBar() != null) {
+//                getSupportActionBar().setTitle("Dashboard");
+//                getSupportActionBar().setDisplayHomeAsUpEnabled(false);
+//            }
+//        }
+
+        // ------- Views -------
         rvActive = findViewById(R.id.rvActive);
         rvUpcoming = findViewById(R.id.rvUpcoming);
         rvPast = findViewById(R.id.rvPast);
@@ -68,16 +86,16 @@ public class OperatorDashboardActivity extends AppCompatActivity {
         btnViewAllUpcoming = findViewById(R.id.btnViewAllUpcoming);
         btnViewAllPast = findViewById(R.id.btnViewAllPast);
 
-        btnScan = findViewById(R.id.btnScan);
+//        btnScan = findViewById(R.id.btnScan);
         btnLogout = findViewById(R.id.btnLogout);
 
         rvActive.setLayoutManager(new LinearLayoutManager(this));
         rvUpcoming.setLayoutManager(new LinearLayoutManager(this));
         rvPast.setLayoutManager(new LinearLayoutManager(this));
 
-        adActive   = new BookingCardAdapter(new ArrayList<>(), this::openDetails);
-        adUpcoming = new BookingCardAdapter(new ArrayList<>(), this::openDetails);
-        adPast     = new BookingCardAdapter(new ArrayList<>(), this::openDetails);
+        adActive   = new BookingCardAdapter(new ArrayList<>(), null);
+        adUpcoming = new BookingCardAdapter(new ArrayList<>(), null);
+        adPast     = new BookingCardAdapter(new ArrayList<>(), null);
 
         rvActive.setAdapter(adActive);
         rvUpcoming.setAdapter(adUpcoming);
@@ -86,26 +104,17 @@ public class OperatorDashboardActivity extends AppCompatActivity {
         api = ApiClient.getClient().create(ApiService.class);
         db  = new DBHelper(this);
 
-        // 1) Render from local cache first
+        // Render from cache first
         cachedAll = db.getAllBookings();
         renderSections(cachedAll);
 
-        // 2) Refresh from API
+        // Refresh from API
         fetchAndCache();
 
         // Expand/Collapse toggles
-        btnViewAllActive.setOnClickListener(v -> {
-            showAllActive = !showAllActive;
-            renderSections(cachedAll);
-        });
-        btnViewAllUpcoming.setOnClickListener(v -> {
-            showAllUpcoming = !showAllUpcoming;
-            renderSections(cachedAll);
-        });
-        btnViewAllPast.setOnClickListener(v -> {
-            showAllPast = !showAllPast;
-            renderSections(cachedAll);
-        });
+        btnViewAllActive.setOnClickListener(v -> { showAllActive   = !showAllActive;   renderSections(cachedAll); });
+        btnViewAllUpcoming.setOnClickListener(v -> { showAllUpcoming = !showAllUpcoming; renderSections(cachedAll); });
+        btnViewAllPast.setOnClickListener(v -> { showAllPast     = !showAllPast;     renderSections(cachedAll); });
 
         btnLogout.setOnClickListener(v -> {
             new SessionManager(this).clearSession();
@@ -113,6 +122,37 @@ public class OperatorDashboardActivity extends AppCompatActivity {
             startActivity(new Intent(this, LoginActivity.class));
             finish();
         });
+
+        // ------- Bottom Nav  -------
+        BottomNavigationView bottom = findViewById(R.id.bottomNav);
+        if (bottom != null) {
+
+            // ⬇️ Add this: prevents the bar getting cut off on gesture-nav phones
+            ViewCompat.setOnApplyWindowInsetsListener(bottom, new OnApplyWindowInsetsListener() {
+                @Override
+                public WindowInsetsCompat onApplyWindowInsets(View v, WindowInsetsCompat insets) {
+                    Insets sys = insets.getInsets(WindowInsetsCompat.Type.systemBars());
+                    v.setPadding(v.getPaddingLeft(), v.getPaddingTop(), v.getPaddingRight(), sys.bottom);
+                    return insets;
+                }
+            });
+
+            bottom.setSelectedItemId(R.id.tab_bookings); // you are on Bookings
+            bottom.setOnItemSelectedListener(item -> {
+                int id = item.getItemId();
+                if (id == R.id.tab_bookings) {
+                    return true;
+                } else if (id == R.id.tab_scan) {
+                    startActivity(new Intent(this, ScanQRActivity.class));
+                    overridePendingTransition(0, 0);
+                    return true;
+                } else if (id == R.id.tab_profile) {
+                    Toast.makeText(this, "Profile coming soon", Toast.LENGTH_SHORT).show();
+                    return true;
+                }
+                return false;
+            });
+        }
     }
 
     private void fetchAndCache() {
@@ -121,7 +161,6 @@ public class OperatorDashboardActivity extends AppCompatActivity {
             Toast.makeText(this, "Missing token", Toast.LENGTH_SHORT).show();
             return;
         }
-
         api.getBookingsForMyStation("Bearer " + token)
                 .enqueue(new Callback<StationBookingsResponse>() {
                     @Override
@@ -166,7 +205,7 @@ public class OperatorDashboardActivity extends AppCompatActivity {
             }
         }
 
-        // Sort: upcoming soonest first, past newest first
+        // Sort: upcoming soonest → first, past newest → first
         Comparator<Booking> byResvAsc  = (x, y) -> safeDate(x).compareTo(safeDate(y));
         Comparator<Booking> byResvDesc = (x, y) -> safeDate(y).compareTo(safeDate(x));
         Collections.sort(upcoming, byResvAsc);
@@ -177,10 +216,10 @@ public class OperatorDashboardActivity extends AppCompatActivity {
         adUpcoming.submit(showAllUpcoming ? upcoming : limit(upcoming, 3));
         adPast.submit(showAllPast ? past : limit(past, 3));
 
-        // Update the button labels based on state and list sizes
-        btnViewAllActive.setText(showAllActive ? "View less" : (active.size() > 1 ? "View all" : "View all"));
-        btnViewAllUpcoming.setText(showAllUpcoming ? "View less" : (upcoming.size() > 3 ? "View all" : "View all"));
-        btnViewAllPast.setText(showAllPast ? "View less" : (past.size() > 3 ? "View all" : "View all"));
+        // Button labels
+        btnViewAllActive.setText(showAllActive ? "View less" : "View all");
+        btnViewAllUpcoming.setText(showAllUpcoming ? "View less" : "View all");
+        btnViewAllPast.setText(showAllPast ? "View less" : "View all");
     }
 
     private List<Booking> limit(List<Booking> src, int n) {
@@ -196,17 +235,10 @@ public class OperatorDashboardActivity extends AppCompatActivity {
     private Date parseIso(String iso) {
         try {
             if (iso == null) return null;
-            String pat = iso.contains(".")
-                    ? "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"
-                    : "yyyy-MM-dd'T'HH:mm:ss'Z'";
+            String pat = iso.contains(".") ? "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'" : "yyyy-MM-dd'T'HH:mm:ss'Z'";
             SimpleDateFormat f = new SimpleDateFormat(pat, Locale.US);
             f.setTimeZone(TimeZone.getTimeZone("UTC"));
             return f.parse(iso);
         } catch (Exception e) { return null; }
-    }
-
-    private void openDetails(Booking b) {
-        Intent i = new Intent(this, ReservationListActivity.class);
-        startActivity(i);
     }
 }
