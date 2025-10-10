@@ -15,6 +15,15 @@ import {
   removeLocalStorageItem,
 } from "../utils/helpers";
 
+// Debug: Log USER_ROLES constants
+console.log("🏷️ USER_ROLES constants:", {
+  USER_ROLES,
+  BACKOFFICE: USER_ROLES.BACKOFFICE,
+  STATION_OPERATOR: USER_ROLES.STATION_OPERATOR,
+  BACKOFFICE_TYPE: typeof USER_ROLES.BACKOFFICE,
+  STATION_OPERATOR_TYPE: typeof USER_ROLES.STATION_OPERATOR,
+});
+
 // Auth State Interface
 interface AuthState {
   user: User | null;
@@ -63,6 +72,12 @@ const authReducer = (state: AuthState, action: AuthAction): AuthState => {
         error: null,
       };
     case "AUTH_SUCCESS":
+      console.log("🔐 AuthContext: AUTH_SUCCESS", {
+        user: action.payload.user,
+        userRole: action.payload.user.role,
+        userRoleType: typeof action.payload.user.role,
+        token: action.payload.token ? "***" : null,
+      });
       return {
         ...state,
         user: action.payload.user,
@@ -210,7 +225,16 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   // Role checking functions
   const hasRole = useCallback(
     (role: UserRole): boolean => {
-      return state.user?.role === role;
+      const result = state.user?.role === role;
+      console.log("🔒 hasRole check:", {
+        requiredRole: role,
+        userRole: state.user?.role,
+        requiredRoleType: typeof role,
+        userRoleType: typeof state.user?.role,
+        result,
+        comparison: `"${state.user?.role}" === "${role}"`,
+      });
+      return result;
     },
     [state.user?.role]
   );

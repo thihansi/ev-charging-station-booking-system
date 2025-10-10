@@ -19,9 +19,30 @@ export const authApi = {
 
   // Get system user profile
   getProfile: async (): Promise<User> => {
-    const response = await apiClient.get<User>("/api/auth/profile");
+    const response = await apiClient.get<ApiUser>("/api/auth/profile");
     console.log("📋 Raw profile response:", response.data);
-    return response.data;
+    console.log("📋 Raw role value:", response.data.role, "Type:", typeof response.data.role);
+    
+    // Map ApiUser to User with proper role conversion
+    const mappedRole = response.data.role === 0 ? "Backoffice" : "StationOperator";
+    console.log("📋 Role mapping:", {
+      rawRole: response.data.role,
+      mappedRole,
+      isBackoffice: response.data.role === 0,
+      isStationOperator: response.data.role !== 0
+    });
+    
+    const mappedUser: User = {
+      id: response.data.id,
+      username: response.data.username,
+      role: mappedRole,
+      fullName: response.data.fullName || undefined,
+      email: response.data.email || undefined,
+    };
+    
+    console.log("📋 Mapped user profile:", mappedUser);
+    console.log("📋 Final role string:", `"${mappedUser.role}"`);
+    return mappedUser;
   },
 
   // Create backoffice user

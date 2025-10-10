@@ -29,6 +29,9 @@ apiClient.interceptors.request.use(
 
     if (token && config.headers) {
       config.headers.Authorization = `Bearer ${token}`;
+      console.log("🔑 Adding auth header to request:", config.url, "Token:", token.substring(0, 20) + "...");
+    } else {
+      console.warn("⚠️ No auth token found for request:", config.url);
     }
 
     return config;

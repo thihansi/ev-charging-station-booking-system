@@ -15,11 +15,14 @@ import UnauthorizedPage from "./pages/UnauthorizedPage";
 import NotFoundPage from "./pages/NotFoundPage";
 import BackofficeDashboard from "./pages/BackofficeDashboard";
 import OperatorDashboard from "./pages/OperatorDashboard";
+import BookingsManagement from "./pages/BookingsManagement";
+import MyStations from "./pages/MyStations";
+import QRScanner from "./pages/QRScanner";
+import Profile from "./pages/Profile";
 import EVOwnersPage from "./pages/EVOwnersPage";
 import ChargingStationsPage from "./pages/ChargingStationsPage";
 import BookingListPage from "./pages/BookingListPage";
 import BookingFormPage from "./pages/BookingFormPage";
-import QRScannerPage from "./pages/QRScannerPage";
 import LandingPage from "./pages/LandingPage";
 import ProfilePage from "./pages/ProfilePage";
 import SystemUsersPage from "./pages/SystemUsersPage";
@@ -191,7 +194,7 @@ function App() {
                 element={
                   <ProtectedRoute requiredRole={USER_ROLES.STATION_OPERATOR}>
                     <DashboardLayout>
-                      <BookingListPage />
+                      <BookingsManagement />
                     </DashboardLayout>
                   </ProtectedRoute>
                 }
@@ -201,7 +204,7 @@ function App() {
                 element={
                   <ProtectedRoute requiredRole={USER_ROLES.STATION_OPERATOR}>
                     <DashboardLayout>
-                      <BookingListPage />
+                      <BookingsManagement />
                     </DashboardLayout>
                   </ProtectedRoute>
                 }
@@ -211,7 +214,17 @@ function App() {
                 element={
                   <ProtectedRoute requiredRole={USER_ROLES.STATION_OPERATOR}>
                     <DashboardLayout>
-                      <QRScannerPage />
+                      <QRScanner />
+                    </DashboardLayout>
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path={ROUTES.OPERATOR.STATIONS}
+                element={
+                  <ProtectedRoute requiredRole={USER_ROLES.STATION_OPERATOR}>
+                    <DashboardLayout>
+                      <MyStations />
                     </DashboardLayout>
                   </ProtectedRoute>
                 }
@@ -221,7 +234,7 @@ function App() {
                 element={
                   <ProtectedRoute requiredRole={USER_ROLES.STATION_OPERATOR}>
                     <DashboardLayout>
-                      <ProfilePage />
+                      <Profile />
                     </DashboardLayout>
                   </ProtectedRoute>
                 }

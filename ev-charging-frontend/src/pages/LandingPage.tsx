@@ -16,7 +16,6 @@ import {
   CircularProgress,
   ToggleButton,
   ToggleButtonGroup,
-  Chip,
 } from "@mui/material";
 import {
   EvStation,
@@ -127,7 +126,7 @@ const LandingPage: React.FC = () => {
   };
 
   const handleLoginTypeChange = (
-    event: React.MouseEvent<HTMLElement>,
+    _event: React.MouseEvent<HTMLElement>,
     newLoginType: "backoffice" | "operator"
   ) => {
     if (newLoginType !== null) {

@@ -22,7 +22,7 @@ const transformBookingFromBackend = (backendBooking: any): Booking => {
 };
 
 export const bookingApi = {
-  // Get all bookings
+  // Get all bookings (with fallback for station operators)
   getAll: async (): Promise<Booking[]> => {
     try {
       console.log("📡 Fetching all bookings from /api/Bookings...");
@@ -49,7 +49,19 @@ export const bookingApi = {
       );
       return transformedBookings;
     } catch (error: any) {
-      console.error("❌ Error fetching bookings:", error);
+      console.error("❌ Error fetching all bookings:", error);
+      
+      // If 403 forbidden, try to get pending bookings instead (station operators might only have access to these)
+      if (error.response?.status === 403) {
+        console.log("⚠️ Access denied to all bookings, trying pending bookings only...");
+        try {
+          return await bookingApi.getPending();
+        } catch (fallbackError) {
+          console.error("❌ Also failed to fetch pending bookings:", fallbackError);
+          return [];
+        }
+      }
+      
       throw error;
     }
   },
@@ -102,5 +114,38 @@ export const bookingApi = {
   getPending: async (): Promise<Booking[]> => {
     const response = await apiClient.get<any[]>("/api/Bookings/pending");
     return response.data.map(transformBookingFromBackend);
+  },
+
+  // Get bookings summary for dashboard
+  getSummary: async (): Promise<any> => {
+    try {
+      console.log("📡 Fetching bookings summary from /api/Bookings/summary...");
+      const response = await apiClient.post("/api/Bookings/summary");
+      console.log("📊 Summary response:", response.data);
+      return response.data;
+    } catch (error) {
+      console.error("❌ Error fetching bookings summary:", error);
+      // Return default values if API fails
+      return {
+        totalBookings: 0,
+        pendingBookings: 0,
+        approvedBookings: 0,
+        completedBookings: 0,
+        todayBookings: 0,
+        totalRevenue: 0
+      };
+    }
+  },
+
+  // Get QR code for booking
+  getQRCode: async (id: string): Promise<{ qrCodeData: string }> => {
+    const response = await apiClient.get(`/api/Bookings/${id}/qrcode`);
+    return response.data;
+  },
+
+  // Validate QR code
+  validateQR: async (qrCodeData: string): Promise<{ valid: boolean; booking?: Booking; message: string }> => {
+    const response = await apiClient.post("/api/Bookings/validate-qr", { qrCodeData });
+    return response.data;
   },
 };

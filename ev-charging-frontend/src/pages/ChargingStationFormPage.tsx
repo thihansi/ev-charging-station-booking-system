@@ -73,11 +73,14 @@ const ChargingStationFormPage: React.FC = () => {
         longitude: stationData.longitude,
         stationType: stationData.stationType,
         totalSlots: stationData.totalSlots,
-        operationalHours: stationData.operationalHours,
+        operationalHours: stationData.operationalHours || {
+          openTime: "09:00",
+          closeTime: "18:00"
+        },
       });
     } catch (error) {
       showError("Failed to load charging station details");
-      navigate(ROUTES.ADMIN.CHARGING_STATIONS);
+      navigate(ROUTES.BACKOFFICE.CHARGING_STATIONS);
     } finally {
       setIsInitialLoading(false);
     }
@@ -148,7 +151,7 @@ const ChargingStationFormPage: React.FC = () => {
         showSuccess("Charging station created successfully");
       }
 
-      navigate(ROUTES.ADMIN.CHARGING_STATIONS);
+      navigate(ROUTES.BACKOFFICE.CHARGING_STATIONS);
     } catch (error: any) {
       showError(
         error.response?.data?.message ||
@@ -160,7 +163,7 @@ const ChargingStationFormPage: React.FC = () => {
   };
 
   const handleCancel = () => {
-    navigate(ROUTES.ADMIN.CHARGING_STATIONS);
+    navigate(ROUTES.BACKOFFICE.CHARGING_STATIONS);
   };
 
   const handleInputChange = (
