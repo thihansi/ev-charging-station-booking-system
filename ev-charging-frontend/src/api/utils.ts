@@ -15,7 +15,38 @@ export interface ApiError {
  * Data transformation utilities for API compatibility
  */
 
-import type { CreateChargingStationRequest, UpdateChargingStationRequest, CreateBookingRequest, CreateEVOwnerBookingRequest } from "../types";
+import type { CreateChargingStationRequest, UpdateChargingStationRequest, CreateBookingRequest, CreateEVOwnerBookingRequest, ChargingStation } from "../types";
+
+// Transform backend charging station response to frontend format
+export const transformChargingStationFromBackend = (backendData: any): ChargingStation => {
+  // Parse schedule string (e.g., "08:00-18:00") into operational hours
+  let operationalHours = undefined;
+  if (backendData.schedule && typeof backendData.schedule === 'string') {
+    const scheduleMatch = backendData.schedule.match(/^(\d{2}:\d{2})-(\d{2}:\d{2})$/);
+    if (scheduleMatch) {
+      operationalHours = {
+        openTime: scheduleMatch[1],
+        closeTime: scheduleMatch[2]
+      };
+    }
+  }
+
+  return {
+    id: backendData.id,
+    name: backendData.name,
+    address: backendData.address,
+    latitude: backendData.latitude,
+    longitude: backendData.longitude,
+    stationType: backendData.type === 1 ? "DC" : "AC", // Convert number to string
+    totalSlots: backendData.totalSlots || backendData.availableSlots, // Use totalSlots if available, otherwise availableSlots
+    availableSlots: backendData.availableSlots,
+    operationalHours,
+    isActive: backendData.isActive,
+    qrCodeData: backendData.qrCodeData,
+    createdAt: backendData.createdAt || new Date().toISOString(),
+    updatedAt: backendData.updatedAt || new Date().toISOString()
+  };
+};
 
 // Transform frontend charging station data to backend format
 export const transformChargingStationForBackend = (frontendData: CreateChargingStationRequest) => {

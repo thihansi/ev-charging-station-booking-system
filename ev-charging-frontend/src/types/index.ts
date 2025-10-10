@@ -77,7 +77,7 @@ export interface ChargingStation {
   stationType: StationType;
   availableSlots: number;
   totalSlots: number;
-  operationalHours: OperationalHours;
+  operationalHours?: OperationalHours; // Made optional to handle API inconsistencies
   isActive: boolean;
   qrCodeData?: string;
   createdAt: string;

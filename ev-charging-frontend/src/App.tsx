@@ -17,8 +17,7 @@ import NotFoundPage from "./pages/NotFoundPage";
 import BackofficeDashboard from "./pages/BackofficeDashboard";
 import OperatorDashboard from "./pages/OperatorDashboard";
 import EVOwnersPage from "./pages/EVOwnersPage";
-import ChargingStationListPage from "./pages/ChargingStationListPage";
-import ChargingStationFormPage from "./pages/ChargingStationFormPage";
+import ChargingStationsPage from "./pages/ChargingStationsPage";
 import BookingListPage from "./pages/BookingListPage";
 import BookingFormPage from "./pages/BookingFormPage";
 import QRScannerPage from "./pages/QRScannerPage";
@@ -111,42 +110,11 @@ function App() {
                 element={
                   <ProtectedRoute requiredRole={USER_ROLES.BACKOFFICE}>
                     <DashboardLayout>
-                      <ChargingStationListPage />
+                      <ChargingStationsPage />
                     </DashboardLayout>
                   </ProtectedRoute>
                 }
               />
-              <Route
-                path={ROUTES.BACKOFFICE.CHARGING_STATIONS_CREATE}
-                element={
-                  <ProtectedRoute requiredRole={USER_ROLES.BACKOFFICE}>
-                    <DashboardLayout>
-                      <ChargingStationFormPage />
-                    </DashboardLayout>
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path={ROUTES.BACKOFFICE.CHARGING_STATIONS_VIEW}
-                element={
-                  <ProtectedRoute requiredRole={USER_ROLES.BACKOFFICE}>
-                    <DashboardLayout>
-                      <div>Charging Station View Page (TODO)</div>
-                    </DashboardLayout>
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path={ROUTES.BACKOFFICE.CHARGING_STATIONS_EDIT}
-                element={
-                  <ProtectedRoute requiredRole={USER_ROLES.BACKOFFICE}>
-                    <DashboardLayout>
-                      <ChargingStationFormPage />
-                    </DashboardLayout>
-                  </ProtectedRoute>
-                }
-              />
-
               {/* Booking Management Routes */}
               <Route
                 path={ROUTES.BACKOFFICE.BOOKINGS}
