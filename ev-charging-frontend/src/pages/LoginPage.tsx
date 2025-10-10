@@ -39,7 +39,7 @@ const LoginPage: React.FC = () => {
   // Redirect if already authenticated
   useEffect(() => {
     if (state.isAuthenticated && state.user) {
-      console.log('🚀 LoginPage: User authenticated, determining redirect...', {
+      console.log("🚀 LoginPage: User authenticated, determining redirect...", {
         isAuthenticated: state.isAuthenticated,
         user: state.user,
         userRole: state.user.role,
@@ -53,8 +53,8 @@ const LoginPage: React.FC = () => {
         state.user.role === USER_ROLES.BACKOFFICE
           ? ROUTES.BACKOFFICE.DASHBOARD
           : ROUTES.OPERATOR.DASHBOARD;
-      
-      console.log('🎯 LoginPage: Redirecting to:', redirectPath);
+
+      console.log("🎯 LoginPage: Redirecting to:", redirectPath);
       navigate(redirectPath, { replace: true });
     }
   }, [state.isAuthenticated, state.user, navigate]);
@@ -91,12 +91,14 @@ const LoginPage: React.FC = () => {
     setIsSubmitting(true);
 
     try {
-      console.log('🔐 LoginPage: Attempting login for:', formData.username);
+      console.log("🔐 LoginPage: Attempting login for:", formData.username);
       await login(formData);
-      console.log('✅ LoginPage: Login successful, context should handle redirect');
+      console.log(
+        "✅ LoginPage: Login successful, context should handle redirect"
+      );
       showSuccess("Login successful");
     } catch (error: any) {
-      console.error('❌ LoginPage: Login failed:', error);
+      console.error("❌ LoginPage: Login failed:", error);
       const errorMessage =
         error.response?.data?.message ||
         "Login failed. Please check your credentials.";

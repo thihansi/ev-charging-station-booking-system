@@ -118,7 +118,12 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
       >
         <ElectricCar sx={{ mr: 2, fontSize: 32 }} />
         <Box>
-          <Typography variant="h6" noWrap fontWeight="bold" sx={{ color: "white" }}>
+          <Typography
+            variant="h6"
+            noWrap
+            fontWeight="bold"
+            sx={{ color: "white" }}
+          >
             EV Charging
           </Typography>
           <Typography variant="caption" sx={{ opacity: 0.9, color: "white" }}>
@@ -131,43 +136,49 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
 
       {/* Navigation Menu */}
       <List sx={{ flex: 1, py: 2 }}>
-        {menuItems.map((item: { title: string; path: string; icon: string }) => {
-          const isActive = isActiveRoute(location.pathname, item.path);
+        {menuItems.map(
+          (item: { title: string; path: string; icon: string }) => {
+            const isActive = isActiveRoute(location.pathname, item.path);
 
-          return (
-            <ListItem key={item.title} disablePadding sx={{ px: 2, mb: 0.5 }}>
-              <ListItemButton
-                onClick={() => handleNavigate(item.path)}
-                sx={{
-                  borderRadius: 2,
-                  py: 1.5,
-                  backgroundColor: isActive ? "rgba(103, 126, 234, 0.1)" : "transparent",
-                  color: isActive ? "#667eea" : "#64748b",
-                  "&:hover": {
-                    backgroundColor: isActive ? "rgba(103, 126, 234, 0.15)" : "#f1f5f9",
-                    color: isActive ? "#667eea" : "#475569",
-                  },
-                }}
-              >
-                <ListItemIcon
+            return (
+              <ListItem key={item.title} disablePadding sx={{ px: 2, mb: 0.5 }}>
+                <ListItemButton
+                  onClick={() => handleNavigate(item.path)}
                   sx={{
+                    borderRadius: 2,
+                    py: 1.5,
+                    backgroundColor: isActive
+                      ? "rgba(103, 126, 234, 0.1)"
+                      : "transparent",
                     color: isActive ? "#667eea" : "#64748b",
-                    minWidth: 40,
+                    "&:hover": {
+                      backgroundColor: isActive
+                        ? "rgba(103, 126, 234, 0.15)"
+                        : "#f1f5f9",
+                      color: isActive ? "#667eea" : "#475569",
+                    },
                   }}
                 >
-                  {getIcon(item.icon)}
-                </ListItemIcon>
-                <ListItemText
-                  primary={item.title}
-                  primaryTypographyProps={{
-                    fontWeight: isActive ? 600 : 500,
-                    fontSize: "0.95rem",
-                  }}
-                />
-              </ListItemButton>
-            </ListItem>
-          );
-        })}
+                  <ListItemIcon
+                    sx={{
+                      color: isActive ? "#667eea" : "#64748b",
+                      minWidth: 40,
+                    }}
+                  >
+                    {getIcon(item.icon)}
+                  </ListItemIcon>
+                  <ListItemText
+                    primary={item.title}
+                    primaryTypographyProps={{
+                      fontWeight: isActive ? 600 : 500,
+                      fontSize: "0.95rem",
+                    }}
+                  />
+                </ListItemButton>
+              </ListItem>
+            );
+          }
+        )}
       </List>
 
       <Divider />

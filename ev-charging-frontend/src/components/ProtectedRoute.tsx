@@ -47,7 +47,7 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
       userRole: state.user.role,
       user: state.user,
       path: location.pathname,
-      match: state.user.role === requiredRole
+      match: state.user.role === requiredRole,
     });
     return <Navigate to={ROUTES.UNAUTHORIZED} replace />;
   }
@@ -58,7 +58,7 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
       requiredRole,
       userRole: state.user.role,
       user: state.user,
-      path: location.pathname
+      path: location.pathname,
     });
   }
 
