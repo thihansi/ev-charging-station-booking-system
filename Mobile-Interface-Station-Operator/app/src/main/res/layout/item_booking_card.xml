@@ -8,20 +8,22 @@
     android:layout_marginVertical="6dp"
     android:gravity="center_vertical">
 
-    <!-- Calendar circle -->
-    <LinearLayout
+    <!-- Circle with PNG icon -->
+    <FrameLayout
         android:layout_width="48dp"
         android:layout_height="48dp"
         android:background="@drawable/circle_light"
-        android:gravity="center"
-        android:layout_marginEnd="12dp">
+        android:layout_marginEnd="12dp"
+        android:foreground="?attr/selectableItemBackground">
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="📅"
-            android:textSize="20sp"/>
-    </LinearLayout>
+        <ImageView
+            android:id="@+id/ivIcon"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_gravity="center"
+            android:src="@drawable/ic_booking"
+        android:contentDescription="@string/app_name"/>
+    </FrameLayout>
 
     <!-- Booking info -->
     <LinearLayout
@@ -30,25 +32,27 @@
         android:layout_weight="1"
         android:orientation="vertical">
 
+        <!-- Booking ID (bold) -->
         <TextView
-            android:id="@+id/tvOwnerName"
+            android:id="@+id/tvBookingIdTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="EV Owner Name"
+            android:text="ID: #B67890"
             android:textStyle="bold"
             android:textSize="15sp"
             android:textColor="@android:color/black" />
 
+        <!-- EV Owner NIC -->
         <TextView
-            android:id="@+id/tvBookingId"
+            android:id="@+id/tvOwnerNic"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="ID: #B67890"
+            android:text="NIC: 20026930087"
             android:textSize="13sp"
             android:textColor="@android:color/darker_gray" />
     </LinearLayout>
 
-    <!-- Time + Day -->
+    <!-- Time + Day (unchanged) -->
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
