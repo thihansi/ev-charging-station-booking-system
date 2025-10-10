@@ -198,7 +198,7 @@ function App() {
                 element={
                   <ProtectedRoute requiredRole={USER_ROLES.STATION_OPERATOR}>
                     <DashboardLayout>
-                      <div>Pending Bookings (TODO)</div>
+                      <BookingListPage />
                     </DashboardLayout>
                   </ProtectedRoute>
                 }

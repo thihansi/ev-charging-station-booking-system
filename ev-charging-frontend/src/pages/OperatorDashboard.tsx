@@ -317,7 +317,7 @@ const OperatorDashboard: React.FC = () => {
               </Typography>
               <Button
                 size="small"
-                onClick={() => navigate(ROUTES.OPERATOR.BOOKINGS_PENDING)}
+                onClick={() => navigate(ROUTES.OPERATOR.BOOKINGS)}
               >
                 View All
               </Button>
@@ -382,7 +382,7 @@ const OperatorDashboard: React.FC = () => {
           <Button
             variant="outlined"
             startIcon={<BookOnline />}
-            onClick={() => navigate(ROUTES.OPERATOR.BOOKINGS_PENDING)}
+            onClick={() => navigate(ROUTES.OPERATOR.BOOKINGS)}
           >
             Manage Bookings
           </Button>

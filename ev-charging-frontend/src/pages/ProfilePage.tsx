@@ -53,7 +53,9 @@ const ProfilePage: React.FC = () => {
     }
   };
 
-  const getRoleColor = (role: string): "primary" | "secondary" | "success" | "error" | "warning" | "info" => {
+  const getRoleColor = (
+    role: string
+  ): "primary" | "secondary" | "success" | "error" | "warning" | "info" => {
     switch (role) {
       case "Backoffice":
         return "primary";
@@ -78,7 +80,9 @@ const ProfilePage: React.FC = () => {
   const refreshProfile = async () => {
     setIsLoading(true);
     try {
+      // Try to get updated profile from API
       const updatedProfile = await authApi.getProfile();
+      console.log("✅ Profile refreshed successfully:", updatedProfile);
       setProfileData(updatedProfile);
       setEditForm({
         fullName: updatedProfile?.fullName || "",
@@ -87,8 +91,19 @@ const ProfilePage: React.FC = () => {
       });
       showSuccess("Profile refreshed successfully");
     } catch (error: any) {
-      console.error("Error refreshing profile:", error);
-      showError("Failed to refresh profile");
+      console.error("❌ Error refreshing profile:", error);
+      // If API fails, fall back to the current auth state data
+      if (state.user) {
+        setProfileData(state.user);
+        setEditForm({
+          fullName: state.user?.fullName || "",
+          email: state.user?.email || "",
+          username: state.user?.username || "",
+        });
+        showSuccess("Profile data refreshed from local state");
+      } else {
+        showError("Failed to refresh profile. Please try logging in again.");
+      }
     } finally {
       setIsLoading(false);
     }
@@ -108,7 +123,7 @@ const ProfilePage: React.FC = () => {
     try {
       // Note: Backend doesn't actually support profile updates for system users
       // This is a UI simulation - in reality would need backend support
-      
+
       // For now, we'll just update the local state since the backend doesn't support profile updates
       const updatedProfile = {
         ...profileData!,
@@ -116,16 +131,18 @@ const ProfilePage: React.FC = () => {
         email: editForm.email,
         username: editForm.username,
       };
-      
+
       setProfileData(updatedProfile);
       setEditDialogOpen(false);
-      
+
       // In a real implementation, you would:
       // 1. Call authApi.updateProfile(updatedProfile)
       // 2. Update the auth context with the new user data
       // 3. Store the updated profile in localStorage
-      
-      showSuccess("Profile updated successfully! (Note: Changes are local only - backend API doesn't support profile updates)");
+
+      showSuccess(
+        "Profile updated successfully! (Note: Changes are local only - backend API doesn't support profile updates)"
+      );
     } catch (error: any) {
       console.error("Error updating profile:", error);
       showError("Failed to update profile");
@@ -147,7 +164,7 @@ const ProfilePage: React.FC = () => {
     if (name) {
       return name
         .split(" ")
-        .map(word => word.charAt(0).toUpperCase())
+        .map((word) => word.charAt(0).toUpperCase())
         .slice(0, 2)
         .join("");
     }
@@ -157,9 +174,21 @@ const ProfilePage: React.FC = () => {
   return (
     <Box>
       {/* Header */}
-      <Box sx={{ mb: 4, display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+      <Box
+        sx={{
+          mb: 4,
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "flex-start",
+        }}
+      >
         <Box>
-          <Typography variant="h4" component="h1" gutterBottom fontWeight="bold">
+          <Typography
+            variant="h4"
+            component="h1"
+            gutterBottom
+            fontWeight="bold"
+          >
             My Profile
           </Typography>
           <Typography variant="body1" color="text.secondary">
@@ -178,37 +207,35 @@ const ProfilePage: React.FC = () => {
 
       {isLoading && <LinearProgress sx={{ mb: 4 }} />}
 
-      {/* Profile Information Alert */}
-      <Alert severity="warning" sx={{ mb: 4 }}>
-        <Typography variant="body2">
-          <strong>Backend Limitation:</strong> The current API does not support profile updates for system users. 
-          Profile editing below is for demonstration purposes only and changes are stored locally.
-        </Typography>
-      </Alert>
-
       {/* Profile Card */}
       <Card sx={{ mb: 4 }}>
         <CardContent sx={{ p: 4 }}>
           {/* Profile Header */}
-          <Box sx={{ display: "flex", alignItems: "flex-start", gap: 3, mb: 4 }}>
+          <Box
+            sx={{ display: "flex", alignItems: "flex-start", gap: 3, mb: 4 }}
+          >
             <Avatar
               sx={{
                 width: 80,
                 height: 80,
                 bgcolor: `${getRoleColor(profileData?.role || "")}.main`,
                 fontSize: "2rem",
-                fontWeight: "bold"
+                fontWeight: "bold",
               }}
             >
               {getInitials(profileData?.fullName, profileData?.username)}
             </Avatar>
-            
+
             <Box sx={{ flex: 1 }}>
               <Typography variant="h5" fontWeight="bold" gutterBottom>
-                {profileData?.fullName || profileData?.username || "System User"}
+                {profileData?.fullName ||
+                  profileData?.username ||
+                  "System User"}
               </Typography>
-              
-              <Box sx={{ display: "flex", alignItems: "center", gap: 2, mb: 2 }}>
+
+              <Box
+                sx={{ display: "flex", alignItems: "center", gap: 2, mb: 2 }}
+              >
                 {getRoleIcon(profileData?.role || "")}
                 <Chip
                   label={profileData?.role || "Unknown Role"}
@@ -216,11 +243,11 @@ const ProfilePage: React.FC = () => {
                   size="medium"
                 />
               </Box>
-              
+
               <Typography variant="body1" color="text.secondary" sx={{ mb: 2 }}>
                 @{profileData?.username}
               </Typography>
-              
+
               <Typography variant="body2" color="text.secondary">
                 {getRoleDescription(profileData?.role || "")}
               </Typography>
@@ -234,9 +261,19 @@ const ProfilePage: React.FC = () => {
             Account Details
           </Typography>
 
-          <Box sx={{ display: "grid", gridTemplateColumns: { xs: "1fr", md: "repeat(2, 1fr)" }, gap: 3 }}>
+          <Box
+            sx={{
+              display: "grid",
+              gridTemplateColumns: { xs: "1fr", md: "repeat(2, 1fr)" },
+              gap: 3,
+            }}
+          >
             <Box>
-              <Typography variant="subtitle2" color="text.secondary" gutterBottom>
+              <Typography
+                variant="subtitle2"
+                color="text.secondary"
+                gutterBottom
+              >
                 User ID
               </Typography>
               <Typography variant="body1" fontWeight="medium">
@@ -245,7 +282,11 @@ const ProfilePage: React.FC = () => {
             </Box>
 
             <Box>
-              <Typography variant="subtitle2" color="text.secondary" gutterBottom>
+              <Typography
+                variant="subtitle2"
+                color="text.secondary"
+                gutterBottom
+              >
                 Username
               </Typography>
               <Typography variant="body1" fontWeight="medium">
@@ -254,7 +295,11 @@ const ProfilePage: React.FC = () => {
             </Box>
 
             <Box>
-              <Typography variant="subtitle2" color="text.secondary" gutterBottom>
+              <Typography
+                variant="subtitle2"
+                color="text.secondary"
+                gutterBottom
+              >
                 Role
               </Typography>
               <Typography variant="body1" fontWeight="medium">
@@ -263,7 +308,11 @@ const ProfilePage: React.FC = () => {
             </Box>
 
             <Box>
-              <Typography variant="subtitle2" color="text.secondary" gutterBottom>
+              <Typography
+                variant="subtitle2"
+                color="text.secondary"
+                gutterBottom
+              >
                 Full Name
               </Typography>
               <Typography variant="body1" fontWeight="medium">
@@ -272,7 +321,11 @@ const ProfilePage: React.FC = () => {
             </Box>
 
             <Box>
-              <Typography variant="subtitle2" color="text.secondary" gutterBottom>
+              <Typography
+                variant="subtitle2"
+                color="text.secondary"
+                gutterBottom
+              >
                 Email
               </Typography>
               <Typography variant="body1" fontWeight="medium">
@@ -284,14 +337,18 @@ const ProfilePage: React.FC = () => {
       </Card>
 
       {/* Action Cards */}
-      <Box sx={{ display: "grid", gridTemplateColumns: { xs: "1fr", md: "repeat(2, 1fr)" }, gap: 3 }}>
+      <Box
+        sx={{
+          display: "grid",
+          gridTemplateColumns: { xs: "1fr", md: "repeat(2, 1fr)" },
+          gap: 3,
+        }}
+      >
         <Card>
           <CardContent>
             <Box sx={{ display: "flex", alignItems: "center", gap: 2, mb: 2 }}>
               <Edit color="action" />
-              <Typography variant="h6">
-                Profile Updates
-              </Typography>
+              <Typography variant="h6">Profile Updates</Typography>
             </Box>
             <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
               Edit your profile information (changes are stored locally only).
@@ -313,9 +370,7 @@ const ProfilePage: React.FC = () => {
           <CardContent>
             <Box sx={{ display: "flex", alignItems: "center", gap: 2, mb: 2 }}>
               <Security color="action" />
-              <Typography variant="h6">
-                Security Settings
-              </Typography>
+              <Typography variant="h6">Security Settings</Typography>
             </Box>
             <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
               Password changes must be handled by your administrator.
@@ -333,15 +388,22 @@ const ProfilePage: React.FC = () => {
       </Box>
 
       {/* Edit Profile Dialog */}
-      <Dialog open={editDialogOpen} onClose={handleCancelEdit} maxWidth="sm" fullWidth>
+      <Dialog
+        open={editDialogOpen}
+        onClose={handleCancelEdit}
+        maxWidth="sm"
+        fullWidth
+      >
         <DialogTitle>Edit Profile</DialogTitle>
         <DialogContent>
-          <Box sx={{ pt: 2, display: 'flex', flexDirection: 'column', gap: 3 }}>
+          <Box sx={{ pt: 2, display: "flex", flexDirection: "column", gap: 3 }}>
             <TextField
               label="Username"
               fullWidth
               value={editForm.username}
-              onChange={(e) => setEditForm({ ...editForm, username: e.target.value })}
+              onChange={(e) =>
+                setEditForm({ ...editForm, username: e.target.value })
+              }
               disabled // Username typically shouldn't be editable
               helperText="Username cannot be changed"
             />
@@ -349,7 +411,9 @@ const ProfilePage: React.FC = () => {
               label="Full Name"
               fullWidth
               value={editForm.fullName}
-              onChange={(e) => setEditForm({ ...editForm, fullName: e.target.value })}
+              onChange={(e) =>
+                setEditForm({ ...editForm, fullName: e.target.value })
+              }
               placeholder="Enter your full name"
             />
             <TextField
@@ -357,7 +421,9 @@ const ProfilePage: React.FC = () => {
               type="email"
               fullWidth
               value={editForm.email}
-              onChange={(e) => setEditForm({ ...editForm, email: e.target.value })}
+              onChange={(e) =>
+                setEditForm({ ...editForm, email: e.target.value })
+              }
               placeholder="Enter your email address"
             />
           </Box>
@@ -366,9 +432,9 @@ const ProfilePage: React.FC = () => {
           <Button onClick={handleCancelEdit} startIcon={<Cancel />}>
             Cancel
           </Button>
-          <Button 
-            onClick={handleSaveProfile} 
-            variant="contained" 
+          <Button
+            onClick={handleSaveProfile}
+            variant="contained"
             startIcon={<Save />}
             disabled={isLoading}
           >
