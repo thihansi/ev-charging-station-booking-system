@@ -2,12 +2,21 @@
 export interface User {
   id: string;
   username: string;
-  role: UserRole;
+  role: UserRole; // Always string role after mapping
   fullName?: string;
   email?: string;
 }
 
 export type UserRole = "Backoffice" | "StationOperator";
+
+// API Response User (what backend actually returns)
+export interface ApiUser {
+  id: string;
+  username: string;
+  role: number; // 0 = Backoffice, 1 = StationOperator
+  fullName?: string;
+  email?: string;
+}
 
 export interface SystemUser {
   id: string;

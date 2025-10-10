@@ -118,7 +118,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   useEffect(() => {
     const initializeAuth = async () => {
       try {
-        const token = localStorage.getItem("token");
+        const token = getLocalStorageItem<string>(STORAGE_KEYS.AUTH_TOKEN);
         const user = getLocalStorageItem<User>(STORAGE_KEYS.USER_PROFILE);
 
         if (token && user) {
@@ -135,7 +135,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
               "Failed to verify token, clearing auth data:",
               error.message
             );
-            localStorage.removeItem("token");
+            removeLocalStorageItem(STORAGE_KEYS.AUTH_TOKEN);
             removeLocalStorageItem(STORAGE_KEYS.USER_PROFILE);
             dispatch({ type: "AUTH_LOGOUT" });
           }
@@ -162,8 +162,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         const loginResponse = await authApi.login(credentials);
         console.log("✅ Login successful, token received");
 
-        // Store token temporarily
-        localStorage.setItem("token", loginResponse.token);
+        // Store token with the correct key that the API client expects
+        setLocalStorageItem(STORAGE_KEYS.AUTH_TOKEN, loginResponse.token);
 
         // Fetch user profile
         console.log("👤 Fetching user profile...");
@@ -183,7 +183,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         dispatch({ type: "AUTH_FAILURE", payload: errorMessage });
 
         // Clear any stored data on login failure
-        localStorage.removeItem("token");
+        removeLocalStorageItem(STORAGE_KEYS.AUTH_TOKEN);
         removeLocalStorageItem(STORAGE_KEYS.USER_PROFILE);
 
         throw error;
@@ -195,7 +195,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   // Logout function
   const logout = useCallback((): void => {
     // Clear localStorage
-    localStorage.removeItem("token");
+    removeLocalStorageItem(STORAGE_KEYS.AUTH_TOKEN);
     removeLocalStorageItem(STORAGE_KEYS.USER_PROFILE);
 
     // Update state

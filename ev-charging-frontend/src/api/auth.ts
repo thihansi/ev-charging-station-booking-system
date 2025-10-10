@@ -1,6 +1,7 @@
 import apiClient from "./client";
 import type {
   User,
+  ApiUser,
   LoginRequest,
   LoginResponse,
   CreateUserRequest,
@@ -56,6 +57,48 @@ export const authApi = {
         username
       )}&password=${encodeURIComponent(password)}&role=${role}`
     );
+    return response.data;
+  },
+
+  // Get all users (requires backoffice authentication)
+  getAllUsers: async (): Promise<User[]> => {
+    const response = await apiClient.get<{
+      message: string;
+      count: number;
+      users: ApiUser[];
+    }>("/api/auth/users");
+    
+    // Map API users to frontend User type with proper role conversion
+    const mappedUsers: User[] = response.data.users.map(apiUser => ({
+      id: apiUser.id,
+      username: apiUser.username,
+      role: apiUser.role === 0 ? "Backoffice" : "StationOperator",
+      fullName: apiUser.fullName || undefined, // Don't set fallback here, let UI handle it
+      email: apiUser.email || undefined, // Don't set fallback here, let UI handle it
+    }));
+    
+    return mappedUsers;
+  },
+
+  // Update user (requires backoffice authentication)
+  updateUser: async (
+    userId: string,
+    userData: {
+      username: string;
+      password?: string;
+      role: number;
+    }
+  ): Promise<{ message: string; user: User }> => {
+    const response = await apiClient.put(
+      `/api/auth/users/${userId}`,
+      userData
+    );
+    return response.data;
+  },
+
+  // Delete user (requires backoffice authentication)
+  deleteUser: async (userId: string): Promise<{ message: string }> => {
+    const response = await apiClient.delete(`/api/auth/users/${userId}`);
     return response.data;
   },
 

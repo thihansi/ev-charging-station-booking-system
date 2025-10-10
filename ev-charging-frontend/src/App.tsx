@@ -16,8 +16,7 @@ import UnauthorizedPage from "./pages/UnauthorizedPage";
 import NotFoundPage from "./pages/NotFoundPage";
 import BackofficeDashboard from "./pages/BackofficeDashboard";
 import OperatorDashboard from "./pages/OperatorDashboard";
-import EVOwnerListPage from "./pages/EVOwnerListPage";
-import EVOwnerFormPage from "./pages/EVOwnerFormPage";
+import EVOwnersPage from "./pages/EVOwnersPage";
 import ChargingStationListPage from "./pages/ChargingStationListPage";
 import ChargingStationFormPage from "./pages/ChargingStationFormPage";
 import BookingListPage from "./pages/BookingListPage";
@@ -39,7 +38,12 @@ function App() {
       <CssBaseline />
       <NotificationProvider>
         <AuthProvider>
-          <Router>
+          <Router
+            future={{
+              v7_startTransition: true,
+              v7_relativeSplatPath: true,
+            }}
+          >
             <Routes>
               {/* Public Routes */}
               <Route path={ROUTES.LOGIN} element={<LoginPage />} />
@@ -95,32 +99,11 @@ function App() {
                 element={
                   <ProtectedRoute requiredRole={USER_ROLES.BACKOFFICE}>
                     <DashboardLayout>
-                      <EVOwnerListPage />
+                      <EVOwnersPage />
                     </DashboardLayout>
                   </ProtectedRoute>
                 }
               />
-              <Route
-                path={ROUTES.BACKOFFICE.EV_OWNERS_CREATE}
-                element={
-                  <ProtectedRoute requiredRole={USER_ROLES.BACKOFFICE}>
-                    <DashboardLayout>
-                      <EVOwnerFormPage />
-                    </DashboardLayout>
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path={ROUTES.BACKOFFICE.EV_OWNERS_EDIT}
-                element={
-                  <ProtectedRoute requiredRole={USER_ROLES.BACKOFFICE}>
-                    <DashboardLayout>
-                      <EVOwnerFormPage />
-                    </DashboardLayout>
-                  </ProtectedRoute>
-                }
-              />
-
               {/* Charging Station Management Routes */}
                             {/* Charging Stations Management */}
               <Route

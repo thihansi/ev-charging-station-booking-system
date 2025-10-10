@@ -6,10 +6,23 @@ import type {
 } from "../types";
 
 export const evOwnerApi = {
-  // Get all EV owners (Backoffice only)
+  // Get all EV owners (Backoffice only) - GET /api/EVOwners
   getAll: async (): Promise<EVOwner[]> => {
-    const response = await apiClient.get<EVOwner[]>("/api/EVOwners");
-    return response.data;
+    const response = await apiClient.get<{
+      message?: string;
+      count?: number;
+      evOwners?: EVOwner[];
+    } | EVOwner[]>("/api/EVOwners");
+    
+    // Handle both direct array and wrapped response formats
+    if (Array.isArray(response.data)) {
+      return response.data;
+    } else if (response.data && 'evOwners' in response.data && Array.isArray(response.data.evOwners)) {
+      return response.data.evOwners;
+    } else {
+      console.warn("Unexpected API response format:", response.data);
+      return [];
+    }
   },
 
   // Get EV owner by NIC (Backoffice only)
@@ -32,7 +45,10 @@ export const evOwnerApi = {
   createWithPassword: async (
     evOwnerData: CreateEVOwnerRequest
   ): Promise<{ message: string; evOwner: EVOwner }> => {
-    const response = await apiClient.post("/api/EVOwners/create-with-password", evOwnerData);
+    const response = await apiClient.post(
+      "/api/EVOwners/create-with-password",
+      evOwnerData
+    );
     return response.data;
   },
 
