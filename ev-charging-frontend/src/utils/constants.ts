@@ -14,7 +14,6 @@ export const ROUTES = {
   HOME: "/",
   LOGIN: "/login",
   DASHBOARD: "/dashboard",
-  USER_REGISTRATION: "/register",
 
   // Backoffice routes
   BACKOFFICE: {

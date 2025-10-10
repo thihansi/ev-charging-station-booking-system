@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Navigate, useNavigate, Link } from "react-router-dom";
+import { Navigate, useNavigate } from "react-router-dom";
 import {
   Box,
   Card,
@@ -287,23 +287,6 @@ const LoginPage: React.FC = () => {
               </Typography>
               <Typography variant="body2" color="text.secondary">
                 <strong>Operator:</strong> operator / operator123
-              </Typography>
-            </Box>
-
-            {/* Registration Link */}
-            <Box sx={{ mt: 2, textAlign: "center" }}>
-              <Typography variant="body2" color="text.secondary">
-                Need to create new users?{" "}
-                <Link
-                  to={ROUTES.USER_REGISTRATION}
-                  style={{
-                    color: "inherit",
-                    textDecoration: "none",
-                    fontWeight: "bold",
-                  }}
-                >
-                  Register Here
-                </Link>
               </Typography>
             </Box>
           </CardContent>

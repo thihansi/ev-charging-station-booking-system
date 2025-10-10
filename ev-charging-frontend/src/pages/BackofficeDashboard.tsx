@@ -24,6 +24,7 @@ import { useAuth } from "../context/AuthContext";
 import { useNotificationContext } from "../context/NotificationContext";
 import { ROUTES } from "../utils/constants";
 import { bookingApi, evOwnerApi, chargingStationApi } from "../api";
+import { GRADIENT_STYLES } from "../utils/gradients";
 import type { EVOwner } from "../types";
 
 const BackofficeDashboard: React.FC = () => {
@@ -150,11 +151,24 @@ const BackofficeDashboard: React.FC = () => {
   }, []);
 
   return (
-    <Box>
+    <Box sx={{ 
+      minHeight: "100vh",
+      background: "#f8fafc", // Clean gray background
+      p: 3,
+    }}>
       {/* Header */}
       <Box sx={{ mb: 4, display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
         <Box>
-          <Typography variant="h4" component="h1" gutterBottom fontWeight="bold">
+          <Typography 
+            variant="h4" 
+            component="h1" 
+            gutterBottom 
+            fontWeight="bold"
+            sx={{
+              color: "#1e293b", // Clean dark text instead of gradient
+              fontSize: "2.25rem",
+            }}
+          >
             Backoffice Dashboard
           </Typography>
           <Typography variant="body1" color="text.secondary">
@@ -165,8 +179,15 @@ const BackofficeDashboard: React.FC = () => {
         <IconButton 
           onClick={loadDashboardData} 
           disabled={isLoading}
-          color="primary"
-          sx={{ mt: 1 }}
+          sx={{ 
+            mt: 1,
+            backgroundColor: "#f1f5f9",
+            color: "#64748b",
+            "&:hover": {
+              backgroundColor: "#e2e8f0",
+              color: "#475569",
+            },
+          }}
         >
           <Refresh />
         </IconButton>
@@ -187,7 +208,7 @@ const BackofficeDashboard: React.FC = () => {
           mb: 4,
         }}
       >
-        <Card>
+        <Card sx={{ ...GRADIENT_STYLES.cleanCard }}>
           <CardContent>
             <Box
               sx={{
@@ -200,23 +221,43 @@ const BackofficeDashboard: React.FC = () => {
                 <Typography color="text.secondary" gutterBottom variant="h6">
                   EV Owners
                 </Typography>
-                <Typography variant="h4" fontWeight="bold">
+                <Typography 
+                  variant="h4" 
+                  fontWeight="bold"
+                  sx={{ color: "#1e293b", mb: 1 }}
+                >
                   {stats.totalEvOwners}
                 </Typography>
                 <Chip
-                  icon={<TrendingUp />}
+                  icon={<TrendingUp sx={{ color: "white !important" }} />}
                   label={`+${stats.activeEvOwners} Active`}
-                  color="success"
+                  sx={{ 
+                    backgroundColor: "#10b981",
+                    color: "white",
+                    fontWeight: 500,
+                  }}
                   size="small"
-                  sx={{ mt: 1 }}
                 />
               </Box>
-              <People sx={{ fontSize: 48, color: "primary.main" }} />
+              <Box
+                sx={{
+                  width: 56,
+                  height: 56,
+                  borderRadius: "50%",
+                  backgroundColor: "#3b82f6", // Blue instead of purple
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  color: "white",
+                }}
+              >
+                <People sx={{ fontSize: 28 }} />
+              </Box>
             </Box>
           </CardContent>
         </Card>
 
-        <Card>
+        <Card sx={{ ...GRADIENT_STYLES.cleanCard }}>
           <CardContent>
             <Box
               sx={{
@@ -229,23 +270,43 @@ const BackofficeDashboard: React.FC = () => {
                 <Typography color="text.secondary" gutterBottom variant="h6">
                   Charging Stations
                 </Typography>
-                <Typography variant="h4" fontWeight="bold">
+                <Typography 
+                  variant="h4" 
+                  fontWeight="bold"
+                  sx={{ color: "#1e293b", mb: 1 }}
+                >
                   {stats.totalStations}
                 </Typography>
                 <Chip
-                  icon={<TrendingUp />}
+                  icon={<TrendingUp sx={{ color: "white !important" }} />}
                   label={`${stats.operationalStations} Operational`}
-                  color="success"
+                  sx={{ 
+                    backgroundColor: "#10b981",
+                    color: "white",
+                    fontWeight: 500,
+                  }}
                   size="small"
-                  sx={{ mt: 1 }}
                 />
               </Box>
-              <EvStation sx={{ fontSize: 48, color: "info.main" }} />
+              <Box
+                sx={{
+                  width: 56,
+                  height: 56,
+                  borderRadius: "50%",
+                  backgroundColor: "#8b5cf6", // Purple for charging stations (relevant)
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  color: "white",
+                }}
+              >
+                <EvStation sx={{ fontSize: 28 }} />
+              </Box>
             </Box>
           </CardContent>
         </Card>
 
-        <Card>
+        <Card sx={{ ...GRADIENT_STYLES.cleanCard }}>
           <CardContent>
             <Box
               sx={{
@@ -258,23 +319,43 @@ const BackofficeDashboard: React.FC = () => {
                 <Typography color="text.secondary" gutterBottom variant="h6">
                   Total Bookings
                 </Typography>
-                <Typography variant="h4" fontWeight="bold">
+                <Typography 
+                  variant="h4" 
+                  fontWeight="bold"
+                  sx={{ color: "#1e293b", mb: 1 }}
+                >
                   {stats.totalBookings}
                 </Typography>
                 <Chip
-                  icon={<Notifications />}
+                  icon={<Notifications sx={{ color: "white !important" }} />}
                   label={`${stats.pendingBookings} Pending`}
-                  color="warning"
+                  sx={{ 
+                    backgroundColor: "#f59e0b",
+                    color: "white",
+                    fontWeight: 500,
+                  }}
                   size="small"
-                  sx={{ mt: 1 }}
                 />
               </Box>
-              <CalendarToday sx={{ fontSize: 48, color: "warning.main" }} />
+              <Box
+                sx={{
+                  width: 56,
+                  height: 56,
+                  borderRadius: "50%",
+                  backgroundColor: "#f59e0b", // Orange for bookings
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  color: "white",
+                }}
+              >
+                <CalendarToday sx={{ fontSize: 28 }} />
+              </Box>
             </Box>
           </CardContent>
         </Card>
 
-        <Card>
+        <Card sx={{ ...GRADIENT_STYLES.cleanCard }}>
           <CardContent>
             <Box
               sx={{
@@ -287,18 +368,38 @@ const BackofficeDashboard: React.FC = () => {
                 <Typography color="text.secondary" gutterBottom variant="h6">
                   Monthly Revenue
                 </Typography>
-                <Typography variant="h4" fontWeight="bold">
+                <Typography 
+                  variant="h4" 
+                  fontWeight="bold"
+                  sx={{ color: "#1e293b", mb: 1 }}
+                >
                   {stats.monthlyRevenue > 0 ? `$${stats.monthlyRevenue.toLocaleString()}` : 'N/A'}
                 </Typography>
                 <Chip
-                  icon={<TrendingUp />}
+                  icon={<TrendingUp sx={{ color: "white !important" }} />}
                   label={stats.monthlyRevenue > 0 ? "+12% vs last month" : "Revenue tracking TBD"}
-                  color={stats.monthlyRevenue > 0 ? "success" : "default"}
+                  sx={{ 
+                    backgroundColor: stats.monthlyRevenue > 0 ? "#10b981" : "#64748b",
+                    color: "white",
+                    fontWeight: 500,
+                  }}
                   size="small"
-                  sx={{ mt: 1 }}
                 />
               </Box>
-              <AttachMoney sx={{ fontSize: 48, color: "success.main" }} />
+              <Box
+                sx={{
+                  width: 56,
+                  height: 56,
+                  borderRadius: "50%",
+                  backgroundColor: "#10b981", // Green for revenue
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  color: "white",
+                }}
+              >
+                <AttachMoney sx={{ fontSize: 28 }} />
+              </Box>
             </Box>
           </CardContent>
         </Card>
@@ -326,30 +427,56 @@ const BackofficeDashboard: React.FC = () => {
                 mt: 2,
               }}
             >
-              {quickActions.map((action) => (
+              {quickActions.map((action, index) => {
+                // Define colors for each action
+                const actionColors = [
+                  { bg: "#3b82f6", icon: "#ffffff" }, // Blue for EV Owners
+                  { bg: "#8b5cf6", icon: "#ffffff" }, // Purple for Charging Stations
+                  { bg: "#f59e0b", icon: "#ffffff" }, // Orange for Bookings
+                  { bg: "#10b981", icon: "#ffffff" }, // Green for Reports
+                ];
+                const colors = actionColors[index] || actionColors[0];
+                
+                return (
                 <Card
                   key={action.title}
                   variant="outlined"
                   sx={{
                     cursor: "pointer",
-                    transition: "all 0.2s",
+                    transition: "all 0.2s ease-in-out",
+                    backgroundColor: "#ffffff",
+                    border: "1px solid #e2e8f0",
                     "&:hover": {
-                      boxShadow: 2,
-                      transform: "translateY(-2px)",
+                      boxShadow: "0 8px 25px rgba(0, 0, 0, 0.15)",
+                      transform: "translateY(-4px)",
+                      borderColor: colors.bg,
                     },
                   }}
                   onClick={action.action}
                 >
-                  <CardContent sx={{ textAlign: "center", p: 2 }}>
+                  <CardContent sx={{ textAlign: "center", p: 3 }}>
                     <Box
                       sx={{
-                        color: `${action.color}.main`,
-                        mb: 1,
+                        width: 64,
+                        height: 64,
+                        mx: "auto",
+                        mb: 2,
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        borderRadius: "50%",
+                        backgroundColor: colors.bg,
+                        color: colors.icon,
+                        boxShadow: `0 4px 15px ${colors.bg}40`,
                       }}
                     >
                       {React.cloneElement(action.icon, { fontSize: "large" })}
                     </Box>
-                    <Typography variant="subtitle2" fontWeight="bold">
+                    <Typography 
+                      variant="subtitle1" 
+                      fontWeight="bold"
+                      sx={{ color: "#1e293b", mb: 0.5 }}
+                    >
                       {action.title}
                     </Typography>
                     <Typography variant="body2" color="text.secondary">
@@ -357,7 +484,8 @@ const BackofficeDashboard: React.FC = () => {
                     </Typography>
                   </CardContent>
                 </Card>
-              ))}
+                );
+              })}
             </Box>
           </CardContent>
         </Card>

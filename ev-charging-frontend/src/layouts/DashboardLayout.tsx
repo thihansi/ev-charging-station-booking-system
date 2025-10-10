@@ -108,20 +108,20 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
       {/* Logo and Title */}
       <Box
         sx={{
-          p: 2,
+          p: 3,
           display: "flex",
           alignItems: "center",
-          minHeight: 64,
+          minHeight: 80,
           background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
           color: "white",
         }}
       >
         <ElectricCar sx={{ mr: 2, fontSize: 32 }} />
         <Box>
-          <Typography variant="h6" noWrap fontWeight="bold">
+          <Typography variant="h6" noWrap fontWeight="bold" sx={{ color: "white" }}>
             EV Charging
           </Typography>
-          <Typography variant="caption" sx={{ opacity: 0.8 }}>
+          <Typography variant="caption" sx={{ opacity: 0.9, color: "white" }}>
             {isBackoffice ? "Backoffice Portal" : "Operator Portal"}
           </Typography>
         </Box>
@@ -135,21 +135,23 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
           const isActive = isActiveRoute(location.pathname, item.path);
 
           return (
-            <ListItem key={item.title} disablePadding sx={{ px: 2, mb: 1 }}>
+            <ListItem key={item.title} disablePadding sx={{ px: 2, mb: 0.5 }}>
               <ListItemButton
                 onClick={() => handleNavigate(item.path)}
                 sx={{
                   borderRadius: 2,
-                  backgroundColor: isActive ? "primary.main" : "transparent",
-                  color: isActive ? "white" : "text.primary",
+                  py: 1.5,
+                  backgroundColor: isActive ? "rgba(103, 126, 234, 0.1)" : "transparent",
+                  color: isActive ? "#667eea" : "#64748b",
                   "&:hover": {
-                    backgroundColor: isActive ? "primary.dark" : "action.hover",
+                    backgroundColor: isActive ? "rgba(103, 126, 234, 0.15)" : "#f1f5f9",
+                    color: isActive ? "#667eea" : "#475569",
                   },
                 }}
               >
                 <ListItemIcon
                   sx={{
-                    color: isActive ? "white" : "text.secondary",
+                    color: isActive ? "#667eea" : "#64748b",
                     minWidth: 40,
                   }}
                 >
@@ -158,7 +160,8 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
                 <ListItemText
                   primary={item.title}
                   primaryTypographyProps={{
-                    fontWeight: isActive ? 600 : 400,
+                    fontWeight: isActive ? 600 : 500,
+                    fontSize: "0.95rem",
                   }}
                 />
               </ListItemButton>

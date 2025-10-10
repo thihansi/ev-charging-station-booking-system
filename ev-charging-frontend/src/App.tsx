@@ -22,7 +22,6 @@ import BookingListPage from "./pages/BookingListPage";
 import BookingFormPage from "./pages/BookingFormPage";
 import QRScannerPage from "./pages/QRScannerPage";
 import LandingPage from "./pages/LandingPage";
-import UserRegistrationPage from "./pages/UserRegistrationPage";
 import ProfilePage from "./pages/ProfilePage";
 import SystemUsersPage from "./pages/SystemUsersPage";
 import ProfileTestPage from "./pages/ProfileTestPage";
@@ -46,10 +45,6 @@ function App() {
             <Routes>
               {/* Public Routes */}
               <Route path={ROUTES.LOGIN} element={<LoginPage />} />
-              <Route
-                path={ROUTES.USER_REGISTRATION}
-                element={<UserRegistrationPage />}
-              />
               <Route
                 path={ROUTES.UNAUTHORIZED}
                 element={<UnauthorizedPage />}

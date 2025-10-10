@@ -60,6 +60,30 @@ export const bookingApi = {
     return transformBookingFromBackend(response.data);
   },
 
+  // Create new booking
+  create: async (bookingData: any): Promise<{ message: string }> => {
+    const response = await apiClient.post("/api/Bookings", bookingData);
+    return response.data;
+  },
+
+  // Update booking
+  update: async (id: string, bookingData: any): Promise<{ message: string }> => {
+    const response = await apiClient.put(`/api/Bookings/${id}`, bookingData);
+    return response.data;
+  },
+
+  // Cancel booking
+  cancel: async (id: string): Promise<{ message: string }> => {
+    const response = await apiClient.delete(`/api/Bookings/${id}`);
+    return response.data;
+  },
+
+  // Complete booking
+  complete: async (id: string): Promise<{ message: string }> => {
+    const response = await apiClient.put(`/api/Bookings/${id}`, { status: "Completed" });
+    return response.data;
+  },
+
   // Approve booking
   approve: async (id: string): Promise<{ message: string }> => {
     const response = await apiClient.post(`/api/Bookings/${id}/approve`);

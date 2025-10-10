@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   Box,
   Typography,
@@ -8,6 +8,12 @@ import {
   CardContent,
   useTheme,
   alpha,
+  Modal,
+  TextField,
+  Alert,
+  InputAdornment,
+  IconButton,
+  CircularProgress,
 } from "@mui/material";
 import {
   EvStation,
@@ -18,13 +24,93 @@ import {
   Dashboard,
   ArrowForward,
   LoginOutlined,
+  Visibility,
+  VisibilityOff,
+  Login as LoginIcon,
+  ElectricCar,
+  Close,
 } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
-import { ROUTES } from "../utils/constants";
+import { useAuth } from "../context/AuthContext";
+import { useNotificationContext } from "../context/NotificationContext";
+import { ROUTES, USER_ROLES } from "../utils/constants";
+import type { LoginRequest } from "../types";
 
 const LandingPage: React.FC = () => {
   const theme = useTheme();
   const navigate = useNavigate();
+  const { state, login, clearError } = useAuth();
+  const { showSuccess, showError } = useNotificationContext();
+
+  // Login modal state
+  const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
+  const [formData, setFormData] = useState<LoginRequest>({
+    username: "",
+    password: "",
+  });
+  const [showPassword, setShowPassword] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // Handle login modal
+  const handleOpenLoginModal = () => {
+    setIsLoginModalOpen(true);
+    clearError();
+  };
+
+  const handleCloseLoginModal = () => {
+    setIsLoginModalOpen(false);
+    setFormData({ username: "", password: "" });
+    setShowPassword(false);
+    clearError();
+  };
+
+  const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = event.target;
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+
+    // Clear error when user starts typing
+    if (state.error) {
+      clearError();
+    }
+  };
+
+  const handleSubmit = async (event: React.FormEvent) => {
+    event.preventDefault();
+
+    if (!formData.username.trim() || !formData.password.trim()) {
+      showError("Please enter both username and password");
+      return;
+    }
+
+    setIsSubmitting(true);
+
+    try {
+      await login(formData);
+      showSuccess("Login successful");
+      handleCloseLoginModal();
+      
+      // Navigate based on user role
+      const redirectPath =
+        state.user?.role === USER_ROLES.BACKOFFICE
+          ? ROUTES.BACKOFFICE.DASHBOARD
+          : ROUTES.OPERATOR.DASHBOARD;
+      navigate(redirectPath);
+    } catch (error: any) {
+      const errorMessage =
+        error.response?.data?.message ||
+        "Login failed. Please check your credentials.";
+      showError(errorMessage);
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const togglePasswordVisibility = () => {
+    setShowPassword((prev) => !prev);
+  };
 
   const features = [
     {
@@ -97,17 +183,17 @@ const LandingPage: React.FC = () => {
             }}
           >
             <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
-              <EvStation sx={{ fontSize: 32, color: "primary.main" }} />
-              <Typography variant="h6" fontWeight="bold" color="primary">
+              <EvStation sx={{ fontSize: 32, color: "white" }} />
+              <Typography variant="h6" fontWeight="bold" color="white">
                 EV Charging System
               </Typography>
             </Box>
             <Button
               variant="contained"
               startIcon={<LoginOutlined />}
-              onClick={() => navigate(ROUTES.LOGIN)}
+              onClick={handleOpenLoginModal}
             >
-              Operator Login
+              Admin/Operator Login
             </Button>
           </Box>
         </Container>
@@ -168,24 +254,6 @@ const LandingPage: React.FC = () => {
               }}
             >
               <Button
-                variant="contained"
-                size="large"
-                sx={{
-                  bgcolor: "white",
-                  color: "primary.main",
-                  px: 4,
-                  py: 1.5,
-                  fontSize: "1.1rem",
-                  "&:hover": {
-                    bgcolor: alpha(theme.palette.common.white, 0.9),
-                  },
-                }}
-                endIcon={<ArrowForward />}
-                onClick={() => navigate(ROUTES.LOGIN)}
-              >
-                Admin/Operator Login
-              </Button>
-              <Button
                 variant="outlined"
                 size="large"
                 sx={{
@@ -194,14 +262,17 @@ const LandingPage: React.FC = () => {
                   px: 4,
                   py: 1.5,
                   fontSize: "1.1rem",
+                  borderWidth: "2px",
                   "&:hover": {
                     borderColor: "white",
                     bgcolor: alpha(theme.palette.common.white, 0.1),
+                    borderWidth: "2px",
                   },
                 }}
-                onClick={() => navigate(ROUTES.USER_REGISTRATION)}
+                endIcon={<ArrowForward />}
+                onClick={handleOpenLoginModal}
               >
-                Create Admin Account
+                Admin/Operator Login
               </Button>
             </Box>
           </Box>
@@ -345,19 +416,22 @@ const LandingPage: React.FC = () => {
             }}
           >
             <Button
-              variant="contained"
+              variant="outlined"
               size="large"
               sx={{
-                bgcolor: "white",
-                color: "secondary.main",
+                borderColor: "white",
+                color: "white",
                 px: 4,
                 py: 1.5,
                 fontSize: "1.1rem",
+                borderWidth: "2px",
                 "&:hover": {
-                  bgcolor: alpha(theme.palette.common.white, 0.9),
+                  borderColor: "white",
+                  bgcolor: alpha(theme.palette.common.white, 0.1),
+                  borderWidth: "2px",
                 },
               }}
-              onClick={() => navigate(ROUTES.LOGIN)}
+              onClick={handleOpenLoginModal}
             >
               Access Dashboard
             </Button>

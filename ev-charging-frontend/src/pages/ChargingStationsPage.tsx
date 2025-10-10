@@ -39,10 +39,9 @@ import {
   LocationOn,
   PowerSettingsNew,
   EvStation,
-  Visibility,
   QrCode,
 } from "@mui/icons-material";
-import { chargingStationApi } from "../api";
+import { chargingStationApi, bookingApi } from "../api";
 import type {
   ChargingStation,
   CreateChargingStationRequest,
@@ -296,6 +295,23 @@ const ChargingStationsPage: React.FC = () => {
         await chargingStationApi.activate(statusActionStation.id);
         showSnackbar("Charging station activated successfully");
       } else {
+        // Business Rule: Cannot deactivate station if it has active bookings
+        // Check for active bookings before deactivating
+        const activeBookings = await bookingApi.getAll();
+        const stationActiveBookings = activeBookings.filter(
+          booking => 
+            booking.chargingStationId === statusActionStation.id && 
+            (booking.status === "Pending" || booking.status === "Approved")
+        );
+
+        if (stationActiveBookings.length > 0) {
+          showSnackbar(
+            `Cannot deactivate station. It has ${stationActiveBookings.length} active booking(s). Please complete or cancel these bookings first.`,
+            "error"
+          );
+          return;
+        }
+
         await chargingStationApi.deactivate(statusActionStation.id);
         showSnackbar("Charging station deactivated successfully");
       }

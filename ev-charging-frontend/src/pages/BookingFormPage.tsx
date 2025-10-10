@@ -120,7 +120,7 @@ const BookingFormPage: React.FC = () => {
       if (station) setSelectedStation(station);
     } catch (error) {
       showError("Failed to load booking details");
-      navigate(ROUTES.ADMIN.BOOKINGS);
+      navigate(ROUTES.BACKOFFICE.BOOKINGS);
     } finally {
       setIsInitialLoading(false);
     }
@@ -144,8 +144,25 @@ const BookingFormPage: React.FC = () => {
       const now = new Date();
 
       if (reservationDate <= now) {
-        newErrors.reservationDateTime =
-          "Reservation date must be in the future";
+        newErrors.reservationDateTime = "Reservation date must be in the future";
+      }
+
+      // Business Rule: Reservation date/time must be within 7 days from booking date
+      const maxReservationDate = new Date();
+      maxReservationDate.setDate(maxReservationDate.getDate() + 7);
+      
+      if (reservationDate > maxReservationDate) {
+        newErrors.reservationDateTime = "Reservation date cannot be more than 7 days from now";
+      }
+
+      // Business Rule: For updates, must be at least 12 hours before reservation
+      if (isEditMode && booking) {
+        const twelveHoursFromNow = new Date();
+        twelveHoursFromNow.setHours(twelveHoursFromNow.getHours() + 12);
+        
+        if (reservationDate < twelveHoursFromNow) {
+          newErrors.reservationDateTime = "Reservations can only be updated at least 12 hours before the reservation time";
+        }
       }
     }
 
@@ -173,7 +190,7 @@ const BookingFormPage: React.FC = () => {
         showSuccess("Booking created successfully");
       }
 
-      navigate(ROUTES.ADMIN.BOOKINGS);
+      navigate(ROUTES.BACKOFFICE.BOOKINGS);
     } catch (error: any) {
       console.error("[Booking Creation Error]", error);
       
@@ -194,7 +211,7 @@ const BookingFormPage: React.FC = () => {
   };
 
   const handleCancel = () => {
-    navigate(ROUTES.ADMIN.BOOKINGS);
+    navigate(ROUTES.BACKOFFICE.BOOKINGS);
   };
 
   const handleEvOwnerChange = (evOwner: EVOwner | null) => {
