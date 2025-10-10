@@ -58,4 +58,10 @@
         <item name="rippleColor">@color/ev_primary_ripple</item>
         <item name="android:elevation">2dp</item>
     </style>
+
+    <style name="BottomNav_NoActiveIndicator">
+        <item name="android:width">0dp</item>
+        <item name="android:height">0dp</item>
+        <item name="backgroundColor">@android:color/transparent</item>
+    </style>
 </resources>

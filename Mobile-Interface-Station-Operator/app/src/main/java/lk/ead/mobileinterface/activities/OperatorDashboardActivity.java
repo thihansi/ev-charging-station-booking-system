@@ -2,11 +2,16 @@ package lk.ead.mobileinterface.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.graphics.Insets;
+import androidx.core.view.OnApplyWindowInsetsListener;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -121,11 +126,22 @@ public class OperatorDashboardActivity extends AppCompatActivity {
         // ------- Bottom Nav  -------
         BottomNavigationView bottom = findViewById(R.id.bottomNav);
         if (bottom != null) {
+
+            // ⬇️ Add this: prevents the bar getting cut off on gesture-nav phones
+            ViewCompat.setOnApplyWindowInsetsListener(bottom, new OnApplyWindowInsetsListener() {
+                @Override
+                public WindowInsetsCompat onApplyWindowInsets(View v, WindowInsetsCompat insets) {
+                    Insets sys = insets.getInsets(WindowInsetsCompat.Type.systemBars());
+                    v.setPadding(v.getPaddingLeft(), v.getPaddingTop(), v.getPaddingRight(), sys.bottom);
+                    return insets;
+                }
+            });
+
             bottom.setSelectedItemId(R.id.tab_bookings); // you are on Bookings
             bottom.setOnItemSelectedListener(item -> {
                 int id = item.getItemId();
                 if (id == R.id.tab_bookings) {
-                    return true; // already here
+                    return true;
                 } else if (id == R.id.tab_scan) {
                     startActivity(new Intent(this, ScanQRActivity.class));
                     overridePendingTransition(0, 0);
