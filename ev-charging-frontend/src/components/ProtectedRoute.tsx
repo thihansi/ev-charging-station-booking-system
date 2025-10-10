@@ -14,7 +14,7 @@ interface ProtectedRouteProps {
 const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
   children,
   requiredRole,
-  fallbackPath = ROUTES.LOGIN,
+  fallbackPath = ROUTES.HOME,
 }) => {
   const { state } = useAuth();
   const location = useLocation();

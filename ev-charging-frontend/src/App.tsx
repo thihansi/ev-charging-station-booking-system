@@ -11,7 +11,6 @@ import { AuthProvider, useAuth } from "./context/AuthContext";
 import { NotificationProvider } from "./context/NotificationContext";
 import ProtectedRoute from "./components/ProtectedRoute";
 import DashboardLayout from "./layouts/DashboardLayout";
-import LoginPage from "./pages/LoginPage";
 import UnauthorizedPage from "./pages/UnauthorizedPage";
 import NotFoundPage from "./pages/NotFoundPage";
 import BackofficeDashboard from "./pages/BackofficeDashboard";
@@ -44,7 +43,6 @@ function App() {
           >
             <Routes>
               {/* Public Routes */}
-              <Route path={ROUTES.LOGIN} element={<LoginPage />} />
               <Route
                 path={ROUTES.UNAUTHORIZED}
                 element={<UnauthorizedPage />}
@@ -260,7 +258,7 @@ const DashboardRedirect: React.FC = () => {
   const { state } = useAuth();
 
   if (!state.user) {
-    return <Navigate to={ROUTES.LOGIN} replace />;
+    return <Navigate to={ROUTES.HOME} replace />;
   }
 
   const redirectPath =

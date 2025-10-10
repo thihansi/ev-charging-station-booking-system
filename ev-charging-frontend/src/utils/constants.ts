@@ -12,7 +12,6 @@ export const STORAGE_KEYS = {
 // Routes
 export const ROUTES = {
   HOME: "/",
-  LOGIN: "/login",
   DASHBOARD: "/dashboard",
 
   // Backoffice routes

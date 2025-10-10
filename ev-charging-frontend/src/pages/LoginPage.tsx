@@ -271,24 +271,6 @@ const LoginPage: React.FC = () => {
                 {isSubmitting ? "Signing In..." : "Sign In"}
               </Button>
             </Box>
-
-            {/* Demo Credentials */}
-            <Box sx={{ mt: 3, p: 2, bgcolor: "grey.50", borderRadius: 1 }}>
-              <Typography
-                variant="body2"
-                color="text.secondary"
-                gutterBottom
-                fontWeight="bold"
-              >
-                Demo Credentials:
-              </Typography>
-              <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
-                <strong>Admin:</strong> admin / admin123
-              </Typography>
-              <Typography variant="body2" color="text.secondary">
-                <strong>Operator:</strong> operator / operator123
-              </Typography>
-            </Box>
           </CardContent>
         </Card>
       </Container>

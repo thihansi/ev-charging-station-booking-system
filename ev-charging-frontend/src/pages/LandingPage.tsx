@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Box,
   Typography,
@@ -14,6 +14,9 @@ import {
   InputAdornment,
   IconButton,
   CircularProgress,
+  ToggleButton,
+  ToggleButtonGroup,
+  Chip,
 } from "@mui/material";
 import {
   EvStation,
@@ -29,6 +32,8 @@ import {
   Login as LoginIcon,
   ElectricCar,
   Close,
+  AdminPanelSettings,
+  Engineering,
 } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
@@ -44,12 +49,27 @@ const LandingPage: React.FC = () => {
 
   // Login modal state
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
+  const [loginType, setLoginType] = useState<"backoffice" | "operator">(
+    "backoffice"
+  );
   const [formData, setFormData] = useState<LoginRequest>({
     username: "",
     password: "",
   });
   const [showPassword, setShowPassword] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // Handle authentication state changes
+  useEffect(() => {
+    if (state.isAuthenticated && state.user) {
+      handleCloseLoginModal();
+      const redirectPath =
+        state.user.role === USER_ROLES.BACKOFFICE
+          ? ROUTES.BACKOFFICE.DASHBOARD
+          : ROUTES.OPERATOR.DASHBOARD;
+      navigate(redirectPath, { replace: true });
+    }
+  }, [state.isAuthenticated, state.user, navigate]);
 
   // Handle login modal
   const handleOpenLoginModal = () => {
@@ -61,6 +81,7 @@ const LandingPage: React.FC = () => {
     setIsLoginModalOpen(false);
     setFormData({ username: "", password: "" });
     setShowPassword(false);
+    setLoginType("backoffice");
     clearError();
   };
 
@@ -90,14 +111,7 @@ const LandingPage: React.FC = () => {
     try {
       await login(formData);
       showSuccess("Login successful");
-      handleCloseLoginModal();
-      
-      // Navigate based on user role
-      const redirectPath =
-        state.user?.role === USER_ROLES.BACKOFFICE
-          ? ROUTES.BACKOFFICE.DASHBOARD
-          : ROUTES.OPERATOR.DASHBOARD;
-      navigate(redirectPath);
+      // Navigation will be handled by the useEffect hook
     } catch (error: any) {
       const errorMessage =
         error.response?.data?.message ||
@@ -110,6 +124,18 @@ const LandingPage: React.FC = () => {
 
   const togglePasswordVisibility = () => {
     setShowPassword((prev) => !prev);
+  };
+
+  const handleLoginTypeChange = (
+    event: React.MouseEvent<HTMLElement>,
+    newLoginType: "backoffice" | "operator"
+  ) => {
+    if (newLoginType !== null) {
+      setLoginType(newLoginType);
+      // Clear form when switching types
+      setFormData({ username: "", password: "" });
+      clearError();
+    }
   };
 
   const features = [
@@ -168,9 +194,10 @@ const LandingPage: React.FC = () => {
           left: 0,
           right: 0,
           zIndex: 1000,
-          backgroundColor: alpha(theme.palette.background.paper, 0.95),
-          backdropFilter: "blur(8px)",
-          borderBottom: `1px solid ${theme.palette.divider}`,
+          backgroundColor: "rgba(255, 255, 255, 0.95)",
+          backdropFilter: "blur(12px)",
+          borderBottom: `1px solid ${alpha("#e2e8f0", 0.8)}`,
+          boxShadow: "0 1px 3px rgba(0, 0, 0, 0.1)",
         }}
       >
         <Container maxWidth="lg">
@@ -183,8 +210,32 @@ const LandingPage: React.FC = () => {
             }}
           >
             <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
-              <EvStation sx={{ fontSize: 32, color: "white" }} />
-              <Typography variant="h6" fontWeight="bold" color="white">
+              <Box
+                sx={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  width: 40,
+                  height: 40,
+                  borderRadius: "50%",
+                  background:
+                    "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+                  boxShadow: "0 4px 12px rgba(102, 126, 234, 0.3)",
+                }}
+              >
+                <EvStation sx={{ fontSize: 24, color: "white" }} />
+              </Box>
+              <Typography
+                variant="h6"
+                fontWeight="bold"
+                sx={{
+                  background:
+                    "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+                  backgroundClip: "text",
+                  WebkitBackgroundClip: "text",
+                  WebkitTextFillColor: "transparent",
+                }}
+              >
                 EV Charging System
               </Typography>
             </Box>
@@ -192,6 +243,21 @@ const LandingPage: React.FC = () => {
               variant="contained"
               startIcon={<LoginOutlined />}
               onClick={handleOpenLoginModal}
+              sx={{
+                background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+                color: "white",
+                px: 3,
+                py: 1,
+                borderRadius: 2,
+                boxShadow: "0 4px 12px rgba(102, 126, 234, 0.3)",
+                "&:hover": {
+                  background:
+                    "linear-gradient(135deg, #5a6fd8 0%, #6a4190 100%)",
+                  boxShadow: "0 6px 16px rgba(102, 126, 234, 0.4)",
+                  transform: "translateY(-1px)",
+                },
+                transition: "all 0.2s ease-in-out",
+              }}
             >
               Admin/Operator Login
             </Button>
@@ -454,16 +520,363 @@ const LandingPage: React.FC = () => {
             }}
           >
             <EvStation sx={{ fontSize: 28 }} />
-            <Typography variant="h6" fontWeight="bold">
+            <Typography
+              variant="h6"
+              fontWeight="bold"
+              sx={{ color: "white", mb: 1 }}
+            >
               EV Charging System
             </Typography>
           </Box>
-          <Typography variant="body2" color="grey.400">
+          <Typography variant="body2" color="white">
             © 2025 EV Charging System. All rights reserved. Powering the future
             of electric mobility.
           </Typography>
         </Container>
       </Box>
+
+      {/* Login Modal */}
+      <Modal
+        open={isLoginModalOpen}
+        onClose={handleCloseLoginModal}
+        aria-labelledby="login-modal-title"
+        aria-describedby="login-modal-description"
+        sx={{
+          backdropFilter: "blur(8px)",
+        }}
+      >
+        <Box
+          sx={{
+            position: "absolute",
+            top: "50%",
+            left: "50%",
+            transform: "translate(-50%, -50%)",
+            width: { xs: "85%", sm: 380 },
+            maxWidth: 380,
+            bgcolor: "background.paper",
+            borderRadius: 4,
+            boxShadow:
+              "0 25px 50px -12px rgb(0 0 0 / 0.25), 0 0 0 1px rgba(255, 255, 255, 0.1)",
+            overflow: "hidden",
+            border: "1px solid rgba(255, 255, 255, 0.1)",
+          }}
+        >
+          {/* Modal Header with Gradient */}
+          <Box
+            sx={{
+              background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+              p: 2.5,
+              position: "relative",
+              "&::before": {
+                content: '""',
+                position: "absolute",
+                top: 0,
+                left: 0,
+                right: 0,
+                bottom: 0,
+                background:
+                  'url(\'data:image/svg+xml,<svg width="60" height="60" viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg"><g fill="none" fill-rule="evenodd"><g fill="%23ffffff" fill-opacity="0.1"><circle cx="30" cy="30" r="2"/></g></svg>\') repeat',
+              },
+            }}
+          >
+            {/* Close Button */}
+            <Box
+              sx={{
+                display: "flex",
+                justifyContent: "flex-end",
+                mb: 2,
+                position: "relative",
+                zIndex: 1,
+              }}
+            >
+              <IconButton
+                onClick={handleCloseLoginModal}
+                size="small"
+                sx={{
+                  color: "white",
+                  backgroundColor: "rgba(255, 255, 255, 0.1)",
+                  "&:hover": {
+                    backgroundColor: "rgba(255, 255, 255, 0.2)",
+                  },
+                }}
+              >
+                <Close />
+              </IconButton>
+            </Box>
+
+            {/* Header Content */}
+            <Box
+              sx={{
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+                position: "relative",
+                zIndex: 1,
+              }}
+            >
+              <Box
+                sx={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  width: 70,
+                  height: 70,
+                  borderRadius: "50%",
+                  background: "rgba(255, 255, 255, 0.2)",
+                  backdropFilter: "blur(10px)",
+                  border: "2px solid rgba(255, 255, 255, 0.3)",
+                  mb: 2.5,
+                  boxShadow: "0 8px 32px rgba(0, 0, 0, 0.1)",
+                }}
+              >
+                <ElectricCar sx={{ fontSize: 36, color: "white" }} />
+              </Box>
+              <Typography
+                variant="h5"
+                component="h1"
+                gutterBottom
+                align="center"
+                fontWeight="bold"
+                sx={{ color: "white !important", mb: 1 }}
+              >
+                Welcome Back
+              </Typography>
+              <Typography
+                variant="body1"
+                align="center"
+                sx={{ color: "white !important", mb: 0 }}
+              >
+                Choose your access level and sign in
+              </Typography>
+            </Box>
+          </Box>
+
+          {/* Modal Body */}
+          <Box sx={{ p: 3 }}>
+            {/* Login Type Toggle */}
+            <Box sx={{ display: "flex", justifyContent: "center", mb: 3 }}>
+              <ToggleButtonGroup
+                value={loginType}
+                exclusive
+                onChange={handleLoginTypeChange}
+                aria-label="login type"
+                size="medium"
+                sx={{
+                  backgroundColor: "grey.50",
+                  borderRadius: 3,
+                  p: 0.5,
+                  "& .MuiToggleButton-root": {
+                    px: 3,
+                    py: 1.5,
+                    borderRadius: 2.5,
+                    border: "none",
+                    color: "text.secondary",
+                    fontWeight: 500,
+                    transition: "all 0.2s ease-in-out",
+                    "&.Mui-selected": {
+                      backgroundColor: "white",
+                      color: "primary.main",
+                      boxShadow: "0 2px 8px rgba(0, 0, 0, 0.1)",
+                      "&:hover": {
+                        backgroundColor: "white",
+                      },
+                    },
+                    "&:hover": {
+                      backgroundColor: "grey.100",
+                    },
+                  },
+                }}
+              >
+                <ToggleButton value="backoffice" aria-label="backoffice login">
+                  <AdminPanelSettings sx={{ mr: 1.5, fontSize: 20 }} />
+                  <Typography variant="body2" fontWeight={600}>
+                    Admin Portal
+                  </Typography>
+                </ToggleButton>
+                <ToggleButton value="operator" aria-label="operator login">
+                  <Engineering sx={{ mr: 1.5, fontSize: 20 }} />
+                  <Typography variant="body2" fontWeight={600}>
+                    Operator Portal
+                  </Typography>
+                </ToggleButton>
+              </ToggleButtonGroup>
+            </Box>
+
+            {/* Login Type Info */}
+            <Box sx={{ mb: 3, textAlign: "center" }}>
+              <Box
+                sx={{
+                  display: "inline-flex",
+                  alignItems: "center",
+                  gap: 1,
+                  px: 3,
+                  py: 1.5,
+                  borderRadius: 3,
+                  backgroundColor: alpha(theme.palette.primary.main, 0.1),
+                  border: `1px solid ${alpha(theme.palette.primary.main, 0.2)}`,
+                }}
+              >
+                {loginType === "backoffice" ? (
+                  <AdminPanelSettings />
+                ) : (
+                  <Engineering />
+                )}
+                <Typography
+                  variant="body2"
+                  fontWeight={500}
+                  color="primary.main"
+                >
+                  {loginType === "backoffice"
+                    ? "Full Administrative Access"
+                    : "Station Management Access"}
+                </Typography>
+              </Box>
+            </Box>
+
+            {/* Error Alert */}
+            {state.error && (
+              <Alert
+                severity="error"
+                sx={{
+                  mb: 3,
+                  borderRadius: 2,
+                  "& .MuiAlert-icon": {
+                    fontSize: 20,
+                  },
+                }}
+              >
+                {state.error}
+              </Alert>
+            )}
+
+            {/* Login Form */}
+            <Box component="form" onSubmit={handleSubmit} noValidate>
+              <TextField
+                fullWidth
+                id="username"
+                name="username"
+                label={`${
+                  loginType === "backoffice" ? "Admin" : "Operator"
+                } Username`}
+                placeholder={
+                  loginType === "backoffice"
+                    ? "Enter admin username"
+                    : "Enter operator username"
+                }
+                type="text"
+                value={formData.username}
+                onChange={handleInputChange}
+                margin="normal"
+                required
+                autoComplete="username"
+                autoFocus
+                disabled={isSubmitting}
+                sx={{
+                  mb: 3,
+                  "& .MuiOutlinedInput-root": {
+                    borderRadius: 2,
+                    backgroundColor: "grey.50",
+                    "&:hover": {
+                      backgroundColor: "white",
+                    },
+                    "&.Mui-focused": {
+                      backgroundColor: "white",
+                    },
+                  },
+                }}
+              />
+
+              <TextField
+                fullWidth
+                id="password"
+                name="password"
+                label="Password"
+                type={showPassword ? "text" : "password"}
+                value={formData.password}
+                onChange={handleInputChange}
+                margin="normal"
+                required
+                autoComplete="current-password"
+                disabled={isSubmitting}
+                InputProps={{
+                  endAdornment: (
+                    <InputAdornment position="end">
+                      <IconButton
+                        aria-label="toggle password visibility"
+                        onClick={togglePasswordVisibility}
+                        edge="end"
+                        disabled={isSubmitting}
+                        sx={{ color: "text.secondary" }}
+                      >
+                        {showPassword ? <VisibilityOff /> : <Visibility />}
+                      </IconButton>
+                    </InputAdornment>
+                  ),
+                }}
+                sx={{
+                  mb: 4,
+                  "& .MuiOutlinedInput-root": {
+                    borderRadius: 2,
+                    backgroundColor: "grey.50",
+                    "&:hover": {
+                      backgroundColor: "white",
+                    },
+                    "&.Mui-focused": {
+                      backgroundColor: "white",
+                    },
+                  },
+                }}
+              />
+
+              <Button
+                type="submit"
+                fullWidth
+                variant="contained"
+                size="large"
+                disabled={
+                  isSubmitting ||
+                  !formData.username.trim() ||
+                  !formData.password.trim()
+                }
+                startIcon={
+                  isSubmitting ? (
+                    <CircularProgress size={20} color="inherit" />
+                  ) : (
+                    <LoginIcon />
+                  )
+                }
+                sx={{
+                  py: 2,
+                  borderRadius: 2.5,
+                  fontSize: "1.1rem",
+                  fontWeight: 600,
+                  background:
+                    "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+                  boxShadow: "0 4px 12px rgba(102, 126, 234, 0.3)",
+                  "&:hover": {
+                    background:
+                      "linear-gradient(135deg, #5a6fd8 0%, #6a4190 100%)",
+                    boxShadow: "0 6px 16px rgba(102, 126, 234, 0.4)",
+                    transform: "translateY(-1px)",
+                  },
+                  "&:disabled": {
+                    background: "grey.300",
+                    boxShadow: "none",
+                    transform: "none",
+                  },
+                  transition: "all 0.2s ease-in-out",
+                }}
+              >
+                {isSubmitting
+                  ? "Signing In..."
+                  : `Sign In as ${
+                      loginType === "backoffice" ? "Admin" : "Operator"
+                    }`}
+              </Button>
+            </Box>
+          </Box>
+        </Box>
+      </Modal>
     </Box>
   );
 };

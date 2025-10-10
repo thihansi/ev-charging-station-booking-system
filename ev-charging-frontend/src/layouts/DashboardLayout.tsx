@@ -70,7 +70,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
   const handleLogout = () => {
     logout();
     showSuccess("Logged out successfully");
-    navigate(ROUTES.LOGIN);
+    navigate(ROUTES.HOME);
     handleProfileMenuClose();
   };
 
