@@ -14,8 +14,12 @@ android {
         versionName "1.0"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
-        def mapsKey = project.hasProperty("MAPS_API_KEY") ? project.property("MAPS_API_KEY") : ""
-        manifestPlaceholders = [ MAPS_API_KEY: mapsKey ]
+        defaultConfig {
+            // Safely read the key from local.properties
+            def mapsKey = project.findProperty("MAPS_API_KEY") ?: ""
+            manifestPlaceholders = [ MAPS_API_KEY: mapsKey ]
+            resValue "string", "google_maps_key", mapsKey
+        }
     }
 
     buildTypes {
@@ -43,6 +47,9 @@ dependencies {
     implementation libs.converter.gson
     implementation libs.navigation.fragment
     implementation libs.navigation.ui
+    implementation libs.play.services.maps
+    implementation libs.play.services.location
+    implementation libs.material.v1120
     testImplementation libs.junit
     androidTestImplementation libs.ext.junit
     androidTestImplementation libs.espresso.core

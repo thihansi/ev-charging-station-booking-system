@@ -7,6 +7,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
 import lk.ead.mobileinterface.enumeration.BookingStatus;
+import lk.ead.mobileinterface.enumeration.StationType;
 import lk.ead.mobileinterface.models.Booking;
 import lk.ead.mobileinterface.models.Station;
 import lk.ead.mobileinterface.models.User;
@@ -45,7 +46,7 @@ public class DBHelper extends SQLiteOpenHelper {
 
         // STATION TABLE
         String CREATE_STATION_TABLE = "CREATE TABLE " + TABLE_STATION + " (" +
-                "id INTEGER PRIMARY KEY, " +
+                "id TEXT PRIMARY KEY, " +
                 "name TEXT, " +
                 "address TEXT, " +
                 "latitude REAL, " +
@@ -58,7 +59,7 @@ public class DBHelper extends SQLiteOpenHelper {
 
         // BOOKING TABLE
         String CREATE_BOOKING_TABLE = "CREATE TABLE " + TABLE_BOOKING + " (" +
-                "id INTEGER PRIMARY KEY, " +
+                "id TEXT PRIMARY KEY, " +
                 "evOwnerNic TEXT, " +
                 "chargingStationId INTEGER, " +
                 "bookingDate TEXT, " +
@@ -71,13 +72,6 @@ public class DBHelper extends SQLiteOpenHelper {
                 "rejectionReason TEXT)";
         db.execSQL(CREATE_BOOKING_TABLE);
 
-        // OPERATOR SESSION TABLE
-        String CREATE_OPERATOR_SESSION_TABLE = "CREATE TABLE " + TABLE_OPERATOR_SESSION + " (" +
-                "id INTEGER PRIMARY KEY AUTOINCREMENT, " +
-                "username TEXT, " +
-                "token TEXT, " +
-                "stationId TEXT)";
-        db.execSQL(CREATE_OPERATOR_SESSION_TABLE);
 
     }
 
@@ -144,7 +138,14 @@ public class DBHelper extends SQLiteOpenHelper {
                 values.put("address", station.getAddress());
                 values.put("latitude", station.getLatitude());
                 values.put("longitude", station.getLongitude());
-                values.put("type", station.getType());
+
+                // ✅ Store enum as integer (0 = AC, 1 = DC)
+                if (station.getType() != null) {
+                    values.put("type", station.getType().getValue());
+                } else {
+                    values.put("type", -1); // store -1 if unknown
+                }
+
                 values.put("availableSlots", station.getAvailableSlots());
                 values.put("schedule", station.getSchedule());
                 values.put("isActive", station.isActive() ? 1 : 0);
@@ -161,25 +162,34 @@ public class DBHelper extends SQLiteOpenHelper {
     public List<Station> getAllStations() {
         List<Station> list = new ArrayList<>();
         SQLiteDatabase db = this.getReadableDatabase();
-        Cursor cursor = db.rawQuery("SELECT * FROM " + TABLE_STATION, null);
 
-        if (cursor.moveToFirst()) {
+        Cursor c = db.rawQuery("SELECT * FROM " + TABLE_STATION, null);
+        if (c.moveToFirst()) {
             do {
                 Station s = new Station();
-                s.setId(cursor.getInt(cursor.getColumnIndexOrThrow("id")));
-                s.setName(cursor.getString(cursor.getColumnIndexOrThrow("name")));
-                s.setAddress(cursor.getString(cursor.getColumnIndexOrThrow("address")));
-                s.setLatitude(cursor.getDouble(cursor.getColumnIndexOrThrow("latitude")));
-                s.setLongitude(cursor.getDouble(cursor.getColumnIndexOrThrow("longitude")));
-                s.setType(cursor.getString(cursor.getColumnIndexOrThrow("type")));
-                s.setAvailableSlots(cursor.getInt(cursor.getColumnIndexOrThrow("availableSlots")));
-                s.setSchedule(cursor.getString(cursor.getColumnIndexOrThrow("schedule")));
-                s.setActive(cursor.getInt(cursor.getColumnIndexOrThrow("isActive")) == 1);
-                list.add(s);
-            } while (cursor.moveToNext());
-        }
+                s.setId(c.getString(c.getColumnIndexOrThrow("id")));
+                s.setName(c.getString(c.getColumnIndexOrThrow("name")));
+                s.setAddress(c.getString(c.getColumnIndexOrThrow("address")));
+                s.setLatitude(c.getDouble(c.getColumnIndexOrThrow("latitude")));
+                s.setLongitude(c.getDouble(c.getColumnIndexOrThrow("longitude")));
 
-        cursor.close();
+                // ✅ Convert stored integer to enum
+                int typeVal = c.getInt(c.getColumnIndexOrThrow("type"));
+                if (typeVal >= 0) {
+                    s.setType(StationType.fromInt(typeVal));
+                } else {
+                    s.setType(null);
+                }
+
+                s.setAvailableSlots(c.getInt(c.getColumnIndexOrThrow("availableSlots")));
+                s.setSchedule(c.getString(c.getColumnIndexOrThrow("schedule")));
+                s.setActive(c.getInt(c.getColumnIndexOrThrow("isActive")) == 1);
+
+                list.add(s);
+            } while (c.moveToNext());
+        }
+        c.close();
+        db.close();
         return list;
     }
 
@@ -187,7 +197,7 @@ public class DBHelper extends SQLiteOpenHelper {
     // BOOKING OPERATIONS
     // -----------------------------------------------------
 
-    public void insertBookings(List<Booking> bookings) {
+    public void insertOrUpdateBookings(List<Booking> bookings) {
         SQLiteDatabase db = this.getWritableDatabase();
         db.beginTransaction();
         try {
@@ -222,9 +232,9 @@ public class DBHelper extends SQLiteOpenHelper {
         if (cursor.moveToFirst()) {
             do {
                 Booking b = new Booking();
-                b.setId(cursor.getInt(cursor.getColumnIndexOrThrow("id")));
+                b.setId(cursor.getString(cursor.getColumnIndexOrThrow("id")));
                 b.setEvOwnerNic(cursor.getString(cursor.getColumnIndexOrThrow("evOwnerNic")));
-                b.setChargingStationId(cursor.getInt(cursor.getColumnIndexOrThrow("chargingStationId")));
+                b.setChargingStationId(cursor.getString(cursor.getColumnIndexOrThrow("chargingStationId")));
                 b.setBookingDate(cursor.getString(cursor.getColumnIndexOrThrow("bookingDate")));
                 b.setReservationDateTime(cursor.getString(cursor.getColumnIndexOrThrow("reservationDateTime")));
                 b.setStatus(BookingStatus.valueOf(cursor.getString(cursor.getColumnIndexOrThrow("status"))));
@@ -246,38 +256,4 @@ public class DBHelper extends SQLiteOpenHelper {
         db.delete(TABLE_BOOKING, null, null);
         db.close();
     }
-
-
-    // -----------------------------------------------------
-    // OPERATOR SESSION OPERATIONS
-    // -----------------------------------------------------
-
-    public void saveOperatorSession(String username, String token, String stationId) {
-        SQLiteDatabase db = this.getWritableDatabase();
-        db.delete("operator_session", null, null); // keep only one session
-        ContentValues values = new ContentValues();
-        values.put("username", username);
-        values.put("token", token);
-        values.put("stationId", stationId);
-        db.insert("operator_session", null, values);
-        db.close();
-    }
-
-    public String getOperatorToken() {
-        SQLiteDatabase db = this.getReadableDatabase();
-        Cursor cursor = db.rawQuery("SELECT token FROM operator_session LIMIT 1", null);
-        String token = null;
-        if (cursor.moveToFirst()) {
-            token = cursor.getString(cursor.getColumnIndexOrThrow("token"));
-        }
-        cursor.close();
-        return token;
-    }
-
-    public void clearOperatorSession() {
-        SQLiteDatabase db = this.getWritableDatabase();
-        db.delete("operator_session", null, null);
-        db.close();
-    }
-
 }

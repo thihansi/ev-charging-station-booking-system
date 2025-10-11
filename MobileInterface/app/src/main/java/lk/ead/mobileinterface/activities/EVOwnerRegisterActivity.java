@@ -7,6 +7,7 @@ import android.util.Patterns;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
@@ -16,24 +17,24 @@ import androidx.appcompat.app.AppCompatActivity;
 import lk.ead.mobileinterface.R;
 import lk.ead.mobileinterface.api.ApiClient;
 import lk.ead.mobileinterface.api.ApiService;
-import lk.ead.mobileinterface.models.RegisterRequest;
+import lk.ead.mobileinterface.models.EVOwnerRegisterRequest;
 import lk.ead.mobileinterface.models.User;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class RegisterActivity extends AppCompatActivity {
+public class EVOwnerRegisterActivity extends AppCompatActivity {
 
     private EditText etNic, etName, etEmail, etPhone, etPassword, etConfirmPassword;
     private Button btnCreateAccount;
-    private ProgressBar progressBar;
+    private ImageButton btnBack;
 
     private ApiService api;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_register);
+        setContentView(R.layout.activity_ev_owner_register);
 
         // Bind views
         etNic = findViewById(R.id.etNic);
@@ -42,8 +43,11 @@ public class RegisterActivity extends AppCompatActivity {
         etPhone = findViewById(R.id.etPhone);
         etPassword = findViewById(R.id.etPassword);
         etConfirmPassword = findViewById(R.id.etConfirmPassword);
-        btnCreateAccount = findViewById(R.id.btnCreateAccount);
-        progressBar = findViewById(R.id.progressBar);
+        btnCreateAccount = findViewById(R.id.btnRegister);
+        btnBack = findViewById(R.id.btnBack);
+
+        btnBack.setOnClickListener(v -> onBackPressed());
+
 
         // API
         api = ApiClient.getClient().create(ApiService.class);
@@ -64,7 +68,7 @@ public class RegisterActivity extends AppCompatActivity {
         if (!validate(nic, name, email, phone, password, confirm)) return;
 
         // Build request
-        RegisterRequest req = new RegisterRequest(nic, name, email, phone, password);
+        EVOwnerRegisterRequest req = new EVOwnerRegisterRequest(nic, name, email, phone, password);
 
         // UI state
         setLoading(true);
@@ -75,17 +79,17 @@ public class RegisterActivity extends AppCompatActivity {
             public void onResponse(Call<User> call, Response<User> res) {
                 setLoading(false);
                 if (res.isSuccessful() && res.body() != null) {
-                    Toast.makeText(RegisterActivity.this,
+                    Toast.makeText(EVOwnerRegisterActivity.this,
                             "Account created successfully! Please log in.",
                             Toast.LENGTH_LONG).show();
 
                     // ✅ Redirect to LoginActivity
-                    Intent intent = new Intent(RegisterActivity.this, EVOwnerLoginActivity.class);
+                    Intent intent = new Intent(EVOwnerRegisterActivity.this, EVOwnerLoginActivity.class);
                     intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
                     startActivity(intent);
                     finish();
                 } else {
-                    Toast.makeText(RegisterActivity.this,
+                    Toast.makeText(EVOwnerRegisterActivity.this,
                             "Registration failed: " + res.code(),
                             Toast.LENGTH_LONG).show();
                 }
@@ -94,7 +98,7 @@ public class RegisterActivity extends AppCompatActivity {
             @Override
             public void onFailure(Call<User> call, Throwable t) {
                 setLoading(false);
-                Toast.makeText(RegisterActivity.this, "Network error: " + t.getMessage(), Toast.LENGTH_LONG).show();
+                Toast.makeText(EVOwnerRegisterActivity.this, "Network error: " + t.getMessage(), Toast.LENGTH_LONG).show();
             }
         });
     }
@@ -134,7 +138,7 @@ public class RegisterActivity extends AppCompatActivity {
     }
 
     private void setLoading(boolean loading) {
-        progressBar.setVisibility(loading ? View.VISIBLE : View.GONE);
+        //progressBar.setVisibility(loading ? View.VISIBLE : View.GONE);
         btnCreateAccount.setEnabled(!loading);
     }
 

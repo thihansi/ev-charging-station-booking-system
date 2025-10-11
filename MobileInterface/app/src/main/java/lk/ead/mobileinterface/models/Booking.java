@@ -1,35 +1,60 @@
 package lk.ead.mobileinterface.models;
 
+import com.google.gson.annotations.SerializedName;
 import lk.ead.mobileinterface.enumeration.BookingStatus;
 
 public class Booking {
 
-    private int id;                         // Unique booking ID
-    private String evOwnerNic;              // NIC of the EV owner
-    private int chargingStationId;          // Station ID (foreign key)
-    private String bookingDate;             // Date when booking was created
-    private String reservationDateTime;     // Reserved date/time for charging
-    private BookingStatus status;                 // Booking status (Pending, Approved, etc.)
-    private boolean isActive;               // Whether booking is currently active
-    private String qrCode;                  // Base64 QR code (if approved)
-    private String approvedBy;              // Operator who approved (if any)
-    private String approvedAt;              // Approval timestamp
-    private String rejectionReason;         // Reason if rejected
+    @SerializedName("id")
+    private String id; // Unique booking ID
 
-    // Empty constructor (required for JSON parsing)
+    @SerializedName("evOwnerNIC") // ✅ matches backend JSON (case-sensitive)
+    private String evOwnerNic;
+
+    @SerializedName("chargingStationId")
+    private String chargingStationId;
+
+    @SerializedName("bookingDate")
+    private String bookingDate;
+
+    @SerializedName("reservationDateTime")
+    private String reservationDateTime;
+
+    @SerializedName("status")
+    private int statusCode; // raw backend integer (0–4)
+
+    private transient BookingStatus status;
+
+    @SerializedName("isActive")
+    private boolean isActive;
+
+    @SerializedName("qrCode")
+    private String qrCode;
+
+    @SerializedName("approvedBy")
+    private String approvedBy;
+
+    @SerializedName("approvedAt")
+    private String approvedAt;
+
+    @SerializedName("rejectionReason")
+    private String rejectionReason;
+
+    // Empty constructor (required for Gson)
     public Booking() {}
 
     // All-args constructor
-    public Booking(int id, String evOwnerNic, int chargingStationId,
-                      String bookingDate, String reservationDateTime,
+    public Booking(String id, String evOwnerNic, String chargingStationId,
+                   String bookingDate, String reservationDateTime,
                    BookingStatus status, boolean isActive, String qrCode,
-                      String approvedBy, String approvedAt, String rejectionReason) {
+                   String approvedBy, String approvedAt, String rejectionReason) {
         this.id = id;
         this.evOwnerNic = evOwnerNic;
         this.chargingStationId = chargingStationId;
         this.bookingDate = bookingDate;
         this.reservationDateTime = reservationDateTime;
         this.status = status;
+        this.statusCode = (status != null) ? status.getValue() : 0; // ensure sync
         this.isActive = isActive;
         this.qrCode = qrCode;
         this.approvedBy = approvedBy;
@@ -37,15 +62,16 @@ public class Booking {
         this.rejectionReason = rejectionReason;
     }
 
-    // Getters and Setters
-    public int getId() { return id; }
-    public void setId(int id) { this.id = id; }
+    // -------------------- Getters & Setters --------------------
+
+    public String getId() { return id; }
+    public void setId(String id) { this.id = id; }
 
     public String getEvOwnerNic() { return evOwnerNic; }
     public void setEvOwnerNic(String evOwnerNic) { this.evOwnerNic = evOwnerNic; }
 
-    public int getChargingStationId() { return chargingStationId; }
-    public void setChargingStationId(int chargingStationId) { this.chargingStationId = chargingStationId; }
+    public String getChargingStationId() { return chargingStationId; }
+    public void setChargingStationId(String chargingStationId) { this.chargingStationId = chargingStationId; }
 
     public String getBookingDate() { return bookingDate; }
     public void setBookingDate(String bookingDate) { this.bookingDate = bookingDate; }
@@ -53,8 +79,22 @@ public class Booking {
     public String getReservationDateTime() { return reservationDateTime; }
     public void setReservationDateTime(String reservationDateTime) { this.reservationDateTime = reservationDateTime; }
 
-    public BookingStatus getStatus() { return status; }
-    public void setStatus(BookingStatus status) { this.status = status; }
+    public int getStatusCode() { return statusCode; }
+
+    public void setStatusCode(int statusCode) {
+        this.statusCode = statusCode;
+        this.status = BookingStatus.fromInt(statusCode); // auto-map
+    }
+
+    public BookingStatus getStatus() {
+        if (status == null) status = BookingStatus.fromInt(statusCode);
+        return status;
+    }
+
+    public void setStatus(BookingStatus status) {
+        this.status = status;
+        this.statusCode = (status != null) ? status.getValue() : 0;
+    }
 
     public boolean isActive() { return isActive; }
     public void setActive(boolean active) { isActive = active; }
@@ -73,13 +113,13 @@ public class Booking {
 
     @Override
     public String toString() {
-        return "BookingDto{" +
-                "id=" + id +
+        return "Booking{" +
+                "id='" + id + '\'' +
                 ", evOwnerNic='" + evOwnerNic + '\'' +
-                ", chargingStationId=" + chargingStationId +
+                ", chargingStationId='" + chargingStationId + '\'' +
                 ", bookingDate='" + bookingDate + '\'' +
                 ", reservationDateTime='" + reservationDateTime + '\'' +
-                ", status='" + status + '\'' +
+                ", status=" + (status != null ? status.name() : "Unknown") +
                 ", isActive=" + isActive +
                 ", qrCode='" + qrCode + '\'' +
                 ", approvedBy='" + approvedBy + '\'' +
