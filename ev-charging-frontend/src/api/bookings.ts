@@ -50,18 +50,23 @@ export const bookingApi = {
       return transformedBookings;
     } catch (error: any) {
       console.error("❌ Error fetching all bookings:", error);
-      
+
       // If 403 forbidden, try to get pending bookings instead (station operators might only have access to these)
       if (error.response?.status === 403) {
-        console.log("⚠️ Access denied to all bookings, trying pending bookings only...");
+        console.log(
+          "⚠️ Access denied to all bookings, trying pending bookings only..."
+        );
         try {
           return await bookingApi.getPending();
         } catch (fallbackError) {
-          console.error("❌ Also failed to fetch pending bookings:", fallbackError);
+          console.error(
+            "❌ Also failed to fetch pending bookings:",
+            fallbackError
+          );
           return [];
         }
       }
-      
+
       throw error;
     }
   },
@@ -79,7 +84,10 @@ export const bookingApi = {
   },
 
   // Update booking
-  update: async (id: string, bookingData: any): Promise<{ message: string }> => {
+  update: async (
+    id: string,
+    bookingData: any
+  ): Promise<{ message: string }> => {
     const response = await apiClient.put(`/api/Bookings/${id}`, bookingData);
     return response.data;
   },
@@ -92,28 +100,113 @@ export const bookingApi = {
 
   // Complete booking
   complete: async (id: string): Promise<{ message: string }> => {
-    const response = await apiClient.put(`/api/Bookings/${id}`, { status: "Completed" });
+    console.log(
+      "🔄 Attempting to complete booking using /complete endpoint:",
+      id
+    );
+    const response = await apiClient.post(`/api/Bookings/${id}/complete`);
+    console.log("✅ Booking completed successfully:", response.data);
+    return response.data;
+  },
+
+  // Start booking (changes status to Active)
+  start: async (id: string): Promise<{ message: string }> => {
+    console.log("🔄 Attempting to start booking using /start endpoint:", id);
+    const response = await apiClient.post(`/api/Bookings/${id}/start`);
+    console.log("✅ Booking started successfully:", response.data);
     return response.data;
   },
 
   // Approve booking
   approve: async (id: string): Promise<{ message: string }> => {
-    const response = await apiClient.post(`/api/Bookings/${id}/approve`);
+    console.log(
+      "🔄 Attempting to approve booking using /approve endpoint:",
+      id
+    );
+    
+    const requestData = {
+      bookingId: id,
+      approve: true,
+      rejectionReason: ""
+    };
+    
+    console.log("🔄 Request data:", requestData);
+    
+    const response = await apiClient.post(`/api/Bookings/${id}/approve`, requestData);
+    console.log("✅ Booking approved successfully:", response.data);
     return response.data;
   },
 
   // Reject booking
   reject: async (id: string, reason?: string): Promise<{ message: string }> => {
-    const response = await apiClient.post(`/api/Bookings/${id}/reject`, {
-      reason,
-    });
-    return response.data;
+    try {
+      console.log(
+        "🔄 Attempting to reject booking using /reject endpoint:",
+        id
+      );
+      console.log("🔄 Reject reason:", reason);
+
+      const requestData = {
+        bookingId: id,
+        approve: false,
+        rejectionReason: reason || "Booking rejected by user",
+      };
+
+      console.log("🔄 Request data:", requestData);
+
+      const response = await apiClient.post(
+        `/api/Bookings/${id}/reject`,
+        requestData
+      );
+      console.log("✅ Booking rejected successfully:", response.data);
+      return response.data;
+    } catch (error: any) {
+      console.error("❌ Error rejecting booking:", error);
+      console.error("Response data:", error.response?.data);
+      console.error("Response status:", error.response?.status);
+      console.error("Response headers:", error.response?.headers);
+      throw error;
+    }
   },
 
   // Get pending bookings
   getPending: async (): Promise<Booking[]> => {
     const response = await apiClient.get<any[]>("/api/Bookings/pending");
     return response.data.map(transformBookingFromBackend);
+  },
+
+  // Get operator's station bookings (requires operator token)
+  getMyStationBookings: async (): Promise<Booking[]> => {
+    try {
+      console.log("📡 Fetching operator station bookings from /api/bookings/operator/my-station-bookings...");
+      const response = await apiClient.get<any[]>("/api/bookings/operator/my-station-bookings");
+      console.log("📋 Raw operator bookings response:", response.data);
+
+      let bookingsData = response.data;
+      if (
+        response.data &&
+        typeof response.data === "object" &&
+        "bookings" in response.data
+      ) {
+        bookingsData = (response.data as any).bookings;
+      }
+
+      if (!Array.isArray(bookingsData)) {
+        console.warn("❌ Operator bookings data is not an array:", bookingsData);
+        return [];
+      }
+
+      const transformedBookings = bookingsData.map(transformBookingFromBackend);
+      console.log(
+        `✅ Successfully fetched ${transformedBookings.length} operator station bookings`
+      );
+      return transformedBookings;
+    } catch (error: any) {
+      console.error("❌ Error fetching operator station bookings:", error);
+      console.error("Response data:", error.response?.data);
+      console.error("Response status:", error.response?.status);
+      throw error;
+    }
   },
 
   // Get bookings summary for dashboard
@@ -132,7 +225,7 @@ export const bookingApi = {
         approvedBookings: 0,
         completedBookings: 0,
         todayBookings: 0,
-        totalRevenue: 0
+        totalRevenue: 0,
       };
     }
   },
@@ -144,8 +237,12 @@ export const bookingApi = {
   },
 
   // Validate QR code
-  validateQR: async (qrCodeData: string): Promise<{ valid: boolean; booking?: Booking; message: string }> => {
-    const response = await apiClient.post("/api/Bookings/validate-qr", { qrCodeData });
+  validateQR: async (
+    qrCodeData: string
+  ): Promise<{ valid: boolean; booking?: Booking; message: string }> => {
+    const response = await apiClient.post("/api/Bookings/validate-qr", {
+      qrCodeData,
+    });
     return response.data;
   },
 };

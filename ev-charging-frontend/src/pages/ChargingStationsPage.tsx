@@ -290,17 +290,28 @@ const ChargingStationsPage: React.FC = () => {
   const confirmStatusAction = async () => {
     if (!statusActionStation || !statusAction) return;
 
+    console.log(
+      "🎯 Starting status action:",
+      statusAction,
+      "for station:",
+      statusActionStation.id
+    );
+    console.log("📊 Station current status:", statusActionStation.isActive);
+
     try {
       if (statusAction === "activate") {
+        console.log("🔄 Calling activate API...");
         await chargingStationApi.activate(statusActionStation.id);
         showSnackbar("Charging station activated successfully");
+        console.log("✅ Activation API completed, refreshing data...");
       } else {
+        console.log("🔄 Calling deactivate API...");
         // Business Rule: Cannot deactivate station if it has active bookings
         // Check for active bookings before deactivating
         const activeBookings = await bookingApi.getAll();
         const stationActiveBookings = activeBookings.filter(
-          booking => 
-            booking.chargingStationId === statusActionStation.id && 
+          (booking) =>
+            booking.chargingStationId === statusActionStation.id &&
             (booking.status === "Pending" || booking.status === "Approved")
         );
 
@@ -314,9 +325,18 @@ const ChargingStationsPage: React.FC = () => {
 
         await chargingStationApi.deactivate(statusActionStation.id);
         showSnackbar("Charging station deactivated successfully");
+        console.log("✅ Deactivation API completed, refreshing data...");
       }
-      fetchChargingStations();
+
+      // Add a small delay to ensure backend has processed the change
+      console.log("⏳ Waiting 500ms before refreshing...");
+      setTimeout(async () => {
+        console.log("🔄 Starting data refresh...");
+        await fetchChargingStations();
+        console.log("✅ Data refresh completed");
+      }, 500);
     } catch (err: any) {
+      console.error("❌ Status action failed:", err);
       showSnackbar(
         err.response?.data?.message ||
           `Failed to ${statusAction} charging station`,

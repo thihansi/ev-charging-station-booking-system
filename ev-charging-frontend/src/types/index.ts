@@ -130,7 +130,8 @@ export type BookingStatus =
   | "Approved" // 1
   | "Rejected" // 2
   | "Completed" // 3
-  | "Cancelled"; // 4
+  | "Cancelled" // 4
+  | "Active"; // 5
 
 // Enum mapping for backend compatibility
 export const BookingStatusEnum = {
@@ -139,6 +140,7 @@ export const BookingStatusEnum = {
   Rejected: 2,
   Completed: 3,
   Cancelled: 4,
+  Active: 5,
 } as const;
 
 // Reverse mapping from numeric values to string
@@ -148,6 +150,7 @@ export const BookingStatusFromEnum: Record<number, BookingStatus> = {
   2: "Rejected",
   3: "Completed",
   4: "Cancelled",
+  5: "Active",
 };
 
 // User-friendly status display names
@@ -157,6 +160,7 @@ export const BookingStatusDisplay: Record<BookingStatus, string> = {
   Rejected: "Rejected",
   Completed: "Completed",
   Cancelled: "Cancelled",
+  Active: "Active",
 };
 
 // Function to get display name for status
@@ -192,6 +196,8 @@ export const getBookingStatusColor = (
       return "primary";
     case "Cancelled":
       return "error";
+    case "Active":
+      return "info";
     default:
       return "default";
   }

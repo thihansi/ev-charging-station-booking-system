@@ -59,18 +59,101 @@ export const chargingStationApi = {
 
   // Activate charging station
   activate: async (id: string): Promise<{ message: string }> => {
-    const response = await apiClient.post(
-      `/api/ChargingStations/${id}/activate`
-    );
-    return response.data;
+    try {
+      console.log("🔄 Attempting to activate charging station:", id);
+
+      // First get the current station data
+      const currentStation = await chargingStationApi.getById(id);
+      console.log("📊 Current station data:", currentStation);
+
+      // Check if operationalHours exists, if not provide default
+      const operationalHours = currentStation.operationalHours || {
+        openTime: "08:00",
+        closeTime: "18:00",
+      };
+
+      // Prepare the update data using proper transformation
+      const updateData = {
+        name: currentStation.name,
+        address: currentStation.address,
+        latitude: currentStation.latitude,
+        longitude: currentStation.longitude,
+        stationType: currentStation.stationType,
+        totalSlots: currentStation.totalSlots,
+        operationalHours: operationalHours,
+      };
+
+      console.log("📋 Update data prepared:", updateData);
+
+      // Transform to backend format and add isActive
+      const backendData = transformUpdateChargingStationForBackend(updateData);
+      backendData.isActive = true;
+
+      console.log("🔄 Activation request data:", backendData);
+
+      const response = await apiClient.put(
+        `/api/ChargingStations/${id}`,
+        backendData
+      );
+      console.log("✅ Charging station activated successfully:", response.data);
+      return response.data;
+    } catch (error: any) {
+      console.error("❌ Error activating charging station:", error);
+      console.error("Response data:", error.response?.data);
+      console.error("Full error object:", error);
+      throw error;
+    }
   },
 
   // Deactivate charging station
   deactivate: async (id: string): Promise<{ message: string }> => {
-    const response = await apiClient.post(
-      `/api/ChargingStations/${id}/deactivate`
-    );
-    return response.data;
+    try {
+      console.log("🔄 Attempting to deactivate charging station:", id);
+
+      // First get the current station data
+      const currentStation = await chargingStationApi.getById(id);
+      console.log("📊 Current station data:", currentStation);
+
+      // Check if operationalHours exists, if not provide default
+      const operationalHours = currentStation.operationalHours || {
+        openTime: "08:00",
+        closeTime: "18:00",
+      };
+
+      // Prepare the update data using proper transformation
+      const updateData = {
+        name: currentStation.name,
+        address: currentStation.address,
+        latitude: currentStation.latitude,
+        longitude: currentStation.longitude,
+        stationType: currentStation.stationType,
+        totalSlots: currentStation.totalSlots,
+        operationalHours: operationalHours,
+      };
+
+      console.log("📋 Update data prepared:", updateData);
+
+      // Transform to backend format and add isActive
+      const backendData = transformUpdateChargingStationForBackend(updateData);
+      backendData.isActive = false;
+
+      console.log("🔄 Deactivation request data:", backendData);
+
+      const response = await apiClient.put(
+        `/api/ChargingStations/${id}`,
+        backendData
+      );
+      console.log(
+        "✅ Charging station deactivated successfully:",
+        response.data
+      );
+      return response.data;
+    } catch (error: any) {
+      console.error("❌ Error deactivating charging station:", error);
+      console.error("Response data:", error.response?.data);
+      console.error("Full error object:", error);
+      throw error;
+    }
   },
 
   // Get charging station QR code

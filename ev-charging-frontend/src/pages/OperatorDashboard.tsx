@@ -48,7 +48,7 @@ const OperatorDashboard: React.FC = () => {
   const { state } = useAuth();
   const { showError, showSuccess } = useNotificationContext();
   const navigate = useNavigate();
-  
+
   const [isLoading, setIsLoading] = useState(false);
   const [stats, setStats] = useState<DashboardStats>({
     pendingBookings: 0,
@@ -58,48 +58,64 @@ const OperatorDashboard: React.FC = () => {
   });
   const [pendingBookings, setPendingBookings] = useState<Booking[]>([]);
   const [recentBookings, setRecentBookings] = useState<Booking[]>([]);
-  const [chargingStations, setChargingStations] = useState<ChargingStation[]>([]);
+  const [chargingStations, setChargingStations] = useState<ChargingStation[]>(
+    []
+  );
 
   useEffect(() => {
-    if (state.isAuthenticated && state.user?.role === 'StationOperator') {
+    if (state.isAuthenticated && state.user?.role === "StationOperator") {
       loadDashboardData();
     }
   }, [state.isAuthenticated, state.user]);
 
   const loadDashboardData = async () => {
     setIsLoading(true);
-    
+
     try {
       console.log("🔄 Loading dashboard data...");
 
       // Use Promise.allSettled to handle partial failures gracefully
-      const [summaryResult, bookingsResult, stationsResult] = await Promise.allSettled([
-        bookingApi.getSummary().catch((err) => {
-          console.warn("⚠️ Summary API failed:", err);
-          return null;
-        }),
-        bookingApi.getAll().catch((err) => {
-          console.warn("⚠️ All bookings API failed, trying pending only:", err);
-          return bookingApi.getPending().catch(() => []);
-        }),
-        chargingStationApi.getAll().catch((err) => {
-          console.warn("⚠️ Stations API failed:", err);
-          return [];
-        })
-      ]);
+      const [summaryResult, bookingsResult, stationsResult] =
+        await Promise.allSettled([
+          bookingApi.getSummary().catch((err) => {
+            console.warn("⚠️ Summary API failed:", err);
+            return null;
+          }),
+          // For operators, use the specific operator bookings endpoint
+          bookingApi.getMyStationBookings().catch((err) => {
+            console.warn(
+              "⚠️ Operator station bookings API failed, trying getAll:",
+              err
+            );
+            return bookingApi.getAll().catch((allErr) => {
+              console.warn(
+                "⚠️ All bookings API also failed, trying pending only:",
+                allErr
+              );
+              return bookingApi.getPending().catch(() => []);
+            });
+          }),
+          chargingStationApi.getAll().catch((err) => {
+            console.warn("⚠️ Stations API failed:", err);
+            return [];
+          }),
+        ]);
 
       // Extract results
-      const summary = summaryResult.status === 'fulfilled' ? summaryResult.value : null;
-      const allBookings = bookingsResult.status === 'fulfilled' ? bookingsResult.value : [];
-      const stations = stationsResult.status === 'fulfilled' ? stationsResult.value : [];
+      const summary =
+        summaryResult.status === "fulfilled" ? summaryResult.value : null;
+      const allBookings =
+        bookingsResult.status === "fulfilled" ? bookingsResult.value : [];
+      const stations =
+        stationsResult.status === "fulfilled" ? stationsResult.value : [];
 
-      console.log("📊 Dashboard data loaded:", { 
-        summary, 
-        bookingsCount: allBookings.length, 
+      console.log("📊 Dashboard data loaded:", {
+        summary,
+        bookingsCount: allBookings.length,
         stationsCount: stations.length,
         summaryStatus: summaryResult.status,
         bookingsStatus: bookingsResult.status,
-        stationsStatus: stationsResult.status
+        stationsStatus: stationsResult.status,
       });
 
       // Filter pending bookings
@@ -110,35 +126,39 @@ const OperatorDashboard: React.FC = () => {
 
       // Set recent bookings
       const recent = allBookings
-        .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
+        .sort(
+          (a, b) =>
+            new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+        )
         .slice(0, 10);
       setRecentBookings(recent);
 
       // Set charging stations
-      const activeStations = stations.filter(station => station.isActive);
+      const activeStations = stations.filter((station) => station.isActive);
       setChargingStations(activeStations.slice(0, 4));
 
       // Calculate stats using summary data or calculate from local data
       const today = new Date().toDateString();
-      const todayBookings = allBookings.filter(booking => 
-        new Date(booking.createdAt).toDateString() === today
+      const todayBookings = allBookings.filter(
+        (booking) => new Date(booking.createdAt).toDateString() === today
       ).length;
 
       setStats({
         pendingBookings: summary?.pendingBookings || pending.length,
         activeStations: summary?.activeStations || activeStations.length,
         todayBookings: summary?.todayBookings || todayBookings,
-        totalRevenue: summary?.totalRevenue || allBookings
-          .filter(b => b.status === "Approved")
-          .length * 50,
+        totalRevenue:
+          summary?.totalRevenue ||
+          allBookings.filter((b) => b.status === "Approved").length * 50,
       });
 
       console.log("✅ Dashboard data loaded successfully");
-
     } catch (error: any) {
       console.error("❌ Dashboard loading error:", error);
       if (error.response?.status === 403) {
-        showError("Access denied. Please ensure you have Station Operator permissions.");
+        showError(
+          "Access denied. Please ensure you have Station Operator permissions."
+        );
       } else if (error.response?.status === 401) {
         showError("Session expired. Please log in again.");
       } else {
@@ -184,7 +204,7 @@ const OperatorDashboard: React.FC = () => {
     }
   };
 
-  if (!state.isAuthenticated || state.user?.role !== 'StationOperator') {
+  if (!state.isAuthenticated || state.user?.role !== "StationOperator") {
     return (
       <Box sx={{ p: 3 }}>
         <Alert severity="error">
@@ -197,13 +217,21 @@ const OperatorDashboard: React.FC = () => {
   return (
     <Box sx={{ p: 3, maxWidth: 1200, mx: "auto" }}>
       {/* Header */}
-      <Box sx={{ mb: 4, display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+      <Box
+        sx={{
+          mb: 4,
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+        }}
+      >
         <Box>
           <Typography variant="h4" component="h1" gutterBottom>
             Station Operator Dashboard
           </Typography>
           <Typography variant="body1" color="text.secondary">
-            Welcome back, {state.user?.username}! Manage your charging stations and bookings.
+            Welcome back, {state.user?.username}! Manage your charging stations
+            and bookings.
           </Typography>
         </Box>
         <IconButton onClick={loadDashboardData} disabled={isLoading}>
@@ -284,7 +312,7 @@ const OperatorDashboard: React.FC = () => {
             fullWidth
             sx={{ py: 2 }}
             startIcon={<EventNote />}
-            onClick={() => navigate('/operator/bookings')}
+            onClick={() => navigate("/operator/bookings")}
           >
             Manage Bookings
           </Button>
@@ -295,7 +323,7 @@ const OperatorDashboard: React.FC = () => {
             fullWidth
             sx={{ py: 2 }}
             startIcon={<ElectricCar />}
-            onClick={() => navigate('/operator/stations')}
+            onClick={() => navigate("/operator/stations")}
           >
             My Stations
           </Button>
@@ -306,7 +334,7 @@ const OperatorDashboard: React.FC = () => {
             fullWidth
             sx={{ py: 2 }}
             startIcon={<QrCodeScanner />}
-            onClick={() => navigate('/operator/qr-scanner')}
+            onClick={() => navigate("/operator/qr-scanner")}
           >
             QR Scanner
           </Button>
@@ -317,7 +345,7 @@ const OperatorDashboard: React.FC = () => {
             fullWidth
             sx={{ py: 2 }}
             startIcon={<Dashboard />}
-            onClick={() => navigate('/operator/profile')}
+            onClick={() => navigate("/operator/profile")}
           >
             Profile
           </Button>
@@ -328,20 +356,37 @@ const OperatorDashboard: React.FC = () => {
       <Grid container spacing={3}>
         {/* Pending Bookings */}
         <Grid item xs={12} md={6}>
-          <Paper sx={{ p: 3, height: "400px", display: "flex", flexDirection: "column" }}>
-            <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mb: 2 }}>
+          <Paper
+            sx={{
+              p: 3,
+              height: "400px",
+              display: "flex",
+              flexDirection: "column",
+            }}
+          >
+            <Box
+              sx={{
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
+                mb: 2,
+              }}
+            >
               <Typography variant="h6">Pending Bookings</Typography>
-              <Button 
-                size="small" 
+              <Button
+                size="small"
                 endIcon={<NavigateNext />}
-                onClick={() => navigate('/operator/bookings')}
+                onClick={() => navigate("/operator/bookings")}
               >
                 View All
               </Button>
             </Box>
             <Box sx={{ flexGrow: 1, overflow: "auto" }}>
               {pendingBookings.length === 0 ? (
-                <Typography color="text.secondary" sx={{ textAlign: "center", mt: 4 }}>
+                <Typography
+                  color="text.secondary"
+                  sx={{ textAlign: "center", mt: 4 }}
+                >
                   No pending bookings
                 </Typography>
               ) : (
@@ -357,7 +402,10 @@ const OperatorDashboard: React.FC = () => {
                                 EV Owner: {booking.evOwnerNic}
                               </Typography>
                               <Typography variant="body2">
-                                Date: {new Date(booking.reservationDateTime).toLocaleDateString()}
+                                Date:{" "}
+                                {new Date(
+                                  booking.reservationDateTime
+                                ).toLocaleDateString()}
                               </Typography>
                             </Box>
                           }
@@ -392,20 +440,37 @@ const OperatorDashboard: React.FC = () => {
 
         {/* Recent Bookings */}
         <Grid item xs={12} md={6}>
-          <Paper sx={{ p: 3, height: "400px", display: "flex", flexDirection: "column" }}>
-            <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mb: 2 }}>
+          <Paper
+            sx={{
+              p: 3,
+              height: "400px",
+              display: "flex",
+              flexDirection: "column",
+            }}
+          >
+            <Box
+              sx={{
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
+                mb: 2,
+              }}
+            >
               <Typography variant="h6">Recent Bookings</Typography>
-              <Button 
-                size="small" 
+              <Button
+                size="small"
                 endIcon={<NavigateNext />}
-                onClick={() => navigate('/operator/bookings')}
+                onClick={() => navigate("/operator/bookings")}
               >
                 View All
               </Button>
             </Box>
             <Box sx={{ flexGrow: 1, overflow: "auto" }}>
               {recentBookings.length === 0 ? (
-                <Typography color="text.secondary" sx={{ textAlign: "center", mt: 4 }}>
+                <Typography
+                  color="text.secondary"
+                  sx={{ textAlign: "center", mt: 4 }}
+                >
                   No recent bookings
                 </Typography>
               ) : (
@@ -421,7 +486,10 @@ const OperatorDashboard: React.FC = () => {
                                 EV Owner: {booking.evOwnerNic}
                               </Typography>
                               <Typography variant="body2">
-                                Date: {new Date(booking.reservationDateTime).toLocaleDateString()}
+                                Date:{" "}
+                                {new Date(
+                                  booking.reservationDateTime
+                                ).toLocaleDateString()}
                               </Typography>
                             </Box>
                           }
@@ -447,18 +515,28 @@ const OperatorDashboard: React.FC = () => {
       {/* Charging Stations Overview */}
       <Box sx={{ mt: 4 }}>
         <Paper sx={{ p: 3 }}>
-          <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mb: 2 }}>
+          <Box
+            sx={{
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+              mb: 2,
+            }}
+          >
             <Typography variant="h6">Your Charging Stations</Typography>
-            <Button 
-              size="small" 
+            <Button
+              size="small"
               endIcon={<NavigateNext />}
-              onClick={() => navigate('/operator/stations')}
+              onClick={() => navigate("/operator/stations")}
             >
               Manage All
             </Button>
           </Box>
           {chargingStations.length === 0 ? (
-            <Typography color="text.secondary" sx={{ textAlign: "center", py: 4 }}>
+            <Typography
+              color="text.secondary"
+              sx={{ textAlign: "center", py: 4 }}
+            >
               No charging stations found
             </Typography>
           ) : (
