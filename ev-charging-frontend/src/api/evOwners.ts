@@ -57,11 +57,25 @@ export const evOwnerApi = {
     nic: string,
     evOwnerData: UpdateEVOwnerRequest
   ): Promise<{ message: string; evOwner: EVOwner }> => {
-    const response = await apiClient.put(
-      `/api/EVOwners/${encodeURIComponent(nic)}`,
-      evOwnerData
-    );
-    return response.data;
+    try {
+      console.log("📝 Updating EV Owner - NIC:", nic);
+      console.log("📝 Update Data:", JSON.stringify(evOwnerData, null, 2));
+      console.log("📝 Full URL:", `/api/EVOwners/${encodeURIComponent(nic)}`);
+      
+      const response = await apiClient.put(
+        `/api/EVOwners/${encodeURIComponent(nic)}`,
+        evOwnerData
+      );
+      
+      console.log("✅ Update successful:", response.data);
+      return response.data;
+    } catch (error: any) {
+      console.error("❌ Update failed - Status:", error.response?.status);
+      console.error("❌ Update failed - Status Text:", error.response?.statusText);
+      console.error("❌ Update failed - Error Data:", JSON.stringify(error.response?.data, null, 2));
+      console.error("❌ Update failed - Full Error:", error);
+      throw error;
+    }
   },
 
   // Delete EV owner (Backoffice only)

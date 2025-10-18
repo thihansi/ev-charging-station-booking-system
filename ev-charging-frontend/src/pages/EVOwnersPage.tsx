@@ -161,11 +161,19 @@ const EVOwnersPage: React.FC = () => {
 
       if (editingEvOwner) {
         // Update existing EV owner
+        // Note: Don't include NIC in update data as it's in the URL
         const updateData: UpdateEVOwnerRequest = {
-          name: formData.name,
-          email: formData.email,
-          phone: formData.phone,
+          name: formData.name.trim(),
+          email: formData.email.trim(),
+          phone: formData.phone.trim(),
         };
+        
+        console.log("Updating EV Owner:", {
+          nic: editingEvOwner.nic,
+          updateData,
+          originalData: editingEvOwner,
+        });
+        
         await evOwnerApi.update(editingEvOwner.nic, updateData);
         showSnackbar("EV Owner updated successfully");
       } else {
@@ -192,8 +200,40 @@ const EVOwnersPage: React.FC = () => {
       setUpdateConfirmOpen(false);
       fetchEvOwners();
     } catch (err: any) {
-      showSnackbar(err.response?.data?.message || "Operation failed", "error");
       console.error("Error submitting form:", err);
+      console.error("Error response data:", JSON.stringify(err.response?.data, null, 2));
+      console.error("Error response status:", err.response?.status);
+      console.error("Error response headers:", err.response?.headers);
+      
+      // Extract detailed error message
+      let errorMessage = "Operation failed";
+      
+      if (err.response?.data) {
+        const errorData = err.response.data;
+        
+        // Check for different error formats
+        if (errorData.message) {
+          errorMessage = errorData.message;
+        } else if (errorData.title) {
+          errorMessage = errorData.title;
+        } else if (errorData.errors) {
+          // Handle validation errors object
+          const errors = errorData.errors;
+          if (typeof errors === 'object') {
+            errorMessage = Object.entries(errors)
+              .map(([key, value]) => `${key}: ${Array.isArray(value) ? value.join(', ') : value}`)
+              .join('; ');
+          } else {
+            errorMessage = JSON.stringify(errors);
+          }
+        } else if (typeof errorData === 'string') {
+          errorMessage = errorData;
+        } else {
+          errorMessage = JSON.stringify(errorData);
+        }
+      }
+      
+      showSnackbar(errorMessage, "error");
     } finally {
       setSubmitting(false);
     }
