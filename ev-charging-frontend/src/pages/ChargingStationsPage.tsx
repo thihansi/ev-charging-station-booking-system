@@ -303,8 +303,8 @@ const ChargingStationsPage: React.FC = () => {
         console.log("📋 Checking for active bookings...");
         const activeBookings = await bookingApi.getAll();
         const stationActiveBookings = activeBookings.filter(
-          booking => 
-            booking.chargingStationId === statusActionStation.id && 
+          (booking) =>
+            booking.chargingStationId === statusActionStation.id &&
             (booking.status === "Pending" || booking.status === "Approved")
         );
 
@@ -324,27 +324,37 @@ const ChargingStationsPage: React.FC = () => {
 
       // Use the dedicated activate/deactivate endpoints
       if (statusAction === "activate") {
-        console.log("🟢 Calling activate endpoint for station:", statusActionStation.id);
+        console.log(
+          "🟢 Calling activate endpoint for station:",
+          statusActionStation.id
+        );
         await chargingStationApi.activate(statusActionStation.id);
       } else {
-        console.log("� Calling deactivate endpoint for station:", statusActionStation.id);
+        console.log(
+          "� Calling deactivate endpoint for station:",
+          statusActionStation.id
+        );
         await chargingStationApi.deactivate(statusActionStation.id);
       }
-      
+
       showSnackbar(`Charging station ${statusAction}d successfully`);
       fetchChargingStations();
     } catch (err: any) {
       console.error(`❌ Error ${statusAction} charging station:`, err);
-      console.error("Error response:", JSON.stringify(err.response?.data, null, 2));
-      
-      const errorMessage = err.response?.data?.message 
-        || err.response?.data?.title
-        || err.response?.data?.errors
-        || `Failed to ${statusAction} charging station`;
-      
+      console.error(
+        "Error response:",
+        JSON.stringify(err.response?.data, null, 2)
+      );
+
+      const errorMessage =
+        err.response?.data?.message ||
+        err.response?.data?.title ||
+        err.response?.data?.errors ||
+        `Failed to ${statusAction} charging station`;
+
       showSnackbar(
-        typeof errorMessage === 'object' 
-          ? JSON.stringify(errorMessage) 
+        typeof errorMessage === "object"
+          ? JSON.stringify(errorMessage)
           : errorMessage,
         "error"
       );

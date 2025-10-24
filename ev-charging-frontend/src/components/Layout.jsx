@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
 import {
   AppBar,
   Toolbar,
@@ -17,7 +17,7 @@ import {
   Divider,
   useTheme,
   useMediaQuery,
-} from '@mui/material';
+} from "@mui/material";
 import {
   Menu as MenuIcon,
   AccountCircle,
@@ -29,16 +29,16 @@ import {
   QrCodeScanner,
   Settings,
   Logout,
-} from '@mui/icons-material';
-import { useNavigate, useLocation } from 'react-router-dom';
-import { useAuth } from '../context/AuthContext';
+} from "@mui/icons-material";
+import { useNavigate, useLocation } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
 
 const Layout = ({ children }) => {
   const { state, logout } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
   const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down('md'));
+  const isMobile = useMediaQuery(theme.breakpoints.down("md"));
 
   const [anchorEl, setAnchorEl] = useState(null);
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -57,35 +57,55 @@ const Layout = ({ children }) => {
 
   const handleLogout = () => {
     logout();
-    navigate('/');
+    navigate("/");
     handleClose();
   };
 
   const handleProfile = () => {
-    navigate('/profile');
+    navigate("/profile");
     handleClose();
   };
 
   // Navigation items based on user role
   const getNavigationItems = () => {
     const commonItems = [
-      { text: 'Dashboard', icon: <Dashboard />, path: '/dashboard' },
-      { text: 'Profile', icon: <Settings />, path: '/profile' },
+      { text: "Dashboard", icon: <Dashboard />, path: "/dashboard" },
+      { text: "Profile", icon: <Settings />, path: "/profile" },
     ];
 
-    if (state.user?.role === 'StationOperator') {
+    if (state.user?.role === "StationOperator") {
       return [
-        { text: 'Operator Dashboard', icon: <Dashboard />, path: '/operator/dashboard' },
-        { text: 'Manage Bookings', icon: <BookOnline />, path: '/operator/bookings' },
-        { text: 'My Stations', icon: <EvStation />, path: '/operator/stations' },
-        { text: 'Profile', icon: <Settings />, path: '/profile' },
+        {
+          text: "Operator Dashboard",
+          icon: <Dashboard />,
+          path: "/operator/dashboard",
+        },
+        {
+          text: "Manage Bookings",
+          icon: <BookOnline />,
+          path: "/operator/bookings",
+        },
+        {
+          text: "My Stations",
+          icon: <EvStation />,
+          path: "/operator/stations",
+        },
+        { text: "Profile", icon: <Settings />, path: "/profile" },
       ];
     } else {
       return [
-        { text: 'Dashboard', icon: <Dashboard />, path: '/dashboard' },
-        { text: 'Charging Stations', icon: <EvStation />, path: '/charging-stations' },
-        { text: 'Booking History', icon: <History />, path: '/booking-history' },
-        { text: 'Profile', icon: <Settings />, path: '/profile' },
+        { text: "Dashboard", icon: <Dashboard />, path: "/dashboard" },
+        {
+          text: "Charging Stations",
+          icon: <EvStation />,
+          path: "/charging-stations",
+        },
+        {
+          text: "Booking History",
+          icon: <History />,
+          path: "/booking-history",
+        },
+        { text: "Profile", icon: <Settings />, path: "/profile" },
       ];
     }
   };
@@ -112,7 +132,10 @@ const Layout = ({ children }) => {
               }
             }}
             sx={{
-              backgroundColor: location.pathname === item.path ? 'action.selected' : 'transparent',
+              backgroundColor:
+                location.pathname === item.path
+                  ? "action.selected"
+                  : "transparent",
             }}
           >
             <ListItemIcon>{item.icon}</ListItemIcon>
@@ -124,12 +147,12 @@ const Layout = ({ children }) => {
   );
 
   return (
-    <Box sx={{ display: 'flex' }}>
+    <Box sx={{ display: "flex" }}>
       <AppBar
         position="fixed"
         sx={{
           width: { md: `calc(100% - 240px)` },
-          ml: { md: '240px' },
+          ml: { md: "240px" },
         }}
       >
         <Toolbar>
@@ -138,17 +161,22 @@ const Layout = ({ children }) => {
             aria-label="open drawer"
             edge="start"
             onClick={handleDrawerToggle}
-            sx={{ mr: 2, display: { md: 'none' } }}
+            sx={{ mr: 2, display: { md: "none" } }}
           >
             <MenuIcon />
           </IconButton>
-          
+
           <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-            {state.user?.role === 'StationOperator' ? 'Station Operator Portal' : 'EV Charging System'}
+            {state.user?.role === "StationOperator"
+              ? "Station Operator Portal"
+              : "EV Charging System"}
           </Typography>
 
-          <Box sx={{ display: 'flex', alignItems: 'center' }}>
-            <Typography variant="body2" sx={{ mr: 2, display: { xs: 'none', sm: 'block' } }}>
+          <Box sx={{ display: "flex", alignItems: "center" }}>
+            <Typography
+              variant="body2"
+              sx={{ mr: 2, display: { xs: "none", sm: "block" } }}
+            >
               {state.user?.fullName || state.user?.username}
             </Typography>
             <IconButton
@@ -165,13 +193,13 @@ const Layout = ({ children }) => {
               id="menu-appbar"
               anchorEl={anchorEl}
               anchorOrigin={{
-                vertical: 'top',
-                horizontal: 'right',
+                vertical: "top",
+                horizontal: "right",
               }}
               keepMounted
               transformOrigin={{
-                vertical: 'top',
-                horizontal: 'right',
+                vertical: "top",
+                horizontal: "right",
               }}
               open={Boolean(anchorEl)}
               onClose={handleClose}
@@ -203,19 +231,19 @@ const Layout = ({ children }) => {
             keepMounted: true,
           }}
           sx={{
-            display: { xs: 'block', md: 'none' },
-            '& .MuiDrawer-paper': { boxSizing: 'border-box', width: 240 },
+            display: { xs: "block", md: "none" },
+            "& .MuiDrawer-paper": { boxSizing: "border-box", width: 240 },
           }}
         >
           {drawer}
         </Drawer>
-        
+
         {/* Desktop drawer */}
         <Drawer
           variant="permanent"
           sx={{
-            display: { xs: 'none', md: 'block' },
-            '& .MuiDrawer-paper': { boxSizing: 'border-box', width: 240 },
+            display: { xs: "none", md: "block" },
+            "& .MuiDrawer-paper": { boxSizing: "border-box", width: 240 },
           }}
           open
         >
@@ -229,7 +257,7 @@ const Layout = ({ children }) => {
           flexGrow: 1,
           p: 3,
           width: { md: `calc(100% - 240px)` },
-          marginTop: '64px',
+          marginTop: "64px",
         }}
       >
         {children}

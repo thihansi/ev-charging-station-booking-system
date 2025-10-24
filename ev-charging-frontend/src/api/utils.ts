@@ -110,7 +110,10 @@ export const transformUpdateChargingStationForBackend = (
     });
   }
 
-  console.log("🔄 Transformed backend data:", JSON.stringify(backendData, null, 2));
+  console.log(
+    "🔄 Transformed backend data:",
+    JSON.stringify(backendData, null, 2)
+  );
   return backendData;
 };
 

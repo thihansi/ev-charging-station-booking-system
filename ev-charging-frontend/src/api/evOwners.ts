@@ -8,16 +8,23 @@ import type {
 export const evOwnerApi = {
   // Get all EV owners (Backoffice only) - GET /api/EVOwners
   getAll: async (): Promise<EVOwner[]> => {
-    const response = await apiClient.get<{
-      message?: string;
-      count?: number;
-      evOwners?: EVOwner[];
-    } | EVOwner[]>("/api/EVOwners");
-    
+    const response = await apiClient.get<
+      | {
+          message?: string;
+          count?: number;
+          evOwners?: EVOwner[];
+        }
+      | EVOwner[]
+    >("/api/EVOwners");
+
     // Handle both direct array and wrapped response formats
     if (Array.isArray(response.data)) {
       return response.data;
-    } else if (response.data && 'evOwners' in response.data && Array.isArray(response.data.evOwners)) {
+    } else if (
+      response.data &&
+      "evOwners" in response.data &&
+      Array.isArray(response.data.evOwners)
+    ) {
       return response.data.evOwners;
     } else {
       console.warn("Unexpected API response format:", response.data);
@@ -61,18 +68,24 @@ export const evOwnerApi = {
       console.log("📝 Updating EV Owner - NIC:", nic);
       console.log("📝 Update Data:", JSON.stringify(evOwnerData, null, 2));
       console.log("📝 Full URL:", `/api/EVOwners/${encodeURIComponent(nic)}`);
-      
+
       const response = await apiClient.put(
         `/api/EVOwners/${encodeURIComponent(nic)}`,
         evOwnerData
       );
-      
+
       console.log("✅ Update successful:", response.data);
       return response.data;
     } catch (error: any) {
       console.error("❌ Update failed - Status:", error.response?.status);
-      console.error("❌ Update failed - Status Text:", error.response?.statusText);
-      console.error("❌ Update failed - Error Data:", JSON.stringify(error.response?.data, null, 2));
+      console.error(
+        "❌ Update failed - Status Text:",
+        error.response?.statusText
+      );
+      console.error(
+        "❌ Update failed - Error Data:",
+        JSON.stringify(error.response?.data, null, 2)
+      );
       console.error("❌ Update failed - Full Error:", error);
       throw error;
     }

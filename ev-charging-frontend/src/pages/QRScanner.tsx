@@ -41,12 +41,14 @@ interface ScannedBooking extends Booking {
 const QRScanner: React.FC = () => {
   const { state } = useAuth();
   const { showError, showSuccess } = useNotificationContext();
-  
+
   const videoRef = useRef<HTMLVideoElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  
+
   const [isScanning, setIsScanning] = useState(false);
-  const [scannedBooking, setScannedBooking] = useState<ScannedBooking | null>(null);
+  const [scannedBooking, setScannedBooking] = useState<ScannedBooking | null>(
+    null
+  );
   const [detailsDialogOpen, setDetailsDialogOpen] = useState(false);
   const [stream, setStream] = useState<MediaStream | null>(null);
   const [hasCamera, setHasCamera] = useState(false);
@@ -64,7 +66,7 @@ const QRScanner: React.FC = () => {
   const checkCameraAvailability = async () => {
     try {
       const devices = await navigator.mediaDevices.enumerateDevices();
-      const cameras = devices.filter(device => device.kind === 'videoinput');
+      const cameras = devices.filter((device) => device.kind === "videoinput");
       setHasCamera(cameras.length > 0);
     } catch (error) {
       console.error("Error checking camera availability:", error);
@@ -74,19 +76,19 @@ const QRScanner: React.FC = () => {
 
   const startScanning = async () => {
     try {
-      const mediaStream = await navigator.mediaDevices.getUserMedia({ 
-        video: { 
-          facingMode: 'environment', // Use back camera if available
+      const mediaStream = await navigator.mediaDevices.getUserMedia({
+        video: {
+          facingMode: "environment", // Use back camera if available
           width: { ideal: 1280 },
-          height: { ideal: 720 }
-        } 
+          height: { ideal: 720 },
+        },
       });
-      
+
       if (videoRef.current) {
         videoRef.current.srcObject = mediaStream;
         setStream(mediaStream);
         setIsScanning(true);
-        
+
         // Start QR code detection
         startQRDetection();
       }
@@ -98,7 +100,7 @@ const QRScanner: React.FC = () => {
 
   const stopScanning = () => {
     if (stream) {
-      stream.getTracks().forEach(track => track.stop());
+      stream.getTracks().forEach((track) => track.stop());
       setStream(null);
     }
     setIsScanning(false);
@@ -109,7 +111,7 @@ const QRScanner: React.FC = () => {
 
     const video = videoRef.current;
     const canvas = canvasRef.current;
-    const context = canvas.getContext('2d');
+    const context = canvas.getContext("2d");
 
     if (!context) return;
 
@@ -126,9 +128,14 @@ const QRScanner: React.FC = () => {
       try {
         // In a real implementation, you would use a QR code library like qr-scanner
         // For this demo, we'll simulate QR detection
-        const imageData = context.getImageData(0, 0, canvas.width, canvas.height);
+        const imageData = context.getImageData(
+          0,
+          0,
+          canvas.width,
+          canvas.height
+        );
         const detectedCode = simulateQRDetection(imageData);
-        
+
         if (detectedCode) {
           clearInterval(scanInterval);
           handleQRCodeDetected(detectedCode);
@@ -143,7 +150,8 @@ const QRScanner: React.FC = () => {
   const simulateQRDetection = (_imageData: ImageData): string | null => {
     // In a real implementation, this would use a QR code detection library
     // For demo, we'll randomly detect a QR code after some time
-    if (Math.random() < 0.01) { // 1% chance per scan
+    if (Math.random() < 0.01) {
+      // 1% chance per scan
       return "BOOKING_ID_12345"; // Simulated booking ID
     }
     return null;
@@ -156,14 +164,13 @@ const QRScanner: React.FC = () => {
     try {
       // Extract booking ID from QR code
       const bookingId = extractBookingIdFromQR(qrCode);
-      
+
       if (!bookingId) {
         showError("Invalid QR code format");
         return;
       }
 
       await validateBooking(qrCode);
-      
     } catch (error) {
       console.error("Error processing QR code:", error);
       showError("Failed to process QR code");
@@ -178,7 +185,7 @@ const QRScanner: React.FC = () => {
     if (qrCode.startsWith("BOOKING_")) {
       return qrCode.replace("BOOKING_", "");
     }
-    
+
     try {
       // Try to parse as JSON
       const parsed = JSON.parse(qrCode);
@@ -191,10 +198,10 @@ const QRScanner: React.FC = () => {
 
   const extractBookingId = (qrCode: string): string => {
     // Handle different QR code formats
-    if (qrCode.startsWith('BOOKING_')) {
+    if (qrCode.startsWith("BOOKING_")) {
       return qrCode;
     }
-    
+
     try {
       // Try to parse as JSON
       const parsed = JSON.parse(qrCode);
@@ -208,7 +215,7 @@ const QRScanner: React.FC = () => {
   const validateBooking = async (qrCodeData: string) => {
     try {
       console.log("🔍 Validating QR code:", qrCodeData);
-      
+
       // Use the validate-qr endpoint
       const validationResult = await bookingApi.validateQR(qrCodeData);
       console.log("✅ Validation result:", validationResult);
@@ -217,7 +224,9 @@ const QRScanner: React.FC = () => {
         const scannedBookingData: ScannedBooking = {
           ...validationResult.booking,
           isValid: true,
-          validationMessage: validationResult.message || "Booking is valid and ready for charging.",
+          validationMessage:
+            validationResult.message ||
+            "Booking is valid and ready for charging.",
         };
 
         setScannedBooking(scannedBookingData);
@@ -228,11 +237,12 @@ const QRScanner: React.FC = () => {
         try {
           const bookingId = extractBookingId(qrCodeData);
           const booking = await bookingApi.getById(bookingId);
-          
+
           const scannedBookingData: ScannedBooking = {
             ...booking,
             isValid: false,
-            validationMessage: validationResult.message || "Invalid booking code.",
+            validationMessage:
+              validationResult.message || "Invalid booking code.",
           };
 
           setScannedBooking(scannedBookingData);
@@ -252,10 +262,9 @@ const QRScanner: React.FC = () => {
           });
           setDetailsDialogOpen(true);
         }
-        
+
         showError(validationResult.message || "Invalid booking code.");
       }
-      
     } catch (error: any) {
       console.error("❌ QR validation error:", error);
       if (error.response?.status === 404) {
@@ -290,7 +299,7 @@ const QRScanner: React.FC = () => {
         try {
           // Try to enable torch/flash (may not be supported on all devices)
           await videoTrack.applyConstraints({
-            advanced: [{ torch: !flashEnabled } as any]
+            advanced: [{ torch: !flashEnabled } as any],
           });
           setFlashEnabled(!flashEnabled);
         } catch (error) {
@@ -316,7 +325,7 @@ const QRScanner: React.FC = () => {
     }
   };
 
-  if (!state.isAuthenticated || state.user?.role !== 'StationOperator') {
+  if (!state.isAuthenticated || state.user?.role !== "StationOperator") {
     return (
       <Box sx={{ p: 3 }}>
         <Alert severity="error">
@@ -348,11 +357,17 @@ const QRScanner: React.FC = () => {
               </Alert>
             ) : !isScanning ? (
               <Box>
-                <QrCodeScanner sx={{ fontSize: 80, color: "primary.main", mb: 2 }} />
+                <QrCodeScanner
+                  sx={{ fontSize: 80, color: "primary.main", mb: 2 }}
+                />
                 <Typography variant="h6" gutterBottom>
                   Ready to Scan
                 </Typography>
-                <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
+                <Typography
+                  variant="body2"
+                  color="text.secondary"
+                  sx={{ mb: 3 }}
+                >
                   Position the QR code within the camera frame
                 </Typography>
                 <Button
@@ -379,7 +394,7 @@ const QRScanner: React.FC = () => {
                     }}
                   />
                   <canvas ref={canvasRef} style={{ display: "none" }} />
-                  
+
                   {isProcessing && (
                     <Box
                       sx={{
@@ -400,8 +415,17 @@ const QRScanner: React.FC = () => {
                   )}
                 </Box>
 
-                <Box sx={{ display: "flex", gap: 2, justifyContent: "center", mb: 2 }}>
-                  <Tooltip title={flashEnabled ? "Turn Off Flash" : "Turn On Flash"}>
+                <Box
+                  sx={{
+                    display: "flex",
+                    gap: 2,
+                    justifyContent: "center",
+                    mb: 2,
+                  }}
+                >
+                  <Tooltip
+                    title={flashEnabled ? "Turn Off Flash" : "Turn On Flash"}
+                  >
                     <IconButton onClick={toggleFlash} color="primary">
                       {flashEnabled ? <FlashOff /> : <FlashOn />}
                     </IconButton>
@@ -433,10 +457,12 @@ const QRScanner: React.FC = () => {
           <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
             Enter booking ID or QR code data manually if camera is not available
           </Typography>
-          
+
           <Box sx={{ display: "flex", gap: 2, alignItems: "flex-end" }}>
             <Box sx={{ flexGrow: 1 }}>
-              <label htmlFor="manual-code-input">Booking ID or QR Code Data</label>
+              <label htmlFor="manual-code-input">
+                Booking ID or QR Code Data
+              </label>
               <input
                 id="manual-code-input"
                 type="text"
@@ -478,7 +504,9 @@ const QRScanner: React.FC = () => {
         <Grid container spacing={2}>
           <Grid item xs={12} md={4}>
             <Box sx={{ textAlign: "center" }}>
-              <QrCodeScanner sx={{ fontSize: 40, color: "primary.main", mb: 1 }} />
+              <QrCodeScanner
+                sx={{ fontSize: 40, color: "primary.main", mb: 1 }}
+              />
               <Typography variant="subtitle2" gutterBottom>
                 1. Scan QR Code
               </Typography>
@@ -489,7 +517,9 @@ const QRScanner: React.FC = () => {
           </Grid>
           <Grid item xs={12} md={4}>
             <Box sx={{ textAlign: "center" }}>
-              <CheckCircle sx={{ fontSize: 40, color: "success.main", mb: 1 }} />
+              <CheckCircle
+                sx={{ fontSize: 40, color: "success.main", mb: 1 }}
+              />
               <Typography variant="subtitle2" gutterBottom>
                 2. Validate Booking
               </Typography>
@@ -521,9 +551,7 @@ const QRScanner: React.FC = () => {
       >
         <DialogTitle>
           <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
-            <Typography variant="h6">
-              Booking Validation Result
-            </Typography>
+            <Typography variant="h6">Booking Validation Result</Typography>
             <Chip
               label={scannedBooking?.isValid ? "Valid" : "Invalid"}
               color={scannedBooking?.isValid ? "success" : "error"}
@@ -535,7 +563,7 @@ const QRScanner: React.FC = () => {
           {scannedBooking && (
             <Grid container spacing={3} sx={{ mt: 1 }}>
               <Grid item xs={12}>
-                <Alert 
+                <Alert
                   severity={scannedBooking.isValid ? "success" : "error"}
                   sx={{ mb: 3 }}
                 >
@@ -561,7 +589,9 @@ const QRScanner: React.FC = () => {
                   </Typography>
                   <Typography variant="body2">
                     <strong>Date:</strong>{" "}
-                    {new Date(scannedBooking.reservationDateTime).toLocaleString()}
+                    {new Date(
+                      scannedBooking.reservationDateTime
+                    ).toLocaleString()}
                   </Typography>
                 </Box>
               </Grid>
@@ -571,10 +601,19 @@ const QRScanner: React.FC = () => {
                   EV Owner
                 </Typography>
                 <Box sx={{ p: 2, backgroundColor: "grey.50", borderRadius: 1 }}>
-                  <Box sx={{ display: "flex", alignItems: "center", gap: 1, mb: 1 }}>
+                  <Box
+                    sx={{
+                      display: "flex",
+                      alignItems: "center",
+                      gap: 1,
+                      mb: 1,
+                    }}
+                  >
                     <Person sx={{ fontSize: 16 }} />
                     <Typography variant="body2">
-                      <strong>{scannedBooking.evOwner?.name || "Unknown"}</strong>
+                      <strong>
+                        {scannedBooking.evOwner?.name || "Unknown"}
+                      </strong>
                     </Typography>
                   </Box>
                   <Typography variant="body2">
@@ -588,14 +627,25 @@ const QRScanner: React.FC = () => {
                   Charging Station
                 </Typography>
                 <Box sx={{ p: 2, backgroundColor: "grey.50", borderRadius: 1 }}>
-                  <Box sx={{ display: "flex", alignItems: "center", gap: 1, mb: 1 }}>
+                  <Box
+                    sx={{
+                      display: "flex",
+                      alignItems: "center",
+                      gap: 1,
+                      mb: 1,
+                    }}
+                  >
                     <LocationOn sx={{ fontSize: 16 }} />
                     <Typography variant="body2">
-                      <strong>{scannedBooking.chargingStation?.name || "Unknown Station"}</strong>
+                      <strong>
+                        {scannedBooking.chargingStation?.name ||
+                          "Unknown Station"}
+                      </strong>
                     </Typography>
                   </Box>
                   <Typography variant="body2">
-                    {scannedBooking.chargingStation?.address || "Address not available"}
+                    {scannedBooking.chargingStation?.address ||
+                      "Address not available"}
                   </Typography>
                 </Box>
               </Grid>
@@ -616,9 +666,7 @@ const QRScanner: React.FC = () => {
               Authorize Charging
             </Button>
           )}
-          <Button onClick={() => setDetailsDialogOpen(false)}>
-            Close
-          </Button>
+          <Button onClick={() => setDetailsDialogOpen(false)}>Close</Button>
         </DialogActions>
       </Dialog>
     </Box>

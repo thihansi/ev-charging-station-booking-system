@@ -156,7 +156,9 @@ const BookingListPage: React.FC = () => {
       if (statusFilter === "All") {
         filtered = filtered.filter((booking) => booking.status !== "Cancelled");
       } else {
-        filtered = filtered.filter((booking) => booking.status === statusFilter);
+        filtered = filtered.filter(
+          (booking) => booking.status === statusFilter
+        );
       }
     }
 
@@ -217,20 +219,28 @@ const BookingListPage: React.FC = () => {
   // Get tab indicator color based on selected tab
   const getTabIndicatorColor = () => {
     switch (tabValue) {
-      case 0: return '#1976d2'; // Blue for All Bookings
-      case 1: return '#f57c00'; // Orange for Pending
-      case 2: return '#2e7d32'; // Green for Active
-      default: return '#1976d2';
+      case 0:
+        return "#1976d2"; // Blue for All Bookings
+      case 1:
+        return "#f57c00"; // Orange for Pending
+      case 2:
+        return "#2e7d32"; // Green for Active
+      default:
+        return "#1976d2";
     }
   };
 
   // Get tab text color when selected
   const getTabTextColor = () => {
     switch (tabValue) {
-      case 0: return '#1976d2'; // Blue for All Bookings
-      case 1: return '#f57c00'; // Orange for Pending
-      case 2: return '#2e7d32'; // Green for Active
-      default: return '#1976d2';
+      case 0:
+        return "#1976d2"; // Blue for All Bookings
+      case 1:
+        return "#f57c00"; // Orange for Pending
+      case 2:
+        return "#2e7d32"; // Green for Active
+      default:
+        return "#1976d2";
     }
   };
 
@@ -262,81 +272,81 @@ const BookingListPage: React.FC = () => {
           value={tabValue}
           onChange={handleTabChange}
           sx={{
-            '& .MuiTabs-indicator': {
+            "& .MuiTabs-indicator": {
               backgroundColor: getTabIndicatorColor(),
               height: 3,
             },
-            '& .MuiTab-root': {
-              textTransform: 'uppercase',
+            "& .MuiTab-root": {
+              textTransform: "uppercase",
               fontWeight: 600,
               minHeight: 48,
-              color: '#666',
-              '&.Mui-selected': {
+              color: "#666",
+              "&.Mui-selected": {
                 color: getTabTextColor(),
               },
             },
           }}
         >
-          <Tab 
+          <Tab
             label={
-              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+              <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
                 <Box
                   sx={{
                     width: 8,
                     height: 8,
-                    borderRadius: '50%',
-                    backgroundColor: '#1976d2',
+                    borderRadius: "50%",
+                    backgroundColor: "#1976d2",
                   }}
                 />
                 {`ALL BOOKINGS (${bookings.length})`}
               </Box>
             }
             sx={{
-              '&.Mui-selected': {
-                color: '#1976d2',
-                backgroundColor: 'rgba(25, 118, 210, 0.08)',
+              "&.Mui-selected": {
+                color: "#1976d2",
+                backgroundColor: "rgba(25, 118, 210, 0.08)",
               },
             }}
           />
-          <Tab 
+          <Tab
             label={
-              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+              <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
                 <Box
                   sx={{
                     width: 8,
                     height: 8,
-                    borderRadius: '50%',
-                    backgroundColor: '#f57c00',
+                    borderRadius: "50%",
+                    backgroundColor: "#f57c00",
                   }}
                 />
                 {`PENDING (${getPendingCount()})`}
               </Box>
             }
             sx={{
-              '&.Mui-selected': {
-                color: '#f57c00',
-                backgroundColor: 'rgba(245, 124, 0, 0.08)',
+              "&.Mui-selected": {
+                color: "#f57c00",
+                backgroundColor: "rgba(245, 124, 0, 0.08)",
               },
             }}
           />
-          <Tab 
+          <Tab
             label={
-              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+              <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
                 <Box
                   sx={{
                     width: 8,
                     height: 8,
-                    borderRadius: '50%',
-                    backgroundColor: '#2e7d32',
+                    borderRadius: "50%",
+                    backgroundColor: "#2e7d32",
                   }}
                 />
                 {`ACTIVE (${getActiveCount()})`}
               </Box>
             }
             sx={{
-              '&.Mui-selected': {
-                color: '#2e7d32',
-                backgroundColor: 'rgba(46, 125, 50, 0.08)',
+              "&.Mui-selected": {
+                color: "#2e7d32",
+                backgroundColor: "rgba(46, 125, 50, 0.08)",
               },
             }}
           />
@@ -371,7 +381,9 @@ const BookingListPage: React.FC = () => {
               >
                 {statusList.map((status) => (
                   <MenuItem key={status} value={status}>
-                    {status === "All" ? "All" : getBookingStatusDisplay(status as BookingStatus)}
+                    {status === "All"
+                      ? "All"
+                      : getBookingStatusDisplay(status as BookingStatus)}
                   </MenuItem>
                 ))}
               </Select>
@@ -609,7 +621,13 @@ const BookingListPage: React.FC = () => {
                         </Typography>
                       </TableCell>
                       <TableCell align="center">
-                        <Box sx={{ display: "flex", gap: 1, justifyContent: "center" }}>
+                        <Box
+                          sx={{
+                            display: "flex",
+                            gap: 1,
+                            justifyContent: "center",
+                          }}
+                        >
                           <IconButton
                             size="small"
                             color="primary"
@@ -629,18 +647,35 @@ const BookingListPage: React.FC = () => {
                               setConfirmDialog({
                                 open: true,
                                 title: "Cancel Booking",
-                                message: `Are you sure you want to cancel booking #${booking.id.slice(-8)}? This action cannot be undone.`,
+                                message: `Are you sure you want to cancel booking #${booking.id.slice(
+                                  -8
+                                )}? This action cannot be undone.`,
                                 action: async () => {
                                   try {
-                                    console.log("🗑️ Cancelling booking:", booking.id);
+                                    console.log(
+                                      "🗑️ Cancelling booking:",
+                                      booking.id
+                                    );
                                     await bookingApi.cancel(booking.id);
-                                    console.log("✅ Booking cancelled successfully");
-                                    showSuccess("Booking cancelled successfully");
+                                    console.log(
+                                      "✅ Booking cancelled successfully"
+                                    );
+                                    showSuccess(
+                                      "Booking cancelled successfully"
+                                    );
                                     await loadBookings();
                                   } catch (error: any) {
-                                    console.error("❌ Failed to cancel booking:", error);
-                                    console.error("Error response:", error.response?.data);
-                                    const errorMessage = error.response?.data?.message || "Failed to cancel booking";
+                                    console.error(
+                                      "❌ Failed to cancel booking:",
+                                      error
+                                    );
+                                    console.error(
+                                      "Error response:",
+                                      error.response?.data
+                                    );
+                                    const errorMessage =
+                                      error.response?.data?.message ||
+                                      "Failed to cancel booking";
                                     showError(errorMessage);
                                   }
                                 },

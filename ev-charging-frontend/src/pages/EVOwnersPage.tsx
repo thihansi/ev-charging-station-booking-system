@@ -42,7 +42,11 @@ import {
   Check,
 } from "@mui/icons-material";
 import { evOwnerApi } from "../api";
-import type { EVOwner, CreateEVOwnerRequest, UpdateEVOwnerRequest } from "../types";
+import type {
+  EVOwner,
+  CreateEVOwnerRequest,
+  UpdateEVOwnerRequest,
+} from "../types";
 
 interface EVOwnerFormData {
   nic: string;
@@ -77,8 +81,11 @@ const EVOwnersPage: React.FC = () => {
   const [updateConfirmOpen, setUpdateConfirmOpen] = useState(false);
   const [statusConfirmOpen, setStatusConfirmOpen] = useState(false);
   const [evOwnerToDelete, setEvOwnerToDelete] = useState<EVOwner | null>(null);
-  const [statusAction, setStatusAction] = useState<"activate" | "deactivate" | "reactivate" | null>(null);
-  const [statusActionEvOwner, setStatusActionEvOwner] = useState<EVOwner | null>(null);
+  const [statusAction, setStatusAction] = useState<
+    "activate" | "deactivate" | "reactivate" | null
+  >(null);
+  const [statusActionEvOwner, setStatusActionEvOwner] =
+    useState<EVOwner | null>(null);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [selectedEvOwner, setSelectedEvOwner] = useState<EVOwner | null>(null);
 
@@ -101,7 +108,10 @@ const EVOwnersPage: React.FC = () => {
     fetchEvOwners();
   }, []);
 
-  const showSnackbar = (message: string, severity: "success" | "error" | "info" = "success") => {
+  const showSnackbar = (
+    message: string,
+    severity: "success" | "error" | "info" = "success"
+  ) => {
     setSnackbar({ open: true, message, severity });
   };
 
@@ -143,8 +153,11 @@ const EVOwnersPage: React.FC = () => {
     resetForm();
   };
 
-  const handleInputChange = (field: keyof EVOwnerFormData, value: string | boolean) => {
-    setFormData(prev => ({ ...prev, [field]: value }));
+  const handleInputChange = (
+    field: keyof EVOwnerFormData,
+    value: string | boolean
+  ) => {
+    setFormData((prev) => ({ ...prev, [field]: value }));
   };
 
   const handleSubmit = async () => {
@@ -166,7 +179,10 @@ const EVOwnersPage: React.FC = () => {
       return;
     }
     if (!editingEvOwner && formData.createWithPassword && !formData.password) {
-      showSnackbar("Password is required when creating with login credentials", "error");
+      showSnackbar(
+        "Password is required when creating with login credentials",
+        "error"
+      );
       return;
     }
 
@@ -190,13 +206,13 @@ const EVOwnersPage: React.FC = () => {
           email: formData.email.trim(),
           phone: formData.phone.trim(),
         };
-        
+
         console.log("Updating EV Owner:", {
           nic: editingEvOwner.nic,
           updateData,
           originalData: editingEvOwner,
         });
-        
+
         await evOwnerApi.update(editingEvOwner.nic, updateData);
         showSnackbar("EV Owner updated successfully");
       } else {
@@ -224,16 +240,19 @@ const EVOwnersPage: React.FC = () => {
       fetchEvOwners();
     } catch (err: any) {
       console.error("Error submitting form:", err);
-      console.error("Error response data:", JSON.stringify(err.response?.data, null, 2));
+      console.error(
+        "Error response data:",
+        JSON.stringify(err.response?.data, null, 2)
+      );
       console.error("Error response status:", err.response?.status);
       console.error("Error response headers:", err.response?.headers);
-      
+
       // Extract detailed error message
       let errorMessage = "Operation failed";
-      
+
       if (err.response?.data) {
         const errorData = err.response.data;
-        
+
         // Check for different error formats
         if (errorData.message) {
           errorMessage = errorData.message;
@@ -242,20 +261,23 @@ const EVOwnersPage: React.FC = () => {
         } else if (errorData.errors) {
           // Handle validation errors object
           const errors = errorData.errors;
-          if (typeof errors === 'object') {
+          if (typeof errors === "object") {
             errorMessage = Object.entries(errors)
-              .map(([key, value]) => `${key}: ${Array.isArray(value) ? value.join(', ') : value}`)
-              .join('; ');
+              .map(
+                ([key, value]) =>
+                  `${key}: ${Array.isArray(value) ? value.join(", ") : value}`
+              )
+              .join("; ");
           } else {
             errorMessage = JSON.stringify(errors);
           }
-        } else if (typeof errorData === 'string') {
+        } else if (typeof errorData === "string") {
           errorMessage = errorData;
         } else {
           errorMessage = JSON.stringify(errorData);
         }
       }
-      
+
       showSnackbar(errorMessage, "error");
     } finally {
       setSubmitting(false);
@@ -269,13 +291,16 @@ const EVOwnersPage: React.FC = () => {
 
   const confirmDelete = async () => {
     if (!evOwnerToDelete) return;
-    
+
     try {
       await evOwnerApi.delete(evOwnerToDelete.nic);
       showSnackbar("EV Owner deleted successfully");
       fetchEvOwners();
     } catch (err: any) {
-      showSnackbar(err.response?.data?.message || "Failed to delete EV owner", "error");
+      showSnackbar(
+        err.response?.data?.message || "Failed to delete EV owner",
+        "error"
+      );
       console.error("Error deleting EV owner:", err);
     } finally {
       setDeleteConfirmOpen(false);
@@ -283,7 +308,10 @@ const EVOwnersPage: React.FC = () => {
     }
   };
 
-  const handleStatusAction = (evOwner: EVOwner, action: "activate" | "deactivate" | "reactivate") => {
+  const handleStatusAction = (
+    evOwner: EVOwner,
+    action: "activate" | "deactivate" | "reactivate"
+  ) => {
     setStatusActionEvOwner(evOwner);
     setStatusAction(action);
     setStatusConfirmOpen(true);
@@ -310,7 +338,10 @@ const EVOwnersPage: React.FC = () => {
       }
       fetchEvOwners();
     } catch (err: any) {
-      showSnackbar(err.response?.data?.message || `Failed to ${statusAction} EV owner`, "error");
+      showSnackbar(
+        err.response?.data?.message || `Failed to ${statusAction} EV owner`,
+        "error"
+      );
       console.error(`Error ${statusAction} EV owner:`, err);
     } finally {
       setStatusConfirmOpen(false);
@@ -327,7 +358,10 @@ const EVOwnersPage: React.FC = () => {
     return isActive ? <Check /> : <PersonOff />;
   };
 
-  const handleOpenMenu = (event: React.MouseEvent<HTMLElement>, evOwner: EVOwner) => {
+  const handleOpenMenu = (
+    event: React.MouseEvent<HTMLElement>,
+    evOwner: EVOwner
+  ) => {
     setAnchorEl(event.currentTarget);
     setSelectedEvOwner(evOwner);
   };
@@ -356,7 +390,14 @@ const EVOwnersPage: React.FC = () => {
       )}
 
       {/* Action Bar */}
-      <Box sx={{ mb: 3, display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+      <Box
+        sx={{
+          mb: 3,
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+        }}
+      >
         <Button
           variant="contained"
           startIcon={<PersonAdd />}
@@ -403,8 +444,8 @@ const EVOwnersPage: React.FC = () => {
                   <TableRow>
                     <TableCell colSpan={6} align="center">
                       <Typography color="text.secondary">
-                        {!Array.isArray(evOwners) 
-                          ? "Error: Invalid data format" 
+                        {!Array.isArray(evOwners)
+                          ? "Error: Invalid data format"
                           : "No EV owners found. Create your first EV owner to get started."}
                       </Typography>
                     </TableCell>
@@ -413,15 +454,22 @@ const EVOwnersPage: React.FC = () => {
                   evOwners.map((evOwner) => (
                     <TableRow key={evOwner.nic} hover>
                       <TableCell>
-                        <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+                        <Box
+                          sx={{ display: "flex", alignItems: "center", gap: 1 }}
+                        >
                           <Person />
-                          <Typography fontWeight="medium" sx={{ fontFamily: "monospace" }}>
+                          <Typography
+                            fontWeight="medium"
+                            sx={{ fontFamily: "monospace" }}
+                          >
                             {evOwner.nic}
                           </Typography>
                         </Box>
                       </TableCell>
                       <TableCell>
-                        <Typography fontWeight="medium">{evOwner.name}</Typography>
+                        <Typography fontWeight="medium">
+                          {evOwner.name}
+                        </Typography>
                       </TableCell>
                       <TableCell>{evOwner.email}</TableCell>
                       <TableCell>{evOwner.phone}</TableCell>
@@ -434,7 +482,9 @@ const EVOwnersPage: React.FC = () => {
                         />
                       </TableCell>
                       <TableCell align="right">
-                        <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+                        <Box
+                          sx={{ display: "flex", alignItems: "center", gap: 1 }}
+                        >
                           <Tooltip title="Edit EV Owner">
                             <IconButton
                               size="small"
@@ -468,21 +518,36 @@ const EVOwnersPage: React.FC = () => {
         open={Boolean(anchorEl)}
         onClose={handleCloseMenu}
       >
-        {selectedEvOwner?.isActive ? [
-          <MenuItem key="deactivate" onClick={() => handleStatusAction(selectedEvOwner, "deactivate")}>
-            <ToggleOff sx={{ mr: 1 }} />
-            Deactivate
-          </MenuItem>
-        ] : [
-          <MenuItem key="activate" onClick={() => handleStatusAction(selectedEvOwner!, "activate")}>
-            <ToggleOn sx={{ mr: 1 }} />
-            Activate
-          </MenuItem>,
-          <MenuItem key="reactivate" onClick={() => handleStatusAction(selectedEvOwner!, "reactivate")}>
-            <Check sx={{ mr: 1 }} />
-            Reactivate
-          </MenuItem>
-        ]}
+        {selectedEvOwner?.isActive
+          ? [
+              <MenuItem
+                key="deactivate"
+                onClick={() =>
+                  handleStatusAction(selectedEvOwner, "deactivate")
+                }
+              >
+                <ToggleOff sx={{ mr: 1 }} />
+                Deactivate
+              </MenuItem>,
+            ]
+          : [
+              <MenuItem
+                key="activate"
+                onClick={() => handleStatusAction(selectedEvOwner!, "activate")}
+              >
+                <ToggleOn sx={{ mr: 1 }} />
+                Activate
+              </MenuItem>,
+              <MenuItem
+                key="reactivate"
+                onClick={() =>
+                  handleStatusAction(selectedEvOwner!, "reactivate")
+                }
+              >
+                <Check sx={{ mr: 1 }} />
+                Reactivate
+              </MenuItem>,
+            ]}
         <MenuItem onClick={() => handleDelete(selectedEvOwner!)}>
           <Delete sx={{ mr: 1 }} color="error" />
           Delete
@@ -490,7 +555,12 @@ const EVOwnersPage: React.FC = () => {
       </Menu>
 
       {/* Create/Edit Dialog */}
-      <Dialog open={openDialog} onClose={handleCloseDialog} maxWidth="sm" fullWidth>
+      <Dialog
+        open={openDialog}
+        onClose={handleCloseDialog}
+        maxWidth="sm"
+        fullWidth
+      >
         <DialogTitle>
           {editingEvOwner ? "Edit EV Owner" : "Create New EV Owner"}
         </DialogTitle>
@@ -536,12 +606,23 @@ const EVOwnersPage: React.FC = () => {
                 <FormControl fullWidth>
                   <InputLabel>Account Type</InputLabel>
                   <Select
-                    value={formData.createWithPassword ? "with-password" : "profile-only"}
-                    onChange={(e) => handleInputChange("createWithPassword", e.target.value === "with-password")}
+                    value={
+                      formData.createWithPassword
+                        ? "with-password"
+                        : "profile-only"
+                    }
+                    onChange={(e) =>
+                      handleInputChange(
+                        "createWithPassword",
+                        e.target.value === "with-password"
+                      )
+                    }
                     label="Account Type"
                   >
                     <MenuItem value="profile-only">Profile Only</MenuItem>
-                    <MenuItem value="with-password">Profile + Login Credentials</MenuItem>
+                    <MenuItem value="with-password">
+                      Profile + Login Credentials
+                    </MenuItem>
                   </Select>
                 </FormControl>
 
@@ -550,7 +631,9 @@ const EVOwnersPage: React.FC = () => {
                     label="Password"
                     type="password"
                     value={formData.password}
-                    onChange={(e) => handleInputChange("password", e.target.value)}
+                    onChange={(e) =>
+                      handleInputChange("password", e.target.value)
+                    }
                     fullWidth
                     required
                     helperText="Minimum 6 characters"
@@ -566,15 +649,21 @@ const EVOwnersPage: React.FC = () => {
             onClick={handleSubmit}
             variant="contained"
             disabled={
-              submitting || 
-              !formData.nic || 
-              !formData.name || 
-              !formData.email || 
-              !formData.phone || 
+              submitting ||
+              !formData.nic ||
+              !formData.name ||
+              !formData.email ||
+              !formData.phone ||
               (formData.createWithPassword && !formData.password)
             }
           >
-            {submitting ? <CircularProgress size={20} /> : (editingEvOwner ? "Update" : "Create")}
+            {submitting ? (
+              <CircularProgress size={20} />
+            ) : editingEvOwner ? (
+              "Update"
+            ) : (
+              "Create"
+            )}
           </Button>
         </DialogActions>
       </Dialog>
@@ -587,23 +676,28 @@ const EVOwnersPage: React.FC = () => {
         fullWidth
       >
         <DialogTitle>
-          <Typography variant="h6" component="div" sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+          <Typography
+            variant="h6"
+            component="div"
+            sx={{ display: "flex", alignItems: "center", gap: 1 }}
+          >
             <Delete color="error" />
             Confirm Delete EV Owner
           </Typography>
         </DialogTitle>
         <DialogContent>
           <Typography>
-            Are you sure you want to delete EV owner <strong>"{evOwnerToDelete?.name}"</strong> (NIC: {evOwnerToDelete?.nic})?
+            Are you sure you want to delete EV owner{" "}
+            <strong>"{evOwnerToDelete?.name}"</strong> (NIC:{" "}
+            {evOwnerToDelete?.nic})?
           </Typography>
           <Typography variant="body2" color="error" sx={{ mt: 1 }}>
-            This action cannot be undone. All associated data will be permanently removed.
+            This action cannot be undone. All associated data will be
+            permanently removed.
           </Typography>
         </DialogContent>
         <DialogActions>
-          <Button onClick={() => setDeleteConfirmOpen(false)}>
-            Cancel
-          </Button>
+          <Button onClick={() => setDeleteConfirmOpen(false)}>Cancel</Button>
           <Button onClick={confirmDelete} color="error" variant="contained">
             Delete EV Owner
           </Button>
@@ -618,24 +712,32 @@ const EVOwnersPage: React.FC = () => {
         fullWidth
       >
         <DialogTitle>
-          <Typography variant="h6" component="div" sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+          <Typography
+            variant="h6"
+            component="div"
+            sx={{ display: "flex", alignItems: "center", gap: 1 }}
+          >
             <Edit color="primary" />
             Confirm Update EV Owner
           </Typography>
         </DialogTitle>
         <DialogContent>
           <Typography>
-            Are you sure you want to update EV owner <strong>"{editingEvOwner?.name}"</strong>?
+            Are you sure you want to update EV owner{" "}
+            <strong>"{editingEvOwner?.name}"</strong>?
           </Typography>
           <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
             The EV owner's information will be permanently changed.
           </Typography>
         </DialogContent>
         <DialogActions>
-          <Button onClick={() => setUpdateConfirmOpen(false)}>
-            Cancel
-          </Button>
-          <Button onClick={performSubmit} color="primary" variant="contained" disabled={submitting}>
+          <Button onClick={() => setUpdateConfirmOpen(false)}>Cancel</Button>
+          <Button
+            onClick={performSubmit}
+            color="primary"
+            variant="contained"
+            disabled={submitting}
+          >
             {submitting ? <CircularProgress size={20} /> : "Update EV Owner"}
           </Button>
         </DialogActions>
@@ -649,32 +751,44 @@ const EVOwnersPage: React.FC = () => {
         fullWidth
       >
         <DialogTitle>
-          <Typography variant="h6" component="div" sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-            {statusAction === "deactivate" ? <ToggleOff color="error" /> : <ToggleOn color="success" />}
-            Confirm {statusAction ? statusAction.charAt(0).toUpperCase() + statusAction.slice(1) : ""} EV Owner
+          <Typography
+            variant="h6"
+            component="div"
+            sx={{ display: "flex", alignItems: "center", gap: 1 }}
+          >
+            {statusAction === "deactivate" ? (
+              <ToggleOff color="error" />
+            ) : (
+              <ToggleOn color="success" />
+            )}
+            Confirm{" "}
+            {statusAction
+              ? statusAction.charAt(0).toUpperCase() + statusAction.slice(1)
+              : ""}{" "}
+            EV Owner
           </Typography>
         </DialogTitle>
         <DialogContent>
           <Typography>
-            Are you sure you want to <strong>{statusAction}</strong> EV owner <strong>"{statusActionEvOwner?.name}"</strong>?
+            Are you sure you want to <strong>{statusAction}</strong> EV owner{" "}
+            <strong>"{statusActionEvOwner?.name}"</strong>?
           </Typography>
           <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
-            {statusAction === "deactivate" 
+            {statusAction === "deactivate"
               ? "The EV owner will lose access to the system temporarily."
-              : "The EV owner will regain access to the system."
-            }
+              : "The EV owner will regain access to the system."}
           </Typography>
         </DialogContent>
         <DialogActions>
-          <Button onClick={() => setStatusConfirmOpen(false)}>
-            Cancel
-          </Button>
-          <Button 
-            onClick={confirmStatusAction} 
-            color={statusAction === "deactivate" ? "error" : "success"} 
+          <Button onClick={() => setStatusConfirmOpen(false)}>Cancel</Button>
+          <Button
+            onClick={confirmStatusAction}
+            color={statusAction === "deactivate" ? "error" : "success"}
             variant="contained"
           >
-            {statusAction ? statusAction.charAt(0).toUpperCase() + statusAction.slice(1) : "Action"}
+            {statusAction
+              ? statusAction.charAt(0).toUpperCase() + statusAction.slice(1)
+              : "Action"}
           </Button>
         </DialogActions>
       </Dialog>

@@ -107,7 +107,7 @@ const BackofficeDashboard: React.FC = () => {
       // Fetch data from APIs
       const [bookings, stations] = await Promise.all([
         bookingApi.getAll(),
-        chargingStationApi.getAll()
+        chargingStationApi.getAll(),
       ]);
 
       // Try to fetch EV owners
@@ -119,15 +119,15 @@ const BackofficeDashboard: React.FC = () => {
       }
 
       // Calculate statistics from real data
-      const pendingBookings = bookings.filter(b => {
-        if (typeof b.status === 'string') {
+      const pendingBookings = bookings.filter((b) => {
+        if (typeof b.status === "string") {
           return b.status === "Pending";
-        } else if (typeof b.status === 'number') {
+        } else if (typeof b.status === "number") {
           return b.status === 0; // 0 is Pending in the backend enum
         }
         return false;
       }).length;
-      const operationalStations = stations.filter(s => s.isActive).length;
+      const operationalStations = stations.filter((s) => s.isActive).length;
 
       setStats({
         totalEvOwners: evOwners.length,
@@ -151,18 +151,27 @@ const BackofficeDashboard: React.FC = () => {
   }, []);
 
   return (
-    <Box sx={{ 
-      minHeight: "100vh",
-      background: "#f8fafc", // Clean gray background
-      p: 3,
-    }}>
+    <Box
+      sx={{
+        minHeight: "100vh",
+        background: "#f8fafc", // Clean gray background
+        p: 3,
+      }}
+    >
       {/* Header */}
-      <Box sx={{ mb: 4, display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+      <Box
+        sx={{
+          mb: 4,
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "flex-start",
+        }}
+      >
         <Box>
-          <Typography 
-            variant="h4" 
-            component="h1" 
-            gutterBottom 
+          <Typography
+            variant="h4"
+            component="h1"
+            gutterBottom
             fontWeight="bold"
             sx={{
               color: "#1e293b", // Clean dark text instead of gradient
@@ -176,10 +185,10 @@ const BackofficeDashboard: React.FC = () => {
             overview.
           </Typography>
         </Box>
-        <IconButton 
-          onClick={loadDashboardData} 
+        <IconButton
+          onClick={loadDashboardData}
           disabled={isLoading}
-          sx={{ 
+          sx={{
             mt: 1,
             backgroundColor: "#f1f5f9",
             color: "#64748b",
@@ -221,8 +230,8 @@ const BackofficeDashboard: React.FC = () => {
                 <Typography color="text.secondary" gutterBottom variant="h6">
                   EV Owners
                 </Typography>
-                <Typography 
-                  variant="h4" 
+                <Typography
+                  variant="h4"
                   fontWeight="bold"
                   sx={{ color: "#1e293b", mb: 1 }}
                 >
@@ -231,7 +240,7 @@ const BackofficeDashboard: React.FC = () => {
                 <Chip
                   icon={<TrendingUp sx={{ color: "white !important" }} />}
                   label={`+${stats.activeEvOwners} Active`}
-                  sx={{ 
+                  sx={{
                     backgroundColor: "#10b981",
                     color: "white",
                     fontWeight: 500,
@@ -270,8 +279,8 @@ const BackofficeDashboard: React.FC = () => {
                 <Typography color="text.secondary" gutterBottom variant="h6">
                   Charging Stations
                 </Typography>
-                <Typography 
-                  variant="h4" 
+                <Typography
+                  variant="h4"
                   fontWeight="bold"
                   sx={{ color: "#1e293b", mb: 1 }}
                 >
@@ -280,7 +289,7 @@ const BackofficeDashboard: React.FC = () => {
                 <Chip
                   icon={<TrendingUp sx={{ color: "white !important" }} />}
                   label={`${stats.operationalStations} Operational`}
-                  sx={{ 
+                  sx={{
                     backgroundColor: "#10b981",
                     color: "white",
                     fontWeight: 500,
@@ -319,8 +328,8 @@ const BackofficeDashboard: React.FC = () => {
                 <Typography color="text.secondary" gutterBottom variant="h6">
                   Total Bookings
                 </Typography>
-                <Typography 
-                  variant="h4" 
+                <Typography
+                  variant="h4"
                   fontWeight="bold"
                   sx={{ color: "#1e293b", mb: 1 }}
                 >
@@ -329,7 +338,7 @@ const BackofficeDashboard: React.FC = () => {
                 <Chip
                   icon={<Notifications sx={{ color: "white !important" }} />}
                   label={`${stats.pendingBookings} Pending`}
-                  sx={{ 
+                  sx={{
                     backgroundColor: "#f59e0b",
                     color: "white",
                     fontWeight: 500,
@@ -368,18 +377,25 @@ const BackofficeDashboard: React.FC = () => {
                 <Typography color="text.secondary" gutterBottom variant="h6">
                   Monthly Revenue
                 </Typography>
-                <Typography 
-                  variant="h4" 
+                <Typography
+                  variant="h4"
                   fontWeight="bold"
                   sx={{ color: "#1e293b", mb: 1 }}
                 >
-                  {stats.monthlyRevenue > 0 ? `$${stats.monthlyRevenue.toLocaleString()}` : 'N/A'}
+                  {stats.monthlyRevenue > 0
+                    ? `$${stats.monthlyRevenue.toLocaleString()}`
+                    : "N/A"}
                 </Typography>
                 <Chip
                   icon={<TrendingUp sx={{ color: "white !important" }} />}
-                  label={stats.monthlyRevenue > 0 ? "+12% vs last month" : "Revenue tracking TBD"}
-                  sx={{ 
-                    backgroundColor: stats.monthlyRevenue > 0 ? "#10b981" : "#64748b",
+                  label={
+                    stats.monthlyRevenue > 0
+                      ? "+12% vs last month"
+                      : "Revenue tracking TBD"
+                  }
+                  sx={{
+                    backgroundColor:
+                      stats.monthlyRevenue > 0 ? "#10b981" : "#64748b",
                     color: "white",
                     fontWeight: 500,
                   }}
@@ -436,54 +452,54 @@ const BackofficeDashboard: React.FC = () => {
                   { bg: "#10b981", icon: "#ffffff" }, // Green for Reports
                 ];
                 const colors = actionColors[index] || actionColors[0];
-                
+
                 return (
-                <Card
-                  key={action.title}
-                  variant="outlined"
-                  sx={{
-                    cursor: "pointer",
-                    transition: "all 0.2s ease-in-out",
-                    backgroundColor: "#ffffff",
-                    border: "1px solid #e2e8f0",
-                    "&:hover": {
-                      boxShadow: "0 8px 25px rgba(0, 0, 0, 0.15)",
-                      transform: "translateY(-4px)",
-                      borderColor: colors.bg,
-                    },
-                  }}
-                  onClick={action.action}
-                >
-                  <CardContent sx={{ textAlign: "center", p: 3 }}>
-                    <Box
-                      sx={{
-                        width: 64,
-                        height: 64,
-                        mx: "auto",
-                        mb: 2,
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "center",
-                        borderRadius: "50%",
-                        backgroundColor: colors.bg,
-                        color: colors.icon,
-                        boxShadow: `0 4px 15px ${colors.bg}40`,
-                      }}
-                    >
-                      {React.cloneElement(action.icon, { fontSize: "large" })}
-                    </Box>
-                    <Typography 
-                      variant="subtitle1" 
-                      fontWeight="bold"
-                      sx={{ color: "#1e293b", mb: 0.5 }}
-                    >
-                      {action.title}
-                    </Typography>
-                    <Typography variant="body2" color="text.secondary">
-                      {action.description}
-                    </Typography>
-                  </CardContent>
-                </Card>
+                  <Card
+                    key={action.title}
+                    variant="outlined"
+                    sx={{
+                      cursor: "pointer",
+                      transition: "all 0.2s ease-in-out",
+                      backgroundColor: "#ffffff",
+                      border: "1px solid #e2e8f0",
+                      "&:hover": {
+                        boxShadow: "0 8px 25px rgba(0, 0, 0, 0.15)",
+                        transform: "translateY(-4px)",
+                        borderColor: colors.bg,
+                      },
+                    }}
+                    onClick={action.action}
+                  >
+                    <CardContent sx={{ textAlign: "center", p: 3 }}>
+                      <Box
+                        sx={{
+                          width: 64,
+                          height: 64,
+                          mx: "auto",
+                          mb: 2,
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "center",
+                          borderRadius: "50%",
+                          backgroundColor: colors.bg,
+                          color: colors.icon,
+                          boxShadow: `0 4px 15px ${colors.bg}40`,
+                        }}
+                      >
+                        {React.cloneElement(action.icon, { fontSize: "large" })}
+                      </Box>
+                      <Typography
+                        variant="subtitle1"
+                        fontWeight="bold"
+                        sx={{ color: "#1e293b", mb: 0.5 }}
+                      >
+                        {action.title}
+                      </Typography>
+                      <Typography variant="body2" color="text.secondary">
+                        {action.description}
+                      </Typography>
+                    </CardContent>
+                  </Card>
                 );
               })}
             </Box>

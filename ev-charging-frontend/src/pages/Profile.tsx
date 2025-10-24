@@ -47,7 +47,7 @@ interface PasswordFormData {
 const Profile: React.FC = () => {
   const { state } = useAuth();
   const { showError, showSuccess } = useNotificationContext();
-  
+
   const [isEditing, setIsEditing] = useState(false);
   const [passwordDialogOpen, setPasswordDialogOpen] = useState(false);
   const [showPasswords, setShowPasswords] = useState({
@@ -55,20 +55,21 @@ const Profile: React.FC = () => {
     new: false,
     confirm: false,
   });
-  
+
   const [profileData, setProfileData] = useState<ProfileFormData>({
     fullName: state.user?.fullName || "",
     email: state.user?.email || "",
     username: state.user?.username || "",
   });
-  
+
   const [passwordData, setPasswordData] = useState<PasswordFormData>({
     currentPassword: "",
     newPassword: "",
     confirmPassword: "",
   });
 
-  const [originalProfileData, setOriginalProfileData] = useState<ProfileFormData>(profileData);
+  const [originalProfileData, setOriginalProfileData] =
+    useState<ProfileFormData>(profileData);
 
   const handleEditProfile = () => {
     setOriginalProfileData(profileData);
@@ -87,7 +88,7 @@ const Profile: React.FC = () => {
         showError("Full name is required");
         return;
       }
-      
+
       if (!profileData.email.trim()) {
         showError("Email is required");
         return;
@@ -100,7 +101,7 @@ const Profile: React.FC = () => {
 
       // In a real implementation, you would call an API to update the profile
       // await userApi.updateProfile(profileData);
-      
+
       showSuccess("Profile updated successfully!");
       setIsEditing(false);
       setOriginalProfileData(profileData);
@@ -134,7 +135,7 @@ const Profile: React.FC = () => {
 
       // In a real implementation, you would call an API to change the password
       // await userApi.changePassword(passwordData);
-      
+
       showSuccess("Password changed successfully!");
       setPasswordDialogOpen(false);
       setPasswordData({
@@ -147,28 +148,34 @@ const Profile: React.FC = () => {
     }
   };
 
-  const handleProfileFieldChange = (field: keyof ProfileFormData, value: string) => {
-    setProfileData(prev => ({ ...prev, [field]: value }));
+  const handleProfileFieldChange = (
+    field: keyof ProfileFormData,
+    value: string
+  ) => {
+    setProfileData((prev) => ({ ...prev, [field]: value }));
   };
 
-  const handlePasswordFieldChange = (field: keyof PasswordFormData, value: string) => {
-    setPasswordData(prev => ({ ...prev, [field]: value }));
+  const handlePasswordFieldChange = (
+    field: keyof PasswordFormData,
+    value: string
+  ) => {
+    setPasswordData((prev) => ({ ...prev, [field]: value }));
   };
 
   const togglePasswordVisibility = (field: keyof typeof showPasswords) => {
-    setShowPasswords(prev => ({ ...prev, [field]: !prev[field] }));
+    setShowPasswords((prev) => ({ ...prev, [field]: !prev[field] }));
   };
 
   const getInitials = (name: string) => {
     return name
       .split(" ")
-      .map(word => word.charAt(0))
+      .map((word) => word.charAt(0))
       .join("")
       .toUpperCase()
       .slice(0, 2);
   };
 
-  if (!state.isAuthenticated || state.user?.role !== 'StationOperator') {
+  if (!state.isAuthenticated || state.user?.role !== "StationOperator") {
     return (
       <Box sx={{ p: 3 }}>
         <Alert severity="error">
@@ -193,7 +200,14 @@ const Profile: React.FC = () => {
       {/* Profile Information Card */}
       <Card sx={{ mb: 3 }}>
         <CardContent>
-          <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mb: 3 }}>
+          <Box
+            sx={{
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+              mb: 3,
+            }}
+          >
             <Typography variant="h6">Profile Information</Typography>
             {!isEditing ? (
               <Button
@@ -237,7 +251,9 @@ const Profile: React.FC = () => {
                     fontSize: "2rem",
                   }}
                 >
-                  {getInitials(profileData.fullName || state.user?.username || "U")}
+                  {getInitials(
+                    profileData.fullName || state.user?.username || "U"
+                  )}
                 </Avatar>
                 <Typography variant="h6" gutterBottom>
                   {profileData.fullName || state.user?.username}
@@ -256,10 +272,14 @@ const Profile: React.FC = () => {
                     fullWidth
                     label="Full Name"
                     value={profileData.fullName}
-                    onChange={(e) => handleProfileFieldChange("fullName", e.target.value)}
+                    onChange={(e) =>
+                      handleProfileFieldChange("fullName", e.target.value)
+                    }
                     disabled={!isEditing}
                     InputProps={{
-                      startAdornment: <Person sx={{ mr: 1, color: "text.secondary" }} />,
+                      startAdornment: (
+                        <Person sx={{ mr: 1, color: "text.secondary" }} />
+                      ),
                     }}
                   />
                 </Grid>
@@ -270,10 +290,14 @@ const Profile: React.FC = () => {
                     label="Email Address"
                     type="email"
                     value={profileData.email}
-                    onChange={(e) => handleProfileFieldChange("email", e.target.value)}
+                    onChange={(e) =>
+                      handleProfileFieldChange("email", e.target.value)
+                    }
                     disabled={!isEditing}
                     InputProps={{
-                      startAdornment: <Email sx={{ mr: 1, color: "text.secondary" }} />,
+                      startAdornment: (
+                        <Email sx={{ mr: 1, color: "text.secondary" }} />
+                      ),
                     }}
                   />
                 </Grid>
@@ -283,10 +307,14 @@ const Profile: React.FC = () => {
                     fullWidth
                     label="Username"
                     value={profileData.username}
-                    onChange={(e) => handleProfileFieldChange("username", e.target.value)}
+                    onChange={(e) =>
+                      handleProfileFieldChange("username", e.target.value)
+                    }
                     disabled={!isEditing}
                     InputProps={{
-                      startAdornment: <Badge sx={{ mr: 1, color: "text.secondary" }} />,
+                      startAdornment: (
+                        <Badge sx={{ mr: 1, color: "text.secondary" }} />
+                      ),
                     }}
                   />
                 </Grid>
@@ -321,7 +349,11 @@ const Profile: React.FC = () => {
                   <Person sx={{ mr: 1, color: "text.secondary" }} />
                   <Typography variant="subtitle2">User ID</Typography>
                 </Box>
-                <Typography variant="body2" color="text.secondary" fontFamily="monospace">
+                <Typography
+                  variant="body2"
+                  color="text.secondary"
+                  fontFamily="monospace"
+                >
                   {state.user?.id || "N/A"}
                 </Typography>
               </Paper>
@@ -337,8 +369,14 @@ const Profile: React.FC = () => {
             Security Settings
           </Typography>
           <Divider sx={{ mb: 3 }} />
-          
-          <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+
+          <Box
+            sx={{
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+            }}
+          >
             <Box>
               <Typography variant="subtitle1" gutterBottom>
                 Password
@@ -374,14 +412,20 @@ const Profile: React.FC = () => {
                 label="Current Password"
                 type={showPasswords.current ? "text" : "password"}
                 value={passwordData.currentPassword}
-                onChange={(e) => handlePasswordFieldChange("currentPassword", e.target.value)}
+                onChange={(e) =>
+                  handlePasswordFieldChange("currentPassword", e.target.value)
+                }
                 InputProps={{
                   endAdornment: (
                     <IconButton
                       onClick={() => togglePasswordVisibility("current")}
                       edge="end"
                     >
-                      {showPasswords.current ? <VisibilityOff /> : <Visibility />}
+                      {showPasswords.current ? (
+                        <VisibilityOff />
+                      ) : (
+                        <Visibility />
+                      )}
                     </IconButton>
                   ),
                 }}
@@ -394,7 +438,9 @@ const Profile: React.FC = () => {
                 label="New Password"
                 type={showPasswords.new ? "text" : "password"}
                 value={passwordData.newPassword}
-                onChange={(e) => handlePasswordFieldChange("newPassword", e.target.value)}
+                onChange={(e) =>
+                  handlePasswordFieldChange("newPassword", e.target.value)
+                }
                 InputProps={{
                   endAdornment: (
                     <IconButton
@@ -415,14 +461,20 @@ const Profile: React.FC = () => {
                 label="Confirm New Password"
                 type={showPasswords.confirm ? "text" : "password"}
                 value={passwordData.confirmPassword}
-                onChange={(e) => handlePasswordFieldChange("confirmPassword", e.target.value)}
+                onChange={(e) =>
+                  handlePasswordFieldChange("confirmPassword", e.target.value)
+                }
                 InputProps={{
                   endAdornment: (
                     <IconButton
                       onClick={() => togglePasswordVisibility("confirm")}
                       edge="end"
                     >
-                      {showPasswords.confirm ? <VisibilityOff /> : <Visibility />}
+                      {showPasswords.confirm ? (
+                        <VisibilityOff />
+                      ) : (
+                        <Visibility />
+                      )}
                     </IconButton>
                   ),
                 }}

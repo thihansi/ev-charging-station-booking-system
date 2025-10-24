@@ -76,7 +76,7 @@ const BookingsManagement: React.FC = () => {
       const data = await bookingApi.getAll();
       console.log("📋 Loaded bookings:", data);
       console.log("🚀 About to enrich bookings...");
-      
+
       // Enrich bookings with names
       const enrichedBookings = await enrichBookingsWithNames(data);
       console.log("🎉 Enrichment done, setting bookings...");
@@ -93,16 +93,18 @@ const BookingsManagement: React.FC = () => {
     }
   };
 
-  const enrichBookingsWithNames = async (bookings: Booking[]): Promise<Booking[]> => {
+  const enrichBookingsWithNames = async (
+    bookings: Booking[]
+  ): Promise<Booking[]> => {
     const { chargingStationApi, evOwnerApi } = await import("../api");
-    
+
     console.log("🔄 Starting enrichment for", bookings.length, "bookings");
     console.log("👤 User role:", state.user?.role);
-    
+
     // Fetch all charging stations and EV owners once
     let allStations: any[] = [];
     let allEvOwners: any[] = [];
-    
+
     try {
       allStations = await chargingStationApi.getAll();
       console.log("✅ Fetched all charging stations:", allStations.length);
@@ -110,7 +112,7 @@ const BookingsManagement: React.FC = () => {
     } catch (error) {
       console.error("❌ Failed to fetch charging stations:", error);
     }
-    
+
     // Only fetch EV owners for backoffice users (not operators)
     if (state.user?.role === "Backoffice") {
       try {
@@ -121,11 +123,11 @@ const BookingsManagement: React.FC = () => {
         console.error("❌ Failed to fetch EV owners:", error);
       }
     }
-    
+
     // Enrich each booking
     const enriched = bookings.map((booking, index) => {
       const enrichedBooking = { ...booking };
-      
+
       console.log(`📦 Processing booking ${index + 1}:`, {
         id: booking.id?.slice(-8),
         evOwnerNic: booking.evOwnerNic,
@@ -133,21 +135,29 @@ const BookingsManagement: React.FC = () => {
         hasEvOwner: !!booking.evOwner,
         hasStation: !!booking.chargingStation,
       });
-      
+
       // Find and attach charging station
       if (!booking.chargingStation && booking.chargingStationId) {
-        const station = allStations.find(s => s.id === booking.chargingStationId);
+        const station = allStations.find(
+          (s) => s.id === booking.chargingStationId
+        );
         if (station) {
           enrichedBooking.chargingStation = station;
           console.log(`  ✅ Matched station: ${station.name}`);
         } else {
-          console.log(`  ⚠️ No station found for ID: ${booking.chargingStationId}`);
+          console.log(
+            `  ⚠️ No station found for ID: ${booking.chargingStationId}`
+          );
         }
       }
-      
+
       // Find and attach EV owner (only for backoffice)
-      if (state.user?.role === "Backoffice" && !booking.evOwner && booking.evOwnerNic) {
-        const evOwner = allEvOwners.find(e => e.nic === booking.evOwnerNic);
+      if (
+        state.user?.role === "Backoffice" &&
+        !booking.evOwner &&
+        booking.evOwnerNic
+      ) {
+        const evOwner = allEvOwners.find((e) => e.nic === booking.evOwnerNic);
         if (evOwner) {
           enrichedBooking.evOwner = evOwner;
           console.log(`  ✅ Matched EV owner: ${evOwner.name}`);
@@ -155,9 +165,13 @@ const BookingsManagement: React.FC = () => {
           console.log(`  ⚠️ No EV owner found for NIC: ${booking.evOwnerNic}`);
         }
       }
-      
+
       // For operators, create a simple display name from NIC
-      if (state.user?.role === "StationOperator" && !enrichedBooking.evOwner && booking.evOwnerNic) {
+      if (
+        state.user?.role === "StationOperator" &&
+        !enrichedBooking.evOwner &&
+        booking.evOwnerNic
+      ) {
         enrichedBooking.evOwner = {
           nic: booking.evOwnerNic,
           name: booking.evOwnerNic,
@@ -165,18 +179,20 @@ const BookingsManagement: React.FC = () => {
           phone: "",
           isActive: true,
         };
-        console.log(`  📝 Created placeholder for operator: ${booking.evOwnerNic}`);
+        console.log(
+          `  📝 Created placeholder for operator: ${booking.evOwnerNic}`
+        );
       }
-      
+
       return enrichedBooking;
     });
-    
+
     console.log("✅ Enrichment complete. Sample enriched booking:", {
       id: enriched[0]?.id?.slice(-8),
       evOwnerName: enriched[0]?.evOwner?.name,
       stationName: enriched[0]?.chargingStation?.name,
     });
-    
+
     return enriched;
   };
 
@@ -310,14 +326,16 @@ const BookingsManagement: React.FC = () => {
   const paginatedBookings = filteredBookings.slice(startIndex, endIndex);
 
   // Debug: Log unique statuses in bookings
-  const uniqueStatuses = [...new Set(bookings.map(b => b.status))];
+  const uniqueStatuses = [...new Set(bookings.map((b) => b.status))];
   console.log("📊 Unique booking statuses:", uniqueStatuses);
-  
+
   const stats = {
     total: bookings.length,
     pending: bookings.filter((b) => b.status === BOOKING_STATUS.PENDING).length,
-    approved: bookings.filter((b) => b.status === BOOKING_STATUS.APPROVED).length,
-    rejected: bookings.filter((b) => b.status === BOOKING_STATUS.REJECTED).length,
+    approved: bookings.filter((b) => b.status === BOOKING_STATUS.APPROVED)
+      .length,
+    rejected: bookings.filter((b) => b.status === BOOKING_STATUS.REJECTED)
+      .length,
   };
 
   if (!state.isAuthenticated || state.user?.role !== "StationOperator") {

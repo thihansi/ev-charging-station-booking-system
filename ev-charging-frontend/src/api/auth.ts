@@ -20,10 +20,10 @@ export const authApi = {
   // Get system user profile
   getProfile: async (): Promise<User> => {
     const response = await apiClient.get<ApiUser>("/api/auth/profile");
-    
+
     // Enhanced role mapping with multiple scenarios
     let mappedRole: "Backoffice" | "StationOperator";
-    
+
     // Handle different role mapping scenarios
     // Role 1 = Backoffice (admin), Role 0 = StationOperator
     if (response.data.role === 1) {
@@ -35,13 +35,13 @@ export const authApi = {
     } else {
       // For admin users, if role is not 0, 1, or 2, assume it's admin
       // Check username to determine if this is an admin account
-      if (response.data.username?.toLowerCase().includes('admin')) {
+      if (response.data.username?.toLowerCase().includes("admin")) {
         mappedRole = "Backoffice";
       } else {
         mappedRole = "StationOperator";
       }
     }
-    
+
     const mappedUser: User = {
       id: response.data.id,
       username: response.data.username,
@@ -49,7 +49,7 @@ export const authApi = {
       fullName: response.data.fullName || undefined,
       email: response.data.email || undefined,
     };
-    
+
     return mappedUser;
   },
 
@@ -96,16 +96,16 @@ export const authApi = {
       count: number;
       users: ApiUser[];
     }>("/api/auth/users");
-    
+
     // Map API users to frontend User type with proper role conversion
-    const mappedUsers: User[] = response.data.users.map(apiUser => ({
+    const mappedUsers: User[] = response.data.users.map((apiUser) => ({
       id: apiUser.id,
       username: apiUser.username,
       role: apiUser.role === 0 ? "Backoffice" : "StationOperator",
       fullName: apiUser.fullName || undefined, // Don't set fallback here, let UI handle it
       email: apiUser.email || undefined, // Don't set fallback here, let UI handle it
     }));
-    
+
     return mappedUsers;
   },
 
@@ -118,10 +118,7 @@ export const authApi = {
       role: number;
     }
   ): Promise<{ message: string; user: User }> => {
-    const response = await apiClient.put(
-      `/api/auth/users/${userId}`,
-      userData
-    );
+    const response = await apiClient.put(`/api/auth/users/${userId}`, userData);
     return response.data;
   },
 
@@ -145,7 +142,9 @@ export const authApi = {
     fullName: string;
     email: string;
   }): Promise<{ message: string; user: User }> => {
-    throw new Error("Profile updates are not supported for system users. Backend User entity only contains username and role.");
+    throw new Error(
+      "Profile updates are not supported for system users. Backend User entity only contains username and role."
+    );
   },
 
   // Change password - NOT IMPLEMENTED IN BACKEND
@@ -154,6 +153,8 @@ export const authApi = {
     currentPassword: string;
     newPassword: string;
   }): Promise<{ message: string }> => {
-    throw new Error("Password changes are not supported for system users. Please contact your administrator.");
+    throw new Error(
+      "Password changes are not supported for system users. Please contact your administrator."
+    );
   },
 };
