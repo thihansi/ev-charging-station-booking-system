@@ -21,7 +21,6 @@ import {
   Dashboard,
   EventNote,
   ElectricCar,
-  QrCodeScanner,
   CheckCircle,
   Cancel,
   People,
@@ -66,6 +65,33 @@ const OperatorDashboard: React.FC = () => {
     }
   }, [state.isAuthenticated, state.user]);
 
+  const enrichBookingsWithNames = (bookings: Booking[], stations: ChargingStation[]): Booking[] => {
+    return bookings.map(booking => {
+      const enrichedBooking = { ...booking };
+      
+      // Find and attach charging station
+      if (!booking.chargingStation && booking.chargingStationId) {
+        const station = stations.find(s => s.id === booking.chargingStationId);
+        if (station) {
+          enrichedBooking.chargingStation = station;
+        }
+      }
+      
+      // For operators, create a simple display name from NIC
+      if (!enrichedBooking.evOwner && booking.evOwnerNic) {
+        enrichedBooking.evOwner = {
+          nic: booking.evOwnerNic,
+          name: booking.evOwnerNic, // Show NIC as name for operators
+          email: "",
+          phone: "",
+          isActive: true,
+        };
+      }
+      
+      return enrichedBooking;
+    });
+  };
+
   const loadDashboardData = async () => {
     setIsLoading(true);
     
@@ -102,14 +128,18 @@ const OperatorDashboard: React.FC = () => {
         stationsStatus: stationsResult.status
       });
 
+      // Enrich bookings with station names
+      const enrichedBookings = enrichBookingsWithNames(allBookings, stations);
+      console.log("✅ Enriched bookings for dashboard");
+
       // Filter pending bookings
-      const pending = allBookings.filter(
+      const pending = enrichedBookings.filter(
         (booking) => booking.status === "Pending"
       );
       setPendingBookings(pending.slice(0, 5));
 
       // Set recent bookings
-      const recent = allBookings
+      const recent = enrichedBookings
         .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
         .slice(0, 10);
       setRecentBookings(recent);
@@ -298,17 +328,6 @@ const OperatorDashboard: React.FC = () => {
             onClick={() => navigate('/operator/stations')}
           >
             My Stations
-          </Button>
-        </Grid>
-        <Grid item xs={12} sm={6} md={3}>
-          <Button
-            variant="contained"
-            fullWidth
-            sx={{ py: 2 }}
-            startIcon={<QrCodeScanner />}
-            onClick={() => navigate('/operator/qr-scanner')}
-          >
-            QR Scanner
           </Button>
         </Grid>
         <Grid item xs={12} sm={6} md={3}>

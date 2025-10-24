@@ -96,7 +96,21 @@ export const transformUpdateChargingStationForBackend = (
   if (frontendData.operationalHours !== undefined) {
     backendData.schedule = `${frontendData.operationalHours.openTime}-${frontendData.operationalHours.closeTime}`;
   }
+  if (frontendData.isActive !== undefined) {
+    // Try multiple field name variants that backend might use
+    backendData.isActive = frontendData.isActive;
+    backendData.IsActive = frontendData.isActive; // C# PascalCase variant
+    backendData.status = frontendData.isActive ? 1 : 0; // Numeric status variant
+    backendData.Status = frontendData.isActive ? 1 : 0; // Numeric PascalCase variant
+    console.log("🔵 Setting isActive in backend data:", {
+      isActive: frontendData.isActive,
+      IsActive: frontendData.isActive,
+      status: frontendData.isActive ? 1 : 0,
+      Status: frontendData.isActive ? 1 : 0,
+    });
+  }
 
+  console.log("🔄 Transformed backend data:", JSON.stringify(backendData, null, 2));
   return backendData;
 };
 

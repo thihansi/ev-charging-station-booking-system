@@ -109,6 +109,7 @@ export interface UpdateChargingStationRequest {
   stationType?: StationType;
   totalSlots?: number;
   operationalHours?: OperationalHours;
+  isActive?: boolean;
 }
 
 // Booking related types

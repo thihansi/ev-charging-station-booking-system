@@ -30,7 +30,6 @@ import {
   LocationOn,
   PowerSettingsNew,
   Assessment,
-  QrCode,
   Refresh,
   Visibility,
 } from "@mui/icons-material";
@@ -58,6 +57,7 @@ const MyStations: React.FC = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [addDialogOpen, setAddDialogOpen] = useState(false);
   const [editDialogOpen, setEditDialogOpen] = useState(false);
+  const [viewDialogOpen, setViewDialogOpen] = useState(false);
   const [selectedStation, setSelectedStation] = useState<ChargingStation | null>(null);
   const [formData, setFormData] = useState<StationFormData>({
     name: "",
@@ -117,6 +117,11 @@ const MyStations: React.FC = () => {
     setAddDialogOpen(true);
   };
 
+  const handleViewStation = (station: ChargingStation) => {
+    setSelectedStation(station);
+    setViewDialogOpen(true);
+  };
+
   const handleEditStation = (station: ChargingStation) => {
     setSelectedStation(station);
     setFormData({
@@ -141,22 +146,62 @@ const MyStations: React.FC = () => {
     }
 
     try {
+      console.log("🗑️ Deleting station with ID:", stationId);
       await chargingStationApi.delete(stationId);
+      console.log("✅ Station deleted successfully");
       showSuccess("Charging station deleted successfully!");
       await loadStations();
-    } catch (error) {
-      showError("Failed to delete charging station. Please try again.");
+    } catch (error: any) {
+      console.error("❌ Error deleting station:", {
+        stationId,
+        status: error.response?.status,
+        data: error.response?.data,
+        error,
+      });
+      
+      if (error.response?.status === 404) {
+        showError("Station not found. It may have already been deleted.");
+      } else if (error.response?.status === 403) {
+        showError("You don't have permission to delete this station.");
+      } else {
+        showError(
+          error.response?.data?.message || "Failed to delete charging station. Please try again."
+        );
+      }
     }
   };
 
   const handleToggleStatus = async (station: ChargingStation) => {
     try {
-      const updatedStation = { ...station, isActive: !station.isActive };
-      await chargingStationApi.update(station.id, updatedStation);
-      showSuccess(`Station ${updatedStation.isActive ? "activated" : "deactivated"} successfully!`);
+      const newStatus = !station.isActive;
+      console.log("🔄 Toggling station status:", {
+        stationId: station.id,
+        stationName: station.name,
+        currentStatus: station.isActive,
+        newStatus: newStatus,
+      });
+
+      // Use the dedicated activate/deactivate endpoints
+      if (newStatus) {
+        console.log("🟢 Calling activate endpoint");
+        await chargingStationApi.activate(station.id);
+        showSuccess("Station activated successfully!");
+      } else {
+        console.log("� Calling deactivate endpoint");
+        await chargingStationApi.deactivate(station.id);
+        showSuccess("Station deactivated successfully!");
+      }
+      
       await loadStations();
-    } catch (error) {
-      showError("Failed to update station status. Please try again.");
+    } catch (error: any) {
+      console.error("❌ Failed to toggle station status:", error);
+      console.error("Error response:", JSON.stringify(error.response?.data, null, 2));
+      
+      const errorMessage = error.response?.data?.message 
+        || error.response?.data?.title
+        || "Failed to update station status. Please try again.";
+      
+      showError(errorMessage);
     }
   };
 
@@ -416,13 +461,12 @@ const MyStations: React.FC = () => {
                   <Box sx={{ display: "flex", gap: 1, justifyContent: "space-between" }}>
                     <Box sx={{ display: "flex", gap: 1 }}>
                       <Tooltip title="View Details">
-                        <IconButton size="small" color="primary">
+                        <IconButton 
+                          size="small" 
+                          color="primary"
+                          onClick={() => handleViewStation(station)}
+                        >
                           <Visibility />
-                        </IconButton>
-                      </Tooltip>
-                      <Tooltip title="View QR Code">
-                        <IconButton size="small" color="info">
-                          <QrCode />
                         </IconButton>
                       </Tooltip>
                     </Box>
@@ -681,6 +725,114 @@ const MyStations: React.FC = () => {
           <Button onClick={handleSaveStation} variant="contained">
             Update Station
           </Button>
+        </DialogActions>
+      </Dialog>
+
+      {/* View Station Details Dialog */}
+      <Dialog open={viewDialogOpen} onClose={() => setViewDialogOpen(false)} maxWidth="md" fullWidth>
+        <DialogTitle>Station Details</DialogTitle>
+        <DialogContent>
+          {selectedStation && (
+            <Grid container spacing={3} sx={{ mt: 1 }}>
+              <Grid item xs={12}>
+                <Paper elevation={0} sx={{ p: 2, bgcolor: "grey.50" }}>
+                  <Typography variant="h6" gutterBottom>
+                    {selectedStation.name}
+                  </Typography>
+                  <Chip
+                    label={selectedStation.isActive ? "Active" : "Inactive"}
+                    color={selectedStation.isActive ? "success" : "default"}
+                    size="small"
+                    sx={{ mb: 2 }}
+                  />
+                </Paper>
+              </Grid>
+
+              <Grid item xs={12} md={6}>
+                <Typography variant="subtitle2" color="text.secondary" gutterBottom>
+                  Station Type
+                </Typography>
+                <Chip
+                  label={selectedStation.stationType}
+                  color={getStationTypeColor(selectedStation.stationType)}
+                  size="small"
+                />
+              </Grid>
+
+              <Grid item xs={12} md={6}>
+                <Typography variant="subtitle2" color="text.secondary" gutterBottom>
+                  Available Slots
+                </Typography>
+                <Typography variant="body1">
+                  {selectedStation.totalSlots} slots
+                </Typography>
+              </Grid>
+
+              <Grid item xs={12}>
+                <Typography variant="subtitle2" color="text.secondary" gutterBottom>
+                  <LocationOn fontSize="small" sx={{ verticalAlign: "middle", mr: 0.5 }} />
+                  Address
+                </Typography>
+                <Typography variant="body1">
+                  {selectedStation.address}
+                </Typography>
+              </Grid>
+
+              <Grid item xs={12} md={6}>
+                <Typography variant="subtitle2" color="text.secondary" gutterBottom>
+                  Latitude
+                </Typography>
+                <Typography variant="body1">
+                  {selectedStation.latitude}
+                </Typography>
+              </Grid>
+
+              <Grid item xs={12} md={6}>
+                <Typography variant="subtitle2" color="text.secondary" gutterBottom>
+                  Longitude
+                </Typography>
+                <Typography variant="body1">
+                  {selectedStation.longitude}
+                </Typography>
+              </Grid>
+
+              {selectedStation.operationalHours && (
+                <>
+                  <Grid item xs={12} md={6}>
+                    <Typography variant="subtitle2" color="text.secondary" gutterBottom>
+                      Opening Time
+                    </Typography>
+                    <Typography variant="body1">
+                      {selectedStation.operationalHours.openTime}
+                    </Typography>
+                  </Grid>
+
+                  <Grid item xs={12} md={6}>
+                    <Typography variant="subtitle2" color="text.secondary" gutterBottom>
+                      Closing Time
+                    </Typography>
+                    <Typography variant="body1">
+                      {selectedStation.operationalHours.closeTime}
+                    </Typography>
+                  </Grid>
+                </>
+              )}
+            </Grid>
+          )}
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setViewDialogOpen(false)}>Close</Button>
+          {selectedStation && (
+            <Button 
+              onClick={() => {
+                setViewDialogOpen(false);
+                handleEditStation(selectedStation);
+              }} 
+              variant="contained"
+            >
+              Edit Station
+            </Button>
+          )}
         </DialogActions>
       </Dialog>
     </Box>

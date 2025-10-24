@@ -1,19 +1,17 @@
 // Booking Status Type
 export type BookingStatus = 
-  | "Pending"
-  | "Confirmed" 
-  | "Active"
-  | "Completed"
-  | "Cancelled"
-  | "Rejected";
+  | "Pending"      // 0
+  | "Approved"     // 1
+  | "Rejected"     // 2
+  | "Completed"    // 3
+  | "Cancelled";   // 4
 
 export const BOOKING_STATUS = {
   PENDING: "Pending" as const,
-  CONFIRMED: "Confirmed" as const,
-  ACTIVE: "Active" as const,
+  APPROVED: "Approved" as const,
+  REJECTED: "Rejected" as const,
   COMPLETED: "Completed" as const,
   CANCELLED: "Cancelled" as const,
-  REJECTED: "Rejected" as const
 } as const;
 
 // Station Type

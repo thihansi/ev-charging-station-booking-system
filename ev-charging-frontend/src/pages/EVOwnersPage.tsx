@@ -148,6 +148,28 @@ const EVOwnersPage: React.FC = () => {
   };
 
   const handleSubmit = async () => {
+    // Validate required fields
+    if (!formData.name.trim()) {
+      showSnackbar("Name is required", "error");
+      return;
+    }
+    if (!formData.email.trim()) {
+      showSnackbar("Email is required", "error");
+      return;
+    }
+    if (!formData.phone.trim()) {
+      showSnackbar("Phone is required", "error");
+      return;
+    }
+    if (!editingEvOwner && !formData.nic.trim()) {
+      showSnackbar("NIC is required", "error");
+      return;
+    }
+    if (!editingEvOwner && formData.createWithPassword && !formData.password) {
+      showSnackbar("Password is required when creating with login credentials", "error");
+      return;
+    }
+
     if (editingEvOwner) {
       setUpdateConfirmOpen(true);
     } else {
@@ -161,8 +183,9 @@ const EVOwnersPage: React.FC = () => {
 
       if (editingEvOwner) {
         // Update existing EV owner
-        // Note: Don't include NIC in update data as it's in the URL
+        // Include NIC in update data (backend might require it)
         const updateData: UpdateEVOwnerRequest = {
+          nic: editingEvOwner.nic, // Include NIC
           name: formData.name.trim(),
           email: formData.email.trim(),
           phone: formData.phone.trim(),

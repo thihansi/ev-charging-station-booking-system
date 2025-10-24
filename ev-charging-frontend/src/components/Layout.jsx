@@ -78,7 +78,6 @@ const Layout = ({ children }) => {
         { text: 'Operator Dashboard', icon: <Dashboard />, path: '/operator/dashboard' },
         { text: 'Manage Bookings', icon: <BookOnline />, path: '/operator/bookings' },
         { text: 'My Stations', icon: <EvStation />, path: '/operator/stations' },
-        { text: 'QR Scanner', icon: <QrCodeScanner />, path: '/operator/qr-scanner' },
         { text: 'Profile', icon: <Settings />, path: '/profile' },
       ];
     } else {
