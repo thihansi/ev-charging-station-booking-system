@@ -43,12 +43,54 @@ export const chargingStationApi = {
     id: string,
     stationData: UpdateChargingStationRequest
   ): Promise<{ message: string }> => {
-    const backendData = transformUpdateChargingStationForBackend(stationData);
-    const response = await apiClient.put(
-      `/api/ChargingStations/${id}`,
-      backendData
-    );
-    return response.data;
+    try {
+      const backendData = transformUpdateChargingStationForBackend(stationData);
+
+      console.log("📝 Updating charging station:", {
+        id,
+        frontendData: stationData,
+        backendData,
+        url: `/api/ChargingStations/${id}`,
+      });
+
+      console.log(
+        "📤 Sending PUT request with body:",
+        JSON.stringify(backendData, null, 2)
+      );
+
+      const response = await apiClient.put(
+        `/api/ChargingStations/${id}`,
+        backendData
+      );
+
+      console.log(
+        "✅ Update successful - Response:",
+        JSON.stringify(response.data, null, 2)
+      );
+      console.log("✅ Status Code:", response.status);
+
+      // Verify the update by fetching the station again
+      try {
+        const verifyResponse = await apiClient.get(
+          `/api/ChargingStations/${id}`
+        );
+        console.log("🔍 Verification - Station after update:", {
+          isActive: verifyResponse.data.isActive,
+          fullData: verifyResponse.data,
+        });
+      } catch (verifyError) {
+        console.warn("⚠️ Could not verify update:", verifyError);
+      }
+
+      return response.data;
+    } catch (error: any) {
+      console.error("❌ Update failed:", {
+        status: error.response?.status,
+        data: JSON.stringify(error.response?.data, null, 2),
+        error,
+      });
+      throw error;
+    }
   },
 
   // Delete charging station
@@ -59,18 +101,46 @@ export const chargingStationApi = {
 
   // Activate charging station
   activate: async (id: string): Promise<{ message: string }> => {
-    const response = await apiClient.post(
-      `/api/ChargingStations/${id}/activate`
-    );
-    return response.data;
+    try {
+      console.log("🟢 Activating charging station - ID:", id);
+      console.log("🟢 URL:", `/api/ChargingStations/${id}/activate`);
+
+      const response = await apiClient.post(
+        `/api/ChargingStations/${id}/activate`
+      );
+
+      console.log("✅ Activation successful:", response.data);
+      return response.data;
+    } catch (error: any) {
+      console.error("❌ Activation failed:", {
+        status: error.response?.status,
+        data: JSON.stringify(error.response?.data, null, 2),
+        error,
+      });
+      throw error;
+    }
   },
 
   // Deactivate charging station
   deactivate: async (id: string): Promise<{ message: string }> => {
-    const response = await apiClient.post(
-      `/api/ChargingStations/${id}/deactivate`
-    );
-    return response.data;
+    try {
+      console.log("🔴 Deactivating charging station - ID:", id);
+      console.log("🔴 URL:", `/api/ChargingStations/${id}/deactivate`);
+
+      const response = await apiClient.post(
+        `/api/ChargingStations/${id}/deactivate`
+      );
+
+      console.log("✅ Deactivation successful:", response.data);
+      return response.data;
+    } catch (error: any) {
+      console.error("❌ Deactivation failed:", {
+        status: error.response?.status,
+        data: JSON.stringify(error.response?.data, null, 2),
+        error,
+      });
+      throw error;
+    }
   },
 
   // Get charging station QR code

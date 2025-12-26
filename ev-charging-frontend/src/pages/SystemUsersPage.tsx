@@ -87,7 +87,10 @@ const SystemUsersPage: React.FC = () => {
     fetchUsers();
   }, []);
 
-  const showSnackbar = (message: string, severity: "success" | "error" | "info" = "success") => {
+  const showSnackbar = (
+    message: string,
+    severity: "success" | "error" | "info" = "success"
+  ) => {
     setSnackbar({ open: true, message, severity });
   };
 
@@ -125,8 +128,11 @@ const SystemUsersPage: React.FC = () => {
     resetForm();
   };
 
-  const handleInputChange = (field: keyof UserFormData, value: string | number) => {
-    setFormData(prev => ({ ...prev, [field]: value }));
+  const handleInputChange = (
+    field: keyof UserFormData,
+    value: string | number
+  ) => {
+    setFormData((prev) => ({ ...prev, [field]: value }));
   };
 
   const handleSubmit = async () => {
@@ -158,7 +164,8 @@ const SystemUsersPage: React.FC = () => {
           password: formData.password,
           fullName: formData.username, // Use username as fullName fallback
           email: `${formData.username}@system.local`, // Generate email from username
-          assignedStationId: formData.role === 1 ? formData.assignedStationId : undefined,
+          assignedStationId:
+            formData.role === 1 ? formData.assignedStationId : undefined,
         };
 
         if (formData.role === 0) {
@@ -187,13 +194,16 @@ const SystemUsersPage: React.FC = () => {
 
   const confirmDelete = async () => {
     if (!userToDelete) return;
-    
+
     try {
       await authApi.deleteUser(userToDelete.id);
       showSnackbar("User deleted successfully");
       fetchUsers(); // Refresh the list
     } catch (err: any) {
-      showSnackbar(err.response?.data?.message || "Failed to delete user", "error");
+      showSnackbar(
+        err.response?.data?.message || "Failed to delete user",
+        "error"
+      );
       console.error("Error deleting user:", err);
     } finally {
       setDeleteConfirmOpen(false);
@@ -216,12 +226,20 @@ const SystemUsersPage: React.FC = () => {
           System Users Management
         </Typography>
         <Typography variant="body1" color="text.secondary">
-          Manage system users including backoffice administrators and station operators
+          Manage system users including backoffice administrators and station
+          operators
         </Typography>
       </Box>
 
       {/* Action Bar */}
-      <Box sx={{ mb: 3, display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+      <Box
+        sx={{
+          mb: 3,
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+        }}
+      >
         <Button
           variant="contained"
           startIcon={<Add />}
@@ -281,9 +299,13 @@ const SystemUsersPage: React.FC = () => {
                   users.map((user) => (
                     <TableRow key={user.id} hover>
                       <TableCell>
-                        <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+                        <Box
+                          sx={{ display: "flex", alignItems: "center", gap: 1 }}
+                        >
                           {getRoleIcon(user.role)}
-                          <Typography fontWeight="medium">{user.username}</Typography>
+                          <Typography fontWeight="medium">
+                            {user.username}
+                          </Typography>
                         </Box>
                       </TableCell>
                       <TableCell>
@@ -294,7 +316,11 @@ const SystemUsersPage: React.FC = () => {
                         />
                       </TableCell>
                       <TableCell>
-                        <Typography variant="body2" color="text.secondary" sx={{ fontFamily: "monospace" }}>
+                        <Typography
+                          variant="body2"
+                          color="text.secondary"
+                          sx={{ fontFamily: "monospace" }}
+                        >
                           {user.id}
                         </Typography>
                       </TableCell>
@@ -328,7 +354,12 @@ const SystemUsersPage: React.FC = () => {
       </Card>
 
       {/* Create/Edit User Dialog */}
-      <Dialog open={openDialog} onClose={handleCloseDialog} maxWidth="sm" fullWidth>
+      <Dialog
+        open={openDialog}
+        onClose={handleCloseDialog}
+        maxWidth="sm"
+        fullWidth
+      >
         <DialogTitle>
           {editingUser ? "Edit User" : "Create New User"}
         </DialogTitle>
@@ -351,7 +382,11 @@ const SystemUsersPage: React.FC = () => {
               onChange={(e) => handleInputChange("password", e.target.value)}
               fullWidth
               required={!editingUser}
-              helperText={editingUser ? "Leave blank to keep current password" : "Minimum 6 characters"}
+              helperText={
+                editingUser
+                  ? "Leave blank to keep current password"
+                  : "Minimum 6 characters"
+              }
             />
 
             <FormControl fullWidth required>
@@ -380,7 +415,9 @@ const SystemUsersPage: React.FC = () => {
               <TextField
                 label="Assigned Station ID"
                 value={formData.assignedStationId}
-                onChange={(e) => handleInputChange("assignedStationId", e.target.value)}
+                onChange={(e) =>
+                  handleInputChange("assignedStationId", e.target.value)
+                }
                 fullWidth
                 required
                 helperText="Required for Station Operators"
@@ -393,9 +430,19 @@ const SystemUsersPage: React.FC = () => {
           <Button
             onClick={handleSubmit}
             variant="contained"
-            disabled={submitting || !formData.username || (!editingUser && !formData.password)}
+            disabled={
+              submitting ||
+              !formData.username ||
+              (!editingUser && !formData.password)
+            }
           >
-            {submitting ? <CircularProgress size={20} /> : (editingUser ? "Update" : "Create")}
+            {submitting ? (
+              <CircularProgress size={20} />
+            ) : editingUser ? (
+              "Update"
+            ) : (
+              "Create"
+            )}
           </Button>
         </DialogActions>
       </Dialog>
@@ -408,23 +455,27 @@ const SystemUsersPage: React.FC = () => {
         fullWidth
       >
         <DialogTitle>
-          <Typography variant="h6" component="div" sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+          <Typography
+            variant="h6"
+            component="div"
+            sx={{ display: "flex", alignItems: "center", gap: 1 }}
+          >
             <Delete color="error" />
             Confirm Delete User
           </Typography>
         </DialogTitle>
         <DialogContent>
           <Typography>
-            Are you sure you want to delete user <strong>"{userToDelete?.username}"</strong>?
+            Are you sure you want to delete user{" "}
+            <strong>"{userToDelete?.username}"</strong>?
           </Typography>
           <Typography variant="body2" color="error" sx={{ mt: 1 }}>
-            This action cannot be undone. The user will permanently lose access to the system.
+            This action cannot be undone. The user will permanently lose access
+            to the system.
           </Typography>
         </DialogContent>
         <DialogActions>
-          <Button onClick={() => setDeleteConfirmOpen(false)}>
-            Cancel
-          </Button>
+          <Button onClick={() => setDeleteConfirmOpen(false)}>Cancel</Button>
           <Button onClick={confirmDelete} color="error" variant="contained">
             Delete User
           </Button>
@@ -439,24 +490,32 @@ const SystemUsersPage: React.FC = () => {
         fullWidth
       >
         <DialogTitle>
-          <Typography variant="h6" component="div" sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+          <Typography
+            variant="h6"
+            component="div"
+            sx={{ display: "flex", alignItems: "center", gap: 1 }}
+          >
             <Edit color="primary" />
             Confirm Update User
           </Typography>
         </DialogTitle>
         <DialogContent>
           <Typography>
-            Are you sure you want to update user <strong>"{editingUser?.username}"</strong>?
+            Are you sure you want to update user{" "}
+            <strong>"{editingUser?.username}"</strong>?
           </Typography>
           <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
             The user's information will be permanently changed.
           </Typography>
         </DialogContent>
         <DialogActions>
-          <Button onClick={() => setUpdateConfirmOpen(false)}>
-            Cancel
-          </Button>
-          <Button onClick={performSubmit} color="primary" variant="contained" disabled={submitting}>
+          <Button onClick={() => setUpdateConfirmOpen(false)}>Cancel</Button>
+          <Button
+            onClick={performSubmit}
+            color="primary"
+            variant="contained"
+            disabled={submitting}
+          >
             {submitting ? <CircularProgress size={20} /> : "Update User"}
           </Button>
         </DialogActions>

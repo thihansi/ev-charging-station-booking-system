@@ -126,7 +126,10 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
           >
             EV Charging
           </Typography>
-          <Typography variant="caption" sx={{ opacity: 0.9, color: "white !important" }}>
+          <Typography
+            variant="caption"
+            sx={{ opacity: 0.9, color: "white !important" }}
+          >
             {isBackoffice ? "Backoffice Portal" : "Operator Portal"}
           </Typography>
         </Box>

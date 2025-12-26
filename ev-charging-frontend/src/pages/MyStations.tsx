@@ -30,14 +30,19 @@ import {
   LocationOn,
   PowerSettingsNew,
   Assessment,
-  QrCode,
   Refresh,
   Visibility,
 } from "@mui/icons-material";
 import { useAuth } from "../context/AuthContext";
 import { useNotificationContext } from "../context/NotificationContext";
 import { chargingStationApi } from "../api";
-import type { ChargingStation, CreateChargingStationRequest, UpdateChargingStationRequest, StationType, OperationalHours } from "../types";
+import type {
+  ChargingStation,
+  CreateChargingStationRequest,
+  UpdateChargingStationRequest,
+  StationType,
+  OperationalHours,
+} from "../types";
 
 interface StationFormData {
   name: string;
@@ -53,12 +58,14 @@ interface StationFormData {
 const MyStations: React.FC = () => {
   const { state } = useAuth();
   const { showError, showSuccess } = useNotificationContext();
-  
+
   const [stations, setStations] = useState<ChargingStation[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [addDialogOpen, setAddDialogOpen] = useState(false);
   const [editDialogOpen, setEditDialogOpen] = useState(false);
-  const [selectedStation, setSelectedStation] = useState<ChargingStation | null>(null);
+  const [viewDialogOpen, setViewDialogOpen] = useState(false);
+  const [selectedStation, setSelectedStation] =
+    useState<ChargingStation | null>(null);
   const [formData, setFormData] = useState<StationFormData>({
     name: "",
     address: "",
@@ -89,7 +96,9 @@ const MyStations: React.FC = () => {
     } catch (error: any) {
       console.error("❌ Error loading stations:", error);
       if (error.response?.status === 403) {
-        showError("Access denied. You don't have permission to view charging stations.");
+        showError(
+          "Access denied. You don't have permission to view charging stations."
+        );
       } else if (error.response?.status === 401) {
         showError("Session expired. Please log in again.");
       } else {
@@ -117,6 +126,11 @@ const MyStations: React.FC = () => {
     setAddDialogOpen(true);
   };
 
+  const handleViewStation = (station: ChargingStation) => {
+    setSelectedStation(station);
+    setViewDialogOpen(true);
+  };
+
   const handleEditStation = (station: ChargingStation) => {
     setSelectedStation(station);
     setFormData({
@@ -141,22 +155,67 @@ const MyStations: React.FC = () => {
     }
 
     try {
+      console.log("🗑️ Deleting station with ID:", stationId);
       await chargingStationApi.delete(stationId);
+      console.log("✅ Station deleted successfully");
       showSuccess("Charging station deleted successfully!");
       await loadStations();
-    } catch (error) {
-      showError("Failed to delete charging station. Please try again.");
+    } catch (error: any) {
+      console.error("❌ Error deleting station:", {
+        stationId,
+        status: error.response?.status,
+        data: error.response?.data,
+        error,
+      });
+
+      if (error.response?.status === 404) {
+        showError("Station not found. It may have already been deleted.");
+      } else if (error.response?.status === 403) {
+        showError("You don't have permission to delete this station.");
+      } else {
+        showError(
+          error.response?.data?.message ||
+            "Failed to delete charging station. Please try again."
+        );
+      }
     }
   };
 
   const handleToggleStatus = async (station: ChargingStation) => {
     try {
-      const updatedStation = { ...station, isActive: !station.isActive };
-      await chargingStationApi.update(station.id, updatedStation);
-      showSuccess(`Station ${updatedStation.isActive ? "activated" : "deactivated"} successfully!`);
+      const newStatus = !station.isActive;
+      console.log("🔄 Toggling station status:", {
+        stationId: station.id,
+        stationName: station.name,
+        currentStatus: station.isActive,
+        newStatus: newStatus,
+      });
+
+      // Use the dedicated activate/deactivate endpoints
+      if (newStatus) {
+        console.log("🟢 Calling activate endpoint");
+        await chargingStationApi.activate(station.id);
+        showSuccess("Station activated successfully!");
+      } else {
+        console.log("� Calling deactivate endpoint");
+        await chargingStationApi.deactivate(station.id);
+        showSuccess("Station deactivated successfully!");
+      }
+
       await loadStations();
-    } catch (error) {
-      showError("Failed to update station status. Please try again.");
+    } catch (error: any) {
+      console.error("❌ Failed to toggle station status:", error);
+      console.error(
+        "Error response:",
+        JSON.stringify(error.response?.data, null, 2)
+      );
+
+      const errorMessage =
+        error.response?.data?.message ||
+        error.response?.data?.title ||
+        "Failed to update station status. Please try again.";
+
+      showError(errorMessage);
     }
   };
 
@@ -194,7 +253,8 @@ const MyStations: React.FC = () => {
       await loadStations();
     } catch (error: any) {
       showError(
-        error.response?.data?.message || "Failed to save charging station. Please try again."
+        error.response?.data?.message ||
+          "Failed to save charging station. Please try again."
       );
     }
   };
@@ -225,7 +285,7 @@ const MyStations: React.FC = () => {
     totalSlots: stations.reduce((sum, station) => sum + station.totalSlots, 0),
   };
 
-  if (!state.isAuthenticated || state.user?.role !== 'StationOperator') {
+  if (!state.isAuthenticated || state.user?.role !== "StationOperator") {
     return (
       <Box sx={{ p: 3 }}>
         <Alert severity="error">
@@ -238,7 +298,14 @@ const MyStations: React.FC = () => {
   return (
     <Box sx={{ p: 3, maxWidth: 1400, mx: "auto" }}>
       {/* Header */}
-      <Box sx={{ mb: 4, display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+      <Box
+        sx={{
+          mb: 4,
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+        }}
+      >
         <Box>
           <Typography variant="h4" component="h1" gutterBottom>
             My Charging Stations
@@ -337,9 +404,14 @@ const MyStations: React.FC = () => {
             No Charging Stations Yet
           </Typography>
           <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
-            Start by adding your first charging station to begin managing bookings.
+            Start by adding your first charging station to begin managing
+            bookings.
           </Typography>
-          <Button variant="contained" startIcon={<Add />} onClick={handleAddStation}>
+          <Button
+            variant="contained"
+            startIcon={<Add />}
+            onClick={handleAddStation}
+          >
             Add Your First Station
           </Button>
         </Paper>
@@ -361,13 +433,29 @@ const MyStations: React.FC = () => {
               >
                 <CardContent sx={{ flexGrow: 1 }}>
                   {/* Station Header */}
-                  <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", mb: 2 }}>
+                  <Box
+                    sx={{
+                      display: "flex",
+                      justifyContent: "space-between",
+                      alignItems: "flex-start",
+                      mb: 2,
+                    }}
+                  >
                     <Box sx={{ flexGrow: 1 }}>
                       <Typography variant="h6" component="h3" gutterBottom>
                         {station.name}
                       </Typography>
-                      <Box sx={{ display: "flex", alignItems: "center", gap: 1, mb: 1 }}>
-                        <LocationOn sx={{ fontSize: 16, color: "text.secondary" }} />
+                      <Box
+                        sx={{
+                          display: "flex",
+                          alignItems: "center",
+                          gap: 1,
+                          mb: 1,
+                        }}
+                      >
+                        <LocationOn
+                          sx={{ fontSize: 16, color: "text.secondary" }}
+                        />
                         <Typography variant="body2" color="text.secondary">
                           {station.address}
                         </Typography>
@@ -401,11 +489,14 @@ const MyStations: React.FC = () => {
                       />
                     </Box>
                     <Typography variant="body2" color="text.secondary">
-                      <strong>Slots:</strong> {station.availableSlots}/{station.totalSlots}
+                      <strong>Slots:</strong> {station.availableSlots}/
+                      {station.totalSlots}
                     </Typography>
                     {station.operationalHours && (
                       <Typography variant="body2" color="text.secondary">
-                        <strong>Hours:</strong> {station.operationalHours.openTime} - {station.operationalHours.closeTime}
+                        <strong>Hours:</strong>{" "}
+                        {station.operationalHours.openTime} -{" "}
+                        {station.operationalHours.closeTime}
                       </Typography>
                     )}
                   </Box>
@@ -413,16 +504,21 @@ const MyStations: React.FC = () => {
                   <Divider sx={{ my: 2 }} />
 
                   {/* Action Buttons */}
-                  <Box sx={{ display: "flex", gap: 1, justifyContent: "space-between" }}>
+                  <Box
+                    sx={{
+                      display: "flex",
+                      gap: 1,
+                      justifyContent: "space-between",
+                    }}
+                  >
                     <Box sx={{ display: "flex", gap: 1 }}>
                       <Tooltip title="View Details">
-                        <IconButton size="small" color="primary">
+                        <IconButton
+                          size="small"
+                          color="primary"
+                          onClick={() => handleViewStation(station)}
+                        >
                           <Visibility />
-                        </IconButton>
-                      </Tooltip>
-                      <Tooltip title="View QR Code">
-                        <IconButton size="small" color="info">
-                          <QrCode />
                         </IconButton>
                       </Tooltip>
                     </Box>
@@ -455,7 +551,12 @@ const MyStations: React.FC = () => {
       )}
 
       {/* Add Station Dialog */}
-      <Dialog open={addDialogOpen} onClose={() => setAddDialogOpen(false)} maxWidth="md" fullWidth>
+      <Dialog
+        open={addDialogOpen}
+        onClose={() => setAddDialogOpen(false)}
+        maxWidth="md"
+        fullWidth
+      >
         <DialogTitle>Add New Charging Station</DialogTitle>
         <DialogContent>
           <Grid container spacing={3} sx={{ mt: 1 }}>
@@ -474,7 +575,9 @@ const MyStations: React.FC = () => {
                 select
                 label="Station Type"
                 value={formData.stationType}
-                onChange={(e) => handleFormChange("stationType", e.target.value as StationType)}
+                onChange={(e) =>
+                  handleFormChange("stationType", e.target.value as StationType)
+                }
               >
                 <MenuItem value="AC">AC Charging</MenuItem>
                 <MenuItem value="DC">DC Fast Charging</MenuItem>
@@ -497,7 +600,9 @@ const MyStations: React.FC = () => {
                 label="Latitude"
                 type="number"
                 value={formData.latitude}
-                onChange={(e) => handleFormChange("latitude", parseFloat(e.target.value))}
+                onChange={(e) =>
+                  handleFormChange("latitude", parseFloat(e.target.value))
+                }
                 inputProps={{ step: "any" }}
               />
             </Grid>
@@ -507,7 +612,9 @@ const MyStations: React.FC = () => {
                 label="Longitude"
                 type="number"
                 value={formData.longitude}
-                onChange={(e) => handleFormChange("longitude", parseFloat(e.target.value))}
+                onChange={(e) =>
+                  handleFormChange("longitude", parseFloat(e.target.value))
+                }
                 inputProps={{ step: "any" }}
               />
             </Grid>
@@ -517,7 +624,9 @@ const MyStations: React.FC = () => {
                 label="Total Slots"
                 type="number"
                 value={formData.totalSlots}
-                onChange={(e) => handleFormChange("totalSlots", parseInt(e.target.value))}
+                onChange={(e) =>
+                  handleFormChange("totalSlots", parseInt(e.target.value))
+                }
                 inputProps={{ min: 1 }}
                 required
               />
@@ -527,7 +636,9 @@ const MyStations: React.FC = () => {
                 control={
                   <Switch
                     checked={formData.isActive}
-                    onChange={(e) => handleFormChange("isActive", e.target.checked)}
+                    onChange={(e) =>
+                      handleFormChange("isActive", e.target.checked)
+                    }
                   />
                 }
                 label="Active"
@@ -539,10 +650,12 @@ const MyStations: React.FC = () => {
                 label="Opening Time"
                 type="time"
                 value={formData.operationalHours.openTime}
-                onChange={(e) => handleFormChange("operationalHours", {
-                  ...formData.operationalHours,
-                  openTime: e.target.value
-                })}
+                onChange={(e) =>
+                  handleFormChange("operationalHours", {
+                    ...formData.operationalHours,
+                    openTime: e.target.value,
+                  })
+                }
                 InputLabelProps={{ shrink: true }}
               />
             </Grid>
@@ -552,10 +665,12 @@ const MyStations: React.FC = () => {
                 label="Closing Time"
                 type="time"
                 value={formData.operationalHours.closeTime}
-                onChange={(e) => handleFormChange("operationalHours", {
-                  ...formData.operationalHours,
-                  closeTime: e.target.value
-                })}
+                onChange={(e) =>
+                  handleFormChange("operationalHours", {
+                    ...formData.operationalHours,
+                    closeTime: e.target.value,
+                  })
+                }
                 InputLabelProps={{ shrink: true }}
               />
             </Grid>
@@ -570,7 +685,12 @@ const MyStations: React.FC = () => {
       </Dialog>
 
       {/* Edit Station Dialog */}
-      <Dialog open={editDialogOpen} onClose={() => setEditDialogOpen(false)} maxWidth="md" fullWidth>
+      <Dialog
+        open={editDialogOpen}
+        onClose={() => setEditDialogOpen(false)}
+        maxWidth="md"
+        fullWidth
+      >
         <DialogTitle>Edit Charging Station</DialogTitle>
         <DialogContent>
           <Grid container spacing={3} sx={{ mt: 1 }}>
@@ -589,7 +709,9 @@ const MyStations: React.FC = () => {
                 select
                 label="Station Type"
                 value={formData.stationType}
-                onChange={(e) => handleFormChange("stationType", e.target.value as StationType)}
+                onChange={(e) =>
+                  handleFormChange("stationType", e.target.value as StationType)
+                }
               >
                 <MenuItem value="AC">AC Charging</MenuItem>
                 <MenuItem value="DC">DC Fast Charging</MenuItem>
@@ -612,7 +734,9 @@ const MyStations: React.FC = () => {
                 label="Latitude"
                 type="number"
                 value={formData.latitude}
-                onChange={(e) => handleFormChange("latitude", parseFloat(e.target.value))}
+                onChange={(e) =>
+                  handleFormChange("latitude", parseFloat(e.target.value))
+                }
                 inputProps={{ step: "any" }}
               />
             </Grid>
@@ -622,7 +746,9 @@ const MyStations: React.FC = () => {
                 label="Longitude"
                 type="number"
                 value={formData.longitude}
-                onChange={(e) => handleFormChange("longitude", parseFloat(e.target.value))}
+                onChange={(e) =>
+                  handleFormChange("longitude", parseFloat(e.target.value))
+                }
                 inputProps={{ step: "any" }}
               />
             </Grid>
@@ -632,7 +758,9 @@ const MyStations: React.FC = () => {
                 label="Total Slots"
                 type="number"
                 value={formData.totalSlots}
-                onChange={(e) => handleFormChange("totalSlots", parseInt(e.target.value))}
+                onChange={(e) =>
+                  handleFormChange("totalSlots", parseInt(e.target.value))
+                }
                 inputProps={{ min: 1 }}
                 required
               />
@@ -642,7 +770,9 @@ const MyStations: React.FC = () => {
                 control={
                   <Switch
                     checked={formData.isActive}
-                    onChange={(e) => handleFormChange("isActive", e.target.checked)}
+                    onChange={(e) =>
+                      handleFormChange("isActive", e.target.checked)
+                    }
                   />
                 }
                 label="Active"
@@ -654,10 +784,12 @@ const MyStations: React.FC = () => {
                 label="Opening Time"
                 type="time"
                 value={formData.operationalHours.openTime}
-                onChange={(e) => handleFormChange("operationalHours", {
-                  ...formData.operationalHours,
-                  openTime: e.target.value
-                })}
+                onChange={(e) =>
+                  handleFormChange("operationalHours", {
+                    ...formData.operationalHours,
+                    openTime: e.target.value,
+                  })
+                }
                 InputLabelProps={{ shrink: true }}
               />
             </Grid>
@@ -667,10 +799,12 @@ const MyStations: React.FC = () => {
                 label="Closing Time"
                 type="time"
                 value={formData.operationalHours.closeTime}
-                onChange={(e) => handleFormChange("operationalHours", {
-                  ...formData.operationalHours,
-                  closeTime: e.target.value
-                })}
+                onChange={(e) =>
+                  handleFormChange("operationalHours", {
+                    ...formData.operationalHours,
+                    closeTime: e.target.value,
+                  })
+                }
                 InputLabelProps={{ shrink: true }}
               />
             </Grid>
@@ -681,6 +815,150 @@ const MyStations: React.FC = () => {
           <Button onClick={handleSaveStation} variant="contained">
             Update Station
           </Button>
+        </DialogActions>
+      </Dialog>
+
+      {/* View Station Details Dialog */}
+      <Dialog
+        open={viewDialogOpen}
+        onClose={() => setViewDialogOpen(false)}
+        maxWidth="md"
+        fullWidth
+      >
+        <DialogTitle>Station Details</DialogTitle>
+        <DialogContent>
+          {selectedStation && (
+            <Grid container spacing={3} sx={{ mt: 1 }}>
+              <Grid item xs={12}>
+                <Paper elevation={0} sx={{ p: 2, bgcolor: "grey.50" }}>
+                  <Typography variant="h6" gutterBottom>
+                    {selectedStation.name}
+                  </Typography>
+                  <Chip
+                    label={selectedStation.isActive ? "Active" : "Inactive"}
+                    color={selectedStation.isActive ? "success" : "default"}
+                    size="small"
+                    sx={{ mb: 2 }}
+                  />
+                </Paper>
+              </Grid>
+
+              <Grid item xs={12} md={6}>
+                <Typography
+                  variant="subtitle2"
+                  color="text.secondary"
+                  gutterBottom
+                >
+                  Station Type
+                </Typography>
+                <Chip
+                  label={selectedStation.stationType}
+                  color={getStationTypeColor(selectedStation.stationType)}
+                  size="small"
+                />
+              </Grid>
+
+              <Grid item xs={12} md={6}>
+                <Typography
+                  variant="subtitle2"
+                  color="text.secondary"
+                  gutterBottom
+                >
+                  Available Slots
+                </Typography>
+                <Typography variant="body1">
+                  {selectedStation.totalSlots} slots
+                </Typography>
+              </Grid>
+
+              <Grid item xs={12}>
+                <Typography
+                  variant="subtitle2"
+                  color="text.secondary"
+                  gutterBottom
+                >
+                  <LocationOn
+                    fontSize="small"
+                    sx={{ verticalAlign: "middle", mr: 0.5 }}
+                  />
+                  Address
+                </Typography>
+                <Typography variant="body1">
+                  {selectedStation.address}
+                </Typography>
+              </Grid>
+
+              <Grid item xs={12} md={6}>
+                <Typography
+                  variant="subtitle2"
+                  color="text.secondary"
+                  gutterBottom
+                >
+                  Latitude
+                </Typography>
+                <Typography variant="body1">
+                  {selectedStation.latitude}
+                </Typography>
+              </Grid>
+
+              <Grid item xs={12} md={6}>
+                <Typography
+                  variant="subtitle2"
+                  color="text.secondary"
+                  gutterBottom
+                >
+                  Longitude
+                </Typography>
+                <Typography variant="body1">
+                  {selectedStation.longitude}
+                </Typography>
+              </Grid>
+
+              {selectedStation.operationalHours && (
+                <>
+                  <Grid item xs={12} md={6}>
+                    <Typography
+                      variant="subtitle2"
+                      color="text.secondary"
+                      gutterBottom
+                    >
+                      Opening Time
+                    </Typography>
+                    <Typography variant="body1">
+                      {selectedStation.operationalHours.openTime}
+                    </Typography>
+                  </Grid>
+
+                  <Grid item xs={12} md={6}>
+                    <Typography
+                      variant="subtitle2"
+                      color="text.secondary"
+                      gutterBottom
+                    >
+                      Closing Time
+                    </Typography>
+                    <Typography variant="body1">
+                      {selectedStation.operationalHours.closeTime}
+                    </Typography>
+                  </Grid>
+                </>
+              )}
+            </Grid>
+          )}
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setViewDialogOpen(false)}>Close</Button>
+          {selectedStation && (
+            <Button
+              onClick={() => {
+                setViewDialogOpen(false);
+                handleEditStation(selectedStation);
+              }}
+              variant="contained"
+            >
+              Edit Station
+            </Button>
+          )}
         </DialogActions>
       </Dialog>
     </Box>

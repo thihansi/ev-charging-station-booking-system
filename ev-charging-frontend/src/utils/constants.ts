@@ -153,11 +153,6 @@ export const MENU_ITEMS = {
       icon: "ev_station",
     },
     {
-      title: "QR Scanner",
-      path: ROUTES.OPERATOR.QR_SCANNER,
-      icon: "qr_code_scanner",
-    },
-    {
       title: "Profile",
       path: ROUTES.PROFILE,
       icon: "person",

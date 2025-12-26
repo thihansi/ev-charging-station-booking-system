@@ -49,7 +49,7 @@ import { BOOKING_STATUS } from "../types/enums.js";
 const BookingsManagement: React.FC = () => {
   const { state } = useAuth();
   const { showError, showSuccess } = useNotificationContext();
-  
+
   const [bookings, setBookings] = useState<Booking[]>([]);
   const [filteredBookings, setFilteredBookings] = useState<Booking[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -72,10 +72,17 @@ const BookingsManagement: React.FC = () => {
   const loadBookings = async () => {
     setIsLoading(true);
     try {
+      console.log("🔄 Loading bookings...");
       const data = await bookingApi.getAll();
-      setBookings(data);
+      console.log("📋 Loaded bookings:", data);
+      console.log("🚀 About to enrich bookings...");
+
+      // Enrich bookings with names
+      const enrichedBookings = await enrichBookingsWithNames(data);
+      console.log("🎉 Enrichment done, setting bookings...");
+      setBookings(enrichedBookings);
     } catch (error: any) {
-      console.error("Error loading bookings:", error);
+      console.error("❌ Error loading bookings:", error);
       if (error.response?.status === 403) {
         showError("Access denied. You don't have permission to view bookings.");
       } else {
@@ -84,6 +91,109 @@ const BookingsManagement: React.FC = () => {
     } finally {
       setIsLoading(false);
     }
+  };
+
+  const enrichBookingsWithNames = async (
+    bookings: Booking[]
+  ): Promise<Booking[]> => {
+    const { chargingStationApi, evOwnerApi } = await import("../api");
+
+    console.log("🔄 Starting enrichment for", bookings.length, "bookings");
+    console.log("👤 User role:", state.user?.role);
+
+    // Fetch all charging stations and EV owners once
+    let allStations: any[] = [];
+    let allEvOwners: any[] = [];
+
+    try {
+      allStations = await chargingStationApi.getAll();
+      console.log("✅ Fetched all charging stations:", allStations.length);
+      console.log("📋 Sample station:", allStations[0]);
+    } catch (error) {
+      console.error("❌ Failed to fetch charging stations:", error);
+    }
+
+    // Only fetch EV owners for backoffice users (not operators)
+    if (state.user?.role === "Backoffice") {
+      try {
+        allEvOwners = await evOwnerApi.getAll();
+        console.log("✅ Fetched all EV owners:", allEvOwners.length);
+        console.log("📋 Sample EV owner:", allEvOwners[0]);
+      } catch (error) {
+        console.error("❌ Failed to fetch EV owners:", error);
+      }
+    }
+
+    // Enrich each booking
+    const enriched = bookings.map((booking, index) => {
+      const enrichedBooking = { ...booking };
+
+      console.log(`📦 Processing booking ${index + 1}:`, {
+        id: booking.id?.slice(-8),
+        evOwnerNic: booking.evOwnerNic,
+        chargingStationId: booking.chargingStationId?.slice(-8),
+        hasEvOwner: !!booking.evOwner,
+        hasStation: !!booking.chargingStation,
+      });
+
+      // Find and attach charging station
+      if (!booking.chargingStation && booking.chargingStationId) {
+        const station = allStations.find(
+          (s) => s.id === booking.chargingStationId
+        );
+        if (station) {
+          enrichedBooking.chargingStation = station;
+          console.log(`  ✅ Matched station: ${station.name}`);
+        } else {
+          console.log(
+            `  ⚠️ No station found for ID: ${booking.chargingStationId}`
+          );
+        }
+      }
+
+      // Find and attach EV owner (only for backoffice)
+      if (
+        state.user?.role === "Backoffice" &&
+        !booking.evOwner &&
+        booking.evOwnerNic
+      ) {
+        const evOwner = allEvOwners.find((e) => e.nic === booking.evOwnerNic);
+        if (evOwner) {
+          enrichedBooking.evOwner = evOwner;
+          console.log(`  ✅ Matched EV owner: ${evOwner.name}`);
+        } else {
+          console.log(`  ⚠️ No EV owner found for NIC: ${booking.evOwnerNic}`);
+        }
+      }
+
+      // For operators, create a simple display name from NIC
+      if (
+        state.user?.role === "StationOperator" &&
+        !enrichedBooking.evOwner &&
+        booking.evOwnerNic
+      ) {
+        enrichedBooking.evOwner = {
+          nic: booking.evOwnerNic,
+          name: booking.evOwnerNic,
+          email: "",
+          phone: "",
+          isActive: true,
+        };
+        console.log(
+          `  📝 Created placeholder for operator: ${booking.evOwnerNic}`
+        );
+      }
+
+      return enrichedBooking;
+    });
+
+    console.log("✅ Enrichment complete. Sample enriched booking:", {
+      id: enriched[0]?.id?.slice(-8),
+      evOwnerName: enriched[0]?.evOwner?.name,
+      stationName: enriched[0]?.chargingStation?.name,
+    });
+
+    return enriched;
   };
 
   const filterBookings = () => {
@@ -95,8 +205,14 @@ const BookingsManagement: React.FC = () => {
         (booking) =>
           booking.evOwnerNic.toLowerCase().includes(searchTerm.toLowerCase()) ||
           booking.id.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          (booking.evOwner?.name && booking.evOwner.name.toLowerCase().includes(searchTerm.toLowerCase())) ||
-          (booking.chargingStation?.name && booking.chargingStation.name.toLowerCase().includes(searchTerm.toLowerCase()))
+          (booking.evOwner?.name &&
+            booking.evOwner.name
+              .toLowerCase()
+              .includes(searchTerm.toLowerCase())) ||
+          (booking.chargingStation?.name &&
+            booking.chargingStation.name
+              .toLowerCase()
+              .includes(searchTerm.toLowerCase()))
       );
     }
 
@@ -152,7 +268,7 @@ const BookingsManagement: React.FC = () => {
     switch (status) {
       case BOOKING_STATUS.PENDING:
         return "warning";
-      case "Approved":
+      case BOOKING_STATUS.APPROVED:
         return "success";
       case BOOKING_STATUS.REJECTED:
         return "error";
@@ -169,7 +285,7 @@ const BookingsManagement: React.FC = () => {
     switch (status) {
       case BOOKING_STATUS.PENDING:
         return <Event />;
-      case "Approved":
+      case BOOKING_STATUS.APPROVED:
         return <CheckCircle />;
       case BOOKING_STATUS.REJECTED:
         return <Cancel />;
@@ -209,14 +325,20 @@ const BookingsManagement: React.FC = () => {
   const endIndex = startIndex + itemsPerPage;
   const paginatedBookings = filteredBookings.slice(startIndex, endIndex);
 
+  // Debug: Log unique statuses in bookings
+  const uniqueStatuses = [...new Set(bookings.map((b) => b.status))];
+  console.log("📊 Unique booking statuses:", uniqueStatuses);
+
   const stats = {
     total: bookings.length,
     pending: bookings.filter((b) => b.status === BOOKING_STATUS.PENDING).length,
-    approved: bookings.filter((b) => b.status === "Approved").length,
-    completed: bookings.filter((b) => b.status === BOOKING_STATUS.COMPLETED).length,
+    approved: bookings.filter((b) => b.status === BOOKING_STATUS.APPROVED)
+      .length,
+    rejected: bookings.filter((b) => b.status === BOOKING_STATUS.REJECTED)
+      .length,
   };
 
-  if (!state.isAuthenticated || state.user?.role !== 'StationOperator') {
+  if (!state.isAuthenticated || state.user?.role !== "StationOperator") {
     return (
       <Box sx={{ p: 3 }}>
         <Alert severity="error">
@@ -229,7 +351,14 @@ const BookingsManagement: React.FC = () => {
   return (
     <Box sx={{ p: 3, maxWidth: 1400, mx: "auto" }}>
       {/* Header */}
-      <Box sx={{ mb: 4, display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+      <Box
+        sx={{
+          mb: 4,
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+        }}
+      >
         <Box>
           <Typography variant="h4" component="h1" gutterBottom>
             Bookings Management
@@ -306,11 +435,11 @@ const BookingsManagement: React.FC = () => {
           <Card>
             <CardContent>
               <Box sx={{ display: "flex", alignItems: "center", mb: 1 }}>
-                <ElectricCar sx={{ mr: 1, color: "info.main" }} />
-                <Typography variant="h6">Completed</Typography>
+                <Cancel sx={{ mr: 1, color: "error.main" }} />
+                <Typography variant="h6">Rejected</Typography>
               </Box>
-              <Typography variant="h4" color="info.main">
-                {stats.completed}
+              <Typography variant="h4" color="error.main">
+                {stats.rejected}
               </Typography>
             </CardContent>
           </Card>
@@ -353,7 +482,7 @@ const BookingsManagement: React.FC = () => {
               >
                 <MenuItem value="ALL">All Statuses</MenuItem>
                 <MenuItem value={BOOKING_STATUS.PENDING}>Pending</MenuItem>
-                <MenuItem value="Approved">Approved</MenuItem>
+                <MenuItem value={BOOKING_STATUS.APPROVED}>Approved</MenuItem>
                 <MenuItem value={BOOKING_STATUS.REJECTED}>Rejected</MenuItem>
                 <MenuItem value={BOOKING_STATUS.COMPLETED}>Completed</MenuItem>
                 <MenuItem value={BOOKING_STATUS.CANCELLED}>Cancelled</MenuItem>
@@ -392,7 +521,10 @@ const BookingsManagement: React.FC = () => {
                   <TableBody>
                     {paginatedBookings.length === 0 ? (
                       <TableRow>
-                        <TableCell colSpan={6} sx={{ textAlign: "center", py: 4 }}>
+                        <TableCell
+                          colSpan={6}
+                          sx={{ textAlign: "center", py: 4 }}
+                        >
                           <Typography color="text.secondary">
                             {searchTerm || statusFilter !== "ALL"
                               ? "No bookings match your filters"
@@ -405,33 +537,49 @@ const BookingsManagement: React.FC = () => {
                         <TableRow key={booking.id} hover>
                           <TableCell>
                             <Typography variant="body2" fontFamily="monospace">
-                              #{booking.id.slice(-8)}
+                              #{booking.id ? booking.id.slice(-8) : "N/A"}
                             </Typography>
                           </TableCell>
                           <TableCell>
-                            <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-                              <Person sx={{ fontSize: 16, color: "text.secondary" }} />
+                            <Box
+                              sx={{
+                                display: "flex",
+                                alignItems: "center",
+                                gap: 1,
+                              }}
+                            >
+                              <Person
+                                sx={{ fontSize: 16, color: "text.secondary" }}
+                              />
                               <Box>
                                 <Typography variant="body2" fontWeight="medium">
                                   {booking.evOwner?.name || "Unknown"}
-                                </Typography>
-                                <Typography variant="caption" color="text.secondary">
-                                  {booking.evOwnerNic}
                                 </Typography>
                               </Box>
                             </Box>
                           </TableCell>
                           <TableCell>
-                            <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-                              <LocationOn sx={{ fontSize: 16, color: "text.secondary" }} />
+                            <Box
+                              sx={{
+                                display: "flex",
+                                alignItems: "center",
+                                gap: 1,
+                              }}
+                            >
+                              <LocationOn
+                                sx={{ fontSize: 16, color: "text.secondary" }}
+                              />
                               <Typography variant="body2">
-                                {booking.chargingStation?.name || "Unknown Station"}
+                                {booking.chargingStation?.name ||
+                                  "Unknown Station"}
                               </Typography>
                             </Box>
                           </TableCell>
                           <TableCell>
                             <Typography variant="body2">
-                              {new Date(booking.reservationDateTime).toLocaleString()}
+                              {new Date(
+                                booking.reservationDateTime
+                              ).toLocaleString()}
                             </Typography>
                           </TableCell>
                           <TableCell>
@@ -452,14 +600,16 @@ const BookingsManagement: React.FC = () => {
                                   <Visibility />
                                 </IconButton>
                               </Tooltip>
-                              
+
                               {booking.status === BOOKING_STATUS.PENDING && (
                                 <>
                                   <Tooltip title="Approve Booking">
                                     <IconButton
                                       size="small"
                                       color="success"
-                                      onClick={() => handleApproveBooking(booking.id)}
+                                      onClick={() =>
+                                        handleApproveBooking(booking.id)
+                                      }
                                       disabled={processingIds.has(booking.id)}
                                     >
                                       <CheckCircle />
@@ -469,7 +619,9 @@ const BookingsManagement: React.FC = () => {
                                     <IconButton
                                       size="small"
                                       color="error"
-                                      onClick={() => handleRejectBooking(booking.id)}
+                                      onClick={() =>
+                                        handleRejectBooking(booking.id)
+                                      }
                                       disabled={processingIds.has(booking.id)}
                                     >
                                       <Cancel />
@@ -477,14 +629,15 @@ const BookingsManagement: React.FC = () => {
                                   </Tooltip>
                                 </>
                               )}
-                              
-                              {booking.status === "Approved" && booking.qrCodeData && (
-                                <Tooltip title="View QR Code">
-                                  <IconButton size="small" color="primary">
-                                    <QrCode />
-                                  </IconButton>
-                                </Tooltip>
-                              )}
+
+                              {booking.status === BOOKING_STATUS.APPROVED &&
+                                booking.qrCodeData && (
+                                  <Tooltip title="View QR Code">
+                                    <IconButton size="small" color="primary">
+                                      <QrCode />
+                                    </IconButton>
+                                  </Tooltip>
+                                )}
                             </Box>
                           </TableCell>
                         </TableRow>
@@ -519,7 +672,8 @@ const BookingsManagement: React.FC = () => {
       >
         <DialogTitle>
           <Typography variant="h6">
-            Booking Details - #{selectedBooking?.id.slice(-8)}
+            Booking Details - #
+            {selectedBooking?.id ? selectedBooking.id.slice(-8) : "N/A"}
           </Typography>
         </DialogTitle>
         <DialogContent>
@@ -531,13 +685,15 @@ const BookingsManagement: React.FC = () => {
                 </Typography>
                 <Box sx={{ p: 2, backgroundColor: "grey.50", borderRadius: 1 }}>
                   <Typography variant="body2">
-                    <strong>Name:</strong> {selectedBooking.evOwner?.name || "Unknown"}
+                    <strong>Name:</strong>{" "}
+                    {selectedBooking.evOwner?.name || "Unknown"}
                   </Typography>
                   <Typography variant="body2">
                     <strong>NIC:</strong> {selectedBooking.evOwnerNic}
                   </Typography>
                   <Typography variant="body2">
-                    <strong>Contact:</strong> {selectedBooking.evOwner?.email || "Not provided"}
+                    <strong>Contact:</strong>{" "}
+                    {selectedBooking.evOwner?.email || "Not provided"}
                   </Typography>
                 </Box>
               </Grid>
@@ -548,13 +704,16 @@ const BookingsManagement: React.FC = () => {
                 </Typography>
                 <Box sx={{ p: 2, backgroundColor: "grey.50", borderRadius: 1 }}>
                   <Typography variant="body2">
-                    <strong>Name:</strong> {selectedBooking.chargingStation?.name || "Unknown"}
+                    <strong>Name:</strong>{" "}
+                    {selectedBooking.chargingStation?.name || "Unknown"}
                   </Typography>
                   <Typography variant="body2">
-                    <strong>Address:</strong> {selectedBooking.chargingStation?.address || "Not provided"}
+                    <strong>Address:</strong>{" "}
+                    {selectedBooking.chargingStation?.address || "Not provided"}
                   </Typography>
                   <Typography variant="body2">
-                    <strong>Type:</strong> {selectedBooking.chargingStation?.stationType || "Unknown"}
+                    <strong>Type:</strong>{" "}
+                    {selectedBooking.chargingStation?.stationType || "Unknown"}
                   </Typography>
                 </Box>
               </Grid>
@@ -574,7 +733,9 @@ const BookingsManagement: React.FC = () => {
                   </Typography>
                   <Typography variant="body2" sx={{ mt: 1 }}>
                     <strong>Reservation Date:</strong>{" "}
-                    {new Date(selectedBooking.reservationDateTime).toLocaleString()}
+                    {new Date(
+                      selectedBooking.reservationDateTime
+                    ).toLocaleString()}
                   </Typography>
                   <Typography variant="body2">
                     <strong>Created:</strong>{" "}
@@ -588,8 +749,17 @@ const BookingsManagement: React.FC = () => {
                   <Typography variant="subtitle2" gutterBottom>
                     QR Code
                   </Typography>
-                  <Box sx={{ p: 2, backgroundColor: "grey.50", borderRadius: 1, textAlign: "center" }}>
-                    <QrCode sx={{ fontSize: 80, color: "primary.main", mb: 1 }} />
+                  <Box
+                    sx={{
+                      p: 2,
+                      backgroundColor: "grey.50",
+                      borderRadius: 1,
+                      textAlign: "center",
+                    }}
+                  >
+                    <QrCode
+                      sx={{ fontSize: 80, color: "primary.main", mb: 1 }}
+                    />
                     <Typography variant="body2" color="text.secondary">
                       QR Code available for validation
                     </Typography>

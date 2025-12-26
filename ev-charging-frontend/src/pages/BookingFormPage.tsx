@@ -144,24 +144,27 @@ const BookingFormPage: React.FC = () => {
       const now = new Date();
 
       if (reservationDate <= now) {
-        newErrors.reservationDateTime = "Reservation date must be in the future";
+        newErrors.reservationDateTime =
+          "Reservation date must be in the future";
       }
 
       // Business Rule: Reservation date/time must be within 7 days from booking date
       const maxReservationDate = new Date();
       maxReservationDate.setDate(maxReservationDate.getDate() + 7);
-      
+
       if (reservationDate > maxReservationDate) {
-        newErrors.reservationDateTime = "Reservation date cannot be more than 7 days from now";
+        newErrors.reservationDateTime =
+          "Reservation date cannot be more than 7 days from now";
       }
 
       // Business Rule: For updates, must be at least 12 hours before reservation
       if (isEditMode && booking) {
         const twelveHoursFromNow = new Date();
         twelveHoursFromNow.setHours(twelveHoursFromNow.getHours() + 12);
-        
+
         if (reservationDate < twelveHoursFromNow) {
-          newErrors.reservationDateTime = "Reservations can only be updated at least 12 hours before the reservation time";
+          newErrors.reservationDateTime =
+            "Reservations can only be updated at least 12 hours before the reservation time";
         }
       }
     }
@@ -193,16 +196,24 @@ const BookingFormPage: React.FC = () => {
       navigate(ROUTES.BACKOFFICE.BOOKINGS);
     } catch (error: any) {
       console.error("[Booking Creation Error]", error);
-      
+
       // Handle specific API errors
       if (error.response?.status === 403) {
-        showError("Access denied: Only EV owners can create bookings. Admins can only view and manage existing bookings.");
+        showError(
+          "Access denied: Only EV owners can create bookings. Admins can only view and manage existing bookings."
+        );
       } else if (error.response?.status === 401) {
-        showError("Authentication required: Please log in as an EV owner to create bookings.");
+        showError(
+          "Authentication required: Please log in as an EV owner to create bookings."
+        );
       } else {
         showError(
           error.response?.data?.message ||
-            `Failed to ${isEditMode ? "update" : "create"} booking. ${error.response?.status === 403 ? "This feature is only available to EV owners." : ""}`
+            `Failed to ${isEditMode ? "update" : "create"} booking. ${
+              error.response?.status === 403
+                ? "This feature is only available to EV owners."
+                : ""
+            }`
         );
       }
     } finally {
@@ -304,8 +315,10 @@ const BookingFormPage: React.FC = () => {
       {!isEditMode && (
         <Alert severity="warning" sx={{ mb: 3 }}>
           <Typography variant="body2">
-            <strong>Important:</strong> According to the API specification, only EV owners can create new bookings. 
-            This form is for demonstration purposes. In production, booking creation should be available only to authenticated EV owners.
+            <strong>Important:</strong> According to the API specification, only
+            EV owners can create new bookings. This form is for demonstration
+            purposes. In production, booking creation should be available only
+            to authenticated EV owners.
           </Typography>
         </Alert>
       )}
@@ -345,7 +358,8 @@ const BookingFormPage: React.FC = () => {
           }
           sx={{ mb: 3 }}
         >
-          Current Status: <strong>{getBookingStatusDisplay(booking.status)}</strong>
+          Current Status:{" "}
+          <strong>{getBookingStatusDisplay(booking.status)}</strong>
           {booking.status === "Pending" && " - Waiting for approval"}
           {booking.status === "Approved" && " - Ready for charging session"}
           {booking.status === "Completed" && " - Charging session completed"}
@@ -390,7 +404,10 @@ const BookingFormPage: React.FC = () => {
                         label="EV Owner"
                         placeholder="Type NIC to search..."
                         error={Boolean(errors.evOwnerNic)}
-                        helperText={errors.evOwnerNic || "Enter at least 3 characters to search"}
+                        helperText={
+                          errors.evOwnerNic ||
+                          "Enter at least 3 characters to search"
+                        }
                         required
                       />
                     )}
@@ -407,10 +424,10 @@ const BookingFormPage: React.FC = () => {
                       </li>
                     )}
                     noOptionsText={
-                      evOwnerSearchTerm.length < 3 
-                        ? "Type at least 3 characters to search" 
-                        : searchingEvOwner 
-                        ? "Searching..." 
+                      evOwnerSearchTerm.length < 3
+                        ? "Type at least 3 characters to search"
+                        : searchingEvOwner
+                        ? "Searching..."
                         : "No EV owner found"
                     }
                   />

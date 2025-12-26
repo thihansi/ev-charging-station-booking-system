@@ -1,8 +1,9 @@
 :root {
-  font-family: "Inter", "Roboto", system-ui, Avenir, Helvetica, Arial, sans-serif;
+  font-family: "Inter", "Roboto", system-ui, Avenir, Helvetica, Arial,
+    sans-serif;
   line-height: 1.5;
   font-weight: 400;
-  
+
   /* Professional Purple Theme CSS Variables - Use selectively */
   --gradient-primary: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   --gradient-primary-dark: linear-gradient(135deg, #5a6fd8 0%, #6a4190 100%);
@@ -10,7 +11,7 @@
   --gradient-text: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   --shadow-primary: 0 2px 8px rgba(0, 0, 0, 0.1);
   --shadow-card: 0 1px 3px rgba(0, 0, 0, 0.1);
-  
+
   /* Neutral color palette for main content */
   --gray-50: #f8fafc;
   --gray-100: #f1f5f9;
@@ -22,7 +23,7 @@
   --gray-700: #334155;
   --gray-800: #1e293b;
   --gray-900: #0f172a;
-  
+
   /* Theme colors - purple used selectively */
   --primary: #667eea;
   --secondary: #764ba2;
@@ -82,7 +83,7 @@ body {
 }
 
 /* Clean transitions for interactive elements */
-button, 
+button,
 .MuiCard-root,
 .MuiPaper-root,
 .MuiButton-root {

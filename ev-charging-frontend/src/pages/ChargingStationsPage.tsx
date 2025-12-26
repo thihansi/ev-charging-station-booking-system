@@ -291,38 +291,73 @@ const ChargingStationsPage: React.FC = () => {
     if (!statusActionStation || !statusAction) return;
 
     try {
-      if (statusAction === "activate") {
-        await chargingStationApi.activate(statusActionStation.id);
-        showSnackbar("Charging station activated successfully");
-      } else {
-        // Business Rule: Cannot deactivate station if it has active bookings
-        // Check for active bookings before deactivating
+      console.log(`🔧 ${statusAction} charging station:`, {
+        stationId: statusActionStation.id,
+        stationName: statusActionStation.name,
+        currentStatus: statusActionStation.isActive,
+        action: statusAction,
+      });
+
+      // Business Rule: Cannot deactivate station if it has active bookings
+      if (statusAction === "deactivate") {
+        console.log("📋 Checking for active bookings...");
         const activeBookings = await bookingApi.getAll();
         const stationActiveBookings = activeBookings.filter(
-          booking => 
-            booking.chargingStationId === statusActionStation.id && 
+          (booking) =>
+            booking.chargingStationId === statusActionStation.id &&
             (booking.status === "Pending" || booking.status === "Approved")
         );
+
+        console.log("📋 Active bookings found:", stationActiveBookings.length);
 
         if (stationActiveBookings.length > 0) {
           showSnackbar(
             `Cannot deactivate station. It has ${stationActiveBookings.length} active booking(s). Please complete or cancel these bookings first.`,
             "error"
           );
+          setStatusConfirmOpen(false);
+          setStatusActionStation(null);
+          setStatusAction(null);
           return;
         }
-
-        await chargingStationApi.deactivate(statusActionStation.id);
-        showSnackbar("Charging station deactivated successfully");
       }
+
+      // Use the dedicated activate/deactivate endpoints
+      if (statusAction === "activate") {
+        console.log(
+          "🟢 Calling activate endpoint for station:",
+          statusActionStation.id
+        );
+        await chargingStationApi.activate(statusActionStation.id);
+      } else {
+        console.log(
+          "� Calling deactivate endpoint for station:",
+          statusActionStation.id
+        );
+        await chargingStationApi.deactivate(statusActionStation.id);
+      }
+
+      showSnackbar(`Charging station ${statusAction}d successfully`);
       fetchChargingStations();
     } catch (err: any) {
-      showSnackbar(
+      console.error(`❌ Error ${statusAction} charging station:`, err);
+      console.error(
+        "Error response:",
+        JSON.stringify(err.response?.data, null, 2)
+      );
+
+      const errorMessage =
         err.response?.data?.message ||
-          `Failed to ${statusAction} charging station`,
+        err.response?.data?.title ||
+        err.response?.data?.errors ||
+        `Failed to ${statusAction} charging station`;
+
+      showSnackbar(
+        typeof errorMessage === "object"
+          ? JSON.stringify(errorMessage)
+          : errorMessage,
         "error"
       );
-      console.error(`Error ${statusAction} charging station:`, err);
     } finally {
       setStatusConfirmOpen(false);
       setStatusActionStation(null);

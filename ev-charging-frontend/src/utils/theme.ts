@@ -142,12 +142,14 @@ export const theme = createTheme({
     MuiCard: {
       styleOverrides: {
         root: {
-          boxShadow: "0 1px 3px rgba(0, 0, 0, 0.1), 0 1px 2px rgba(0, 0, 0, 0.06)",
+          boxShadow:
+            "0 1px 3px rgba(0, 0, 0, 0.1), 0 1px 2px rgba(0, 0, 0, 0.06)",
           borderRadius: 8,
           border: "1px solid #e2e8f0",
           transition: "all 0.2s ease-in-out",
           "&:hover": {
-            boxShadow: "0 4px 15px rgba(0, 0, 0, 0.1), 0 2px 4px rgba(0, 0, 0, 0.06)",
+            boxShadow:
+              "0 4px 15px rgba(0, 0, 0, 0.1), 0 2px 4px rgba(0, 0, 0, 0.06)",
             transform: "translateY(-1px)",
           },
         },
@@ -156,7 +158,8 @@ export const theme = createTheme({
     MuiPaper: {
       styleOverrides: {
         root: {
-          boxShadow: "0 1px 3px rgba(0, 0, 0, 0.1), 0 1px 2px rgba(0, 0, 0, 0.06)",
+          boxShadow:
+            "0 1px 3px rgba(0, 0, 0, 0.1), 0 1px 2px rgba(0, 0, 0, 0.06)",
           borderRadius: 8,
         },
       },
@@ -174,7 +177,8 @@ export const theme = createTheme({
         root: {
           backgroundColor: "#ffffff", // White background
           color: "#0f172a", // Very dark text for maximum contrast
-          boxShadow: "0 1px 3px rgba(0, 0, 0, 0.1), 0 1px 2px rgba(0, 0, 0, 0.06)",
+          boxShadow:
+            "0 1px 3px rgba(0, 0, 0, 0.1), 0 1px 2px rgba(0, 0, 0, 0.06)",
           borderBottom: "1px solid #e2e8f0", // Subtle border
         },
       },

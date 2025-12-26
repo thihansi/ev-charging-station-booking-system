@@ -18,7 +18,6 @@ import OperatorDashboard from "./pages/OperatorDashboard";
 import BookingsManagement from "./pages/BookingsManagement";
 import MyStations from "./pages/MyStations";
 import QRScanner from "./pages/QRScanner";
-import Profile from "./pages/Profile";
 import EVOwnersPage from "./pages/EVOwnersPage";
 import ChargingStationsPage from "./pages/ChargingStationsPage";
 import BookingListPage from "./pages/BookingListPage";
@@ -153,11 +152,11 @@ function App() {
                 }
               />
 
-              {/* Admin Profile Route */}
+              {/* Profile Route - Available to all authenticated users */}
               <Route
                 path={ROUTES.PROFILE}
                 element={
-                  <ProtectedRoute requiredRole={USER_ROLES.BACKOFFICE}>
+                  <ProtectedRoute>
                     <DashboardLayout>
                       <ProfilePage />
                     </DashboardLayout>
@@ -212,16 +211,6 @@ function App() {
                   <ProtectedRoute requiredRole={USER_ROLES.STATION_OPERATOR}>
                     <DashboardLayout>
                       <MyStations />
-                    </DashboardLayout>
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path={ROUTES.PROFILE}
-                element={
-                  <ProtectedRoute requiredRole={USER_ROLES.STATION_OPERATOR}>
-                    <DashboardLayout>
-                      <Profile />
                     </DashboardLayout>
                   </ProtectedRoute>
                 }
